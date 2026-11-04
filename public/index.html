@@ -1,0 +1,1561 @@
+<title>Treffik Design</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
+<style>
+/* Layout: světle šedá plocha, nahoře značka a ovládací panel (řádek 1: pohled, podoba, zobrazení, načítání, celá obrazovka;
+   řádek 2: sekce aplikace; pod ní rozbalené kroky vybrané sekce). Pod panelem buď telefony, nebo user flow. Jen světlá verze. */
+:root{
+  --bg:#EDF0EE; --panel:#FFFFFF; --fg:#141A16; --mute:#66706A; --line:#DFE4E1; --soft:#F2F4F3; --brand:#2E9E4A; --conn:#A3ADA7;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#C2CAC5 transparent}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;gap:14px;align-items:flex-start}
+.brand h1{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:0}
+.brand p{margin:4px 0 0;color:var(--mute);font-size:13px;line-height:1.5}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.noselect,.bar,.phones,.flowv{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.phone input,.phone textarea{-webkit-user-select:text;user-select:text}
+
+/* logo */
+.logo{display:block;flex:none;width:calc(var(--s) * 58 / 48);height:calc(var(--s) * 58 / 48);margin:calc(var(--s) * -5 / 48)}
+.logo svg{display:block;width:100%;height:100%}
+
+/* ovládací panel */
+.bar{display:flex;flex-direction:column;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:10px;box-shadow:0 10px 28px -16px rgba(20,30,25,.22)}
+.bl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.secwrap{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px;min-width:0}
+.secbox{background:var(--soft);border-radius:16px;padding:4px;min-width:0}
+.secbox .seg{background:transparent}
+.lab{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);padding-left:6px;flex:none}
+.sxw{position:relative;z-index:2;min-width:0}
+.sx{overflow-x:auto;scrollbar-width:none;border-radius:14px 14px 0 0;cursor:grab;padding-bottom:8px}
+.sx::-webkit-scrollbar{display:none}
+.sxw::before,.sxw::after{content:"";position:absolute;top:0;bottom:0;width:56px;pointer-events:none;transition:opacity .2s;z-index:2}
+.sxw::before{left:0;background:linear-gradient(to left,rgba(242,244,243,0),var(--soft) 75%);border-radius:14px 0 0 14px;opacity:0}
+.sxw::after{right:0;background:linear-gradient(to right,rgba(242,244,243,0),var(--soft) 70%);border-radius:0 14px 14px 0}
+.sxw.mid::before{opacity:1}
+.sxw.end::after,.sxw.fit::after{opacity:0}
+.sxbtn{position:absolute;top:0;bottom:8px;right:0;z-index:3;width:56px;border:0;padding:0 4px;background:none;display:flex;align-items:center;justify-content:flex-end;cursor:pointer;transition:opacity .2s}.sxbtn.l{right:auto;left:0;justify-content:flex-start}.sxbtn .cb{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--fg);display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.25);transition:transform .15s}.sxbtn:hover .cb{transform:scale(1.06)}
+.sxbtn .ic{width:15px;height:15px}
+.sxw.end .sxbtn:not(.l),.sxw.fit .sxbtn,.sxw:not(.mid) .sxbtn.l{opacity:0;pointer-events:none}.sxw::before,.sxw::after{bottom:8px}
+.seg{position:relative;display:inline-flex;padding:4px;border-radius:14px;background:var(--soft)}
+.thumb{pointer-events:none}.seg .thumb,.fseg .thumb,.gseg .thumb{position:absolute;top:0;left:0;width:0;height:0;border-radius:10px;background:#fff;box-shadow:0 2px 8px rgba(20,30,25,.14),0 0 0 1px rgba(20,30,25,.05);transition:transform .34s cubic-bezier(.2,.8,.2,1),width .34s cubic-bezier(.2,.8,.2,1),height .34s cubic-bezier(.2,.8,.2,1),opacity .2s}
+.seg button{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;font:600 13px/1 var(--sans);padding:9px 12px;border:0;background:none;color:var(--mute);border-radius:10px;cursor:pointer;min-height:36px;white-space:nowrap;transition:color .2s}
+.seg button[aria-pressed="true"]{color:var(--fg)}
+.seg button.soonb{opacity:.42;cursor:help}
+.seg button small{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1px solid currentColor;border-radius:999px;padding:2px 5px}
+.seg .ic{width:16px;height:16px}
+.tb{display:inline-flex;align-items:center;justify-content:center;gap:7px;font:600 13px/1 var(--sans);padding:8px 12px;min-height:36px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--fg);cursor:pointer}
+.tb .ic{width:16px;height:16px}
+.tb.spin .ic{animation:spin .9s cubic-bezier(.4,0,.2,1)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* kroky vybrané sekce, napojené na aktivní sekci */
+.sub{position:relative;background:#fff;border-radius:12px;padding:6px;margin-top:6px;box-shadow:0 1px 3px rgba(20,30,25,.08),0 0 0 1px rgba(20,30,25,.04)}
+.sub.noanim::before{transition:none}.sub::before{content:"";position:absolute;z-index:1;left:var(--cx,40px);top:-30px;width:1.5px;height:30px;opacity:var(--co,1);background:#C9D0CB;transform:translateX(-50%);transition:left .34s cubic-bezier(.2,.8,.2,1)}
+.steps{position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:0}
+.step{display:inline-flex;align-items:center;gap:8px;font:600 13px/1 var(--sans);padding:7px 12px 7px 7px;min-height:38px;border-radius:12px;border:0;background:transparent;color:var(--mute);cursor:pointer;transition:background .2s,color .2s}
+.step .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px/1 var(--sans);background:var(--soft);border:1px solid var(--line);color:var(--mute);flex:none;transition:all .2s}
+.step:hover{color:var(--fg)}
+.step.on{background:#ECF7EF;color:var(--fg)}
+.step.on .n{background:var(--brand);border-color:var(--brand);color:#fff}
+.step.done .n{background:#E4F3E8;border-color:#BFE3C8;color:var(--brand)}
+.link{width:34px;height:2px;margin:0 -7px 0 -6px;border-radius:2px;background:var(--line);flex:none}.step{position:relative;z-index:1}
+.link.done{background:#9FD3AE}
+.subin{animation:subin .34s cubic-bezier(.2,.8,.2,1)}
+@keyframes subin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* telefony */
+.phones{display:flex;flex-wrap:wrap;gap:36px 40px;justify-content:center;padding:10px 0 4px}
+.col{display:flex;flex-direction:column;align-items:center;width:300px;max-width:100%}
+.device{width:300px;max-width:100%;height:624px;padding:7px;background:#0F1411;border-radius:48px;flex:none;
+  box-shadow:0 26px 50px -26px rgba(16,30,22,.45),0 0 0 1px rgba(255,255,255,.06) inset}
+.single .device{height:min(660px,max(560px,calc(100svh - 160px)))}
+
+/* celá obrazovka: na telefonu se aplikace zvětší tak, aby odpovídala skutečnému iPhonu */
+body.full{overflow:hidden}html:has(body.full){scrollbar-gutter:auto}
+body.full .phones{position:fixed;inset:0;z-index:50;background:var(--bg);padding:0;gap:0;align-items:center}
+body.full .col{width:100%;height:100%;max-width:none;justify-content:center}
+body.full .device{zoom:var(--fz,1);width:calc(100vw / var(--fz,1));height:calc(100dvh / var(--fz,1));max-width:none;padding:0;border-radius:0;background:none;box-shadow:none}
+body.full .phone{border-radius:0;--sbh:calc(env(safe-area-inset-top,0px) / var(--fz,1));--navb:calc(10px + env(safe-area-inset-bottom,0px) / var(--fz,1))}
+body.full .sb{display:none}
+@media (min-width:600px){body.full .device{height:min(100dvh - 40px,700px);width:calc(min(100dvh - 40px,700px) * 33 / 70);padding:7px;border-radius:48px;background:#0F1411}body.full .phone{border-radius:41px;--sbh:40px;--navb:10px}body.full .sb{display:flex}}
+.exitfull{position:fixed;z-index:60;right:max(14px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));height:36px;padding:0 12px 0 10px;border-radius:999px;border:1px solid rgba(255,255,255,.6);
+  background:rgba(20,26,22,.72);color:#fff;display:inline-flex;align-items:center;gap:6px;font:600 12.5px/1 var(--sans);cursor:pointer;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.exitfull .ic{width:15px;height:15px}
+@media (max-width:599px){.exitfull{top:auto;left:auto;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(96px + env(safe-area-inset-bottom,0px));width:40px;height:40px;padding:0;justify-content:center}.exitfull span{display:none}}
+
+/* ---------- aplikace ---------- */
+.phone{--sbh:40px;--navb:10px;position:relative;width:100%;height:100%;border-radius:41px;overflow:hidden;display:flex;flex-direction:column;isolation:isolate;
+  background:var(--ground);color:var(--ink);font-family:var(--fu);font-variant-numeric:tabular-nums;-webkit-text-size-adjust:100%}
+.wf{--ground:#F2F2F2;--surf:#fff;--ink:#171717;--mute:#6B6B6B;--line:#E4E4E4;--hdr:#DEDEDE;--hdr-ink:#171717;--hdr-mute:#555;
+  --glass:rgba(255,255,255,.6);--glass-line:rgba(0,0,0,.06);--g:#171717;--g-ink:#fff;--tint:#ECECEC;--tint-ink:#171717;--btn:#171717;
+  --sbg:rgba(242,242,242,.86);--sh:0 4px 14px -6px rgba(0,0,0,.14);--sk1:#E7E7E7;--sk2:#F6F6F6;
+  --sr-bg:#D7D7D7;--sr-fg:#111;--sr-dot:#111;--sa-bg:#E8E8E8;--sa-fg:#111;--sa-dot:#8A8A8A;--sg-bg:#fff;--sg-fg:#111;--sg-dot:#fff;--fu:var(--sans)}
+.ui{--ground:#F2F5F3;--surf:#fff;--ink:#142019;--mute:#6A766F;--line:#E6ECE8;--hdr:linear-gradient(135deg,#46C867 0%,#2C9E4B 100%);--hdr-ink:#fff;--hdr-mute:rgba(255,255,255,.84);
+  --glass:rgba(255,255,255,.2);--glass-line:rgba(255,255,255,.36);--g:#2E9E4A;--g-ink:#fff;--tint:#E7F6EB;--tint-ink:#23843D;--btn:linear-gradient(135deg,#46C867 0%,#2C9E4B 100%);
+  --sbg:rgba(242,245,243,.82);--sh:0 6px 18px -10px rgba(20,60,35,.24),0 1px 2px rgba(20,60,35,.05);--sk1:#E5ECE7;--sk2:#F7FAF8;
+  --sr-bg:#FDE9E6;--sr-fg:#B42318;--sr-dot:#E5483B;--sa-bg:#FFF1D6;--sa-fg:#8A5300;--sa-dot:#F29A0B;--sg-bg:#E4F6E8;--sg-fg:#1D7334;--sg-dot:#2EAA4E;
+  --fu:"Plus Jakarta Sans",var(--sans)}
+.sb{position:absolute;top:0;left:0;right:0;z-index:8;height:var(--sbh);display:flex;align-items:center;justify-content:space-between;padding:6px 22px 0 28px;color:var(--hdr-ink);font:600 13px/1 var(--sans);transition:background .25s,color .25s,box-shadow .25s}
+.phone.scrolled .sb{background:var(--sbg);color:var(--ink);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);box-shadow:0 1px 0 var(--line)}
+.phone.plain .sb{color:var(--ink)}
+.sb .r{display:flex;gap:5px;align-items:center}
+.isl{position:absolute;left:50%;top:9px;transform:translateX(-50%);width:84px;height:24px;border-radius:14px;background:#000}
+.scr{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.screen{min-height:100%;padding-bottom:100px}
+.screen.nonav{padding-bottom:28px}
+.screen.float{padding-bottom:156px}
+.screen.bare{padding-bottom:0;height:100%}
+
+/* záhlaví */
+.hd{display:flex;flex-direction:column;gap:14px;padding:calc(var(--sbh) + 10px) 16px 20px;border-radius:0 0 24px 24px;background:var(--hdr);color:var(--hdr-ink)}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:40px}
+.big{margin:0;font:800 26px/1.1 var(--fu);letter-spacing:-.02em}
+.hsub{margin:-8px 0 0;font:500 12.5px/1.45 var(--fu);color:var(--hdr-mute)}
+.gseg{position:relative;align-self:stretch;display:flex;gap:4px;padding:4px;border-radius:14px;background:var(--glass);border:1px solid var(--glass-line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.gseg button{position:relative;z-index:1;flex:1;justify-content:center;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;font:600 12.5px/1 var(--fu);padding:10px 8px;border-radius:10px;border:0;background:transparent;color:var(--hdr-ink);cursor:pointer;transition:background .25s,color .25s}
+.gseg button[aria-pressed="true"]{color:var(--tint-ink)}.gseg .thumb{border-radius:10px;background:#fff;box-shadow:0 4px 12px -6px rgba(0,0,0,.3)}
+.gseg .ic{width:15px;height:15px}
+.circ{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--glass);border:1px solid var(--glass-line);color:var(--hdr-ink);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);cursor:pointer;padding:0}
+.circ .ic{width:20px;height:20px}
+.searchrow{display:flex;gap:8px;align-items:center}
+.search{flex:1;min-width:0;display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:12px;background:#fff;color:var(--mute);box-shadow:0 8px 20px -12px rgba(0,0,0,.35)}
+.search input{flex:1;min-width:0;height:100%;border:0;background:transparent;font:500 16px/1 var(--fu);padding:0;color:var(--ink);outline:none}
+.search input::placeholder{color:var(--mute)}
+.search input::-webkit-search-cancel-button{display:none}
+.search button{width:30px;height:30px;border-radius:50%;border:0;background:var(--ground);color:var(--mute);display:grid;place-items:center;cursor:pointer}
+.search button .ic{width:15px;height:15px}
+.txtbtn{font:700 13px var(--fu);color:var(--hdr-ink);background:none;border:0;padding:8px 2px;cursor:pointer}
+.hbar{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:8px;min-height:40px}
+.htitle{margin:0;text-align:center;font:700 15px/1.2 var(--fu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero{display:flex;flex-direction:column;gap:10px}
+.ctx{align-self:flex-start;display:inline-flex;gap:6px;align-items:center;font:600 11.5px/1 var(--fu);padding:7px 10px;border-radius:999px;background:var(--glass);border:1px solid var(--glass-line)}
+.ctx .ic{width:13px;height:13px}
+.dw{display:flex;gap:8px;align-items:center;font:600 12.5px/1.35 var(--fu)}
+.dw em{font-style:normal;font-weight:500;color:var(--hdr-mute)}
+.dt{margin:0;font:800 22px/1.18 var(--fu);letter-spacing:-.02em;text-wrap:balance}
+.srow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.srow small{font:500 12px/1.3 var(--fu);color:var(--hdr-mute)}
+.gsum{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--glass);border:1px solid var(--glass-line)}
+.gsum b{font:800 22px/1 var(--fu);white-space:nowrap}
+.gsum span{font:500 12.5px/1.35 var(--fu);color:var(--hdr-mute)}
+.kicker{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font:700 11px/1.3 var(--fu);letter-spacing:.06em;text-transform:uppercase;color:var(--hdr-mute)}
+.center{align-items:center;text-align:center;padding-bottom:28px}
+
+/* drobné prvky */
+.sh{display:inline-block;flex:none;font:800 11.5px/1.2 var(--fu);padding:3px 6px 2px;border-radius:5px;border:1.5px solid #171717;background:#fff;color:#171717;white-space:nowrap;letter-spacing:0;text-transform:none}
+.ui .sh{border-color:#142019;color:#142019}
+.ui .sh.d{background:#C8102E;border-color:#C8102E;color:#fff}
+.ui .sh.i1{background:#1F4FA0;border-color:#1F4FA0;color:#fff}
+.shs{display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 11.5px/1 var(--fu);padding:6px 10px 6px 8px;border-radius:999px;white-space:nowrap;letter-spacing:.01em}
+.pill.solid{font-weight:700;padding:7px 11px 7px 9px}
+.pill.solid{padding:6px 10px 6px 8px;font-weight:600}
+.wf .pill.solid.r{background:#171717;color:#fff}.wf .pill.solid.r i{background:#fff}
+.pill i{width:8px;height:8px;border-radius:50%;flex:none}
+.pill.r{background:var(--sr-bg);color:var(--sr-fg)}.pill.r i{background:var(--sr-dot)}
+.pill.a{background:var(--sa-bg);color:var(--sa-fg)}.pill.a i{background:var(--sa-dot)}
+.pill.g{background:var(--sg-bg);color:var(--sg-fg)}.pill.g i{background:var(--sg-dot)}
+.wf .pill.g{box-shadow:inset 0 0 0 1px #171717}.wf .pill.g i{box-shadow:inset 0 0 0 1.5px #171717}
+.dch{display:inline-flex;align-items:center;gap:5px;font:700 12.5px/1 var(--fu);color:var(--ink);padding:0 2px}
+.dch small{font-weight:600;color:var(--mute);font-size:12px}
+.dch .ic{width:14px;height:14px;color:var(--mute)}
+.soon{opacity:.2;pointer-events:none}
+.lbl{display:flex;align-items:center;gap:6px;font:700 11px/1 var(--fu);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.lbl .ic{width:14px;height:14px}
+.tl{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;background:#ECECEC;color:#171717}
+.tl .ic{width:20px;height:20px}
+.ui .tl.blue{background:#E6F0FF;color:#2F6FD6}.ui .tl.pink{background:#FDE8EF;color:#D63B6F}.ui .tl.yellow{background:#FFF4D6;color:#C98A00}
+.ui .tl.red{background:#FDE9E6;color:#D63A2F}.ui .tl.orange{background:#FFEDDC;color:#E0701B}
+.ui .tl.purple{background:#F1E9FD;color:#8B4FD6}.ui .tl.green{background:#E6F6EA;color:#2E9E4A}.ui .tl.teal{background:#E1F4F6;color:#1C8A99}
+
+/* filtry */
+.stick{position:sticky;top:var(--sbh);z-index:4;padding:12px 14px 8px;background:var(--sbg);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%)}
+.chips{display:flex;gap:7px;overflow-x:auto;margin:0 -14px;padding:2px 14px 4px;scrollbar-width:none;cursor:grab;
+  -webkit-mask-image:linear-gradient(to right,#000 82%,transparent);mask-image:linear-gradient(to right,#000 82%,transparent)}
+.chips.end,.chips.fit{-webkit-mask-image:none;mask-image:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:6px;font:600 13px/1 var(--fu);padding:9px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surf);color:var(--ink);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.chip .ic{width:14px;height:14px}
+.chip small{font:700 11px/1 var(--fu);padding:3px 6px;border-radius:999px;background:var(--ground);color:var(--mute)}
+.chip[aria-pressed="true"]{background:var(--g);border-color:var(--g);color:var(--g-ink)}
+.chip[aria-pressed="true"] small{background:rgba(255,255,255,.22);color:var(--g-ink)}
+.fmeta{display:flex;justify-content:space-between;gap:8px;font:500 12px/1.4 var(--fu);color:var(--mute);padding:6px 18px 8px}
+.dragging{cursor:grabbing!important}
+
+/* karta: kde + vzdálenost, jemná dělicí čára, tělo */
+.flist{display:flex;flex-direction:column;gap:12px;padding:4px 14px 0}
+.ec{display:flex;flex-direction:column;width:100%;padding:0;text-align:left;font:inherit;color:inherit;background:var(--surf);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);cursor:pointer;transition:transform .2s}
+.ec:active{transform:scale(.985)}
+div.ec{cursor:default}
+.ec-w{display:flex;gap:8px;align-items:flex-start;padding:12px 14px 10px}
+.pl{flex:1;min-width:0;font:600 12.5px/1.35 var(--fu);padding-top:1px}
+.dist{flex:none;font:800 13px/1.35 var(--fu)}
+.dist small{font-weight:500;color:var(--mute);font-size:11px}
+.ec-b{position:relative;display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px}
+.ec-b::before{content:"";position:absolute;top:0;left:14px;right:14px;height:1px;background:var(--line)}
+.ec-t{font:700 16px/1.25 var(--fu);letter-spacing:-.01em;text-wrap:pretty}
+.ec-f{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ago{margin-left:auto;font:500 11.5px/1 var(--fu);color:var(--mute);white-space:nowrap}
+.exp{display:flex;gap:10px;align-items:center;font:500 11.5px/1.35 var(--fu);color:var(--mute);border-radius:12px;padding:9px 11px;background:var(--surf);box-shadow:0 6px 16px -8px rgba(20,40,30,.28),0 0 0 1px rgba(20,40,30,.05)}
+.exp b{display:block;font-weight:700;font-size:12px;color:var(--ink)}
+.ei{width:30px;height:30px;border-radius:50%;display:grid!important;place-items:center;flex:none;color:var(--ink);background:var(--ground)}
+.ei .ic{width:15px;height:15px}
+.mine{font:700 10.5px/1 var(--fu);color:var(--tint-ink);background:var(--tint);border-radius:999px;padding:4px 7px}
+.rname{flex:1;font:800 15px/1.25 var(--fu)}
+.go{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--tint);color:var(--tint-ink);flex:none;border:1px solid color-mix(in srgb,var(--tint-ink) 16%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+.go .ic{width:18px;height:18px}
+.rline{display:flex;align-items:center;gap:8px;font:600 13px/1 var(--fu)}
+.rline .ln{flex:1;height:2px;position:relative;background:repeating-linear-gradient(90deg,#C9C9C9 0 6px,transparent 6px 10px)}
+.ui .rline .ln{background:repeating-linear-gradient(90deg,#9ED9AE 0 6px,transparent 6px 10px)}
+.rline .ln::before,.rline .ln::after{content:"";position:absolute;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--surf);box-shadow:inset 0 0 0 2.5px var(--g)}
+.rline .ln::before{left:0}.rline .ln::after{right:0;background:var(--g);box-shadow:none}
+.rvia{display:flex;align-items:center;gap:6px;font:500 12px/1 var(--fu);color:var(--mute)}
+
+/* detail */
+.dbody{display:flex;flex-direction:column;gap:12px;padding:14px 14px 0}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:12px}
+.mcard{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:6px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:6px}
+.mtabs{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;border-radius:12px;background:var(--ground)}
+.mtabs button{position:relative;z-index:1;font:600 12px/1 var(--fu);padding:9px 4px;border-radius:9px;border:0;background:none;color:var(--mute);cursor:pointer;transition:background .2s,color .2s}
+.mtabs button[aria-pressed="true"]{color:var(--ink)}.mtabs .thumb{position:absolute;top:0;left:0;border-radius:9px;background:var(--surf);box-shadow:0 2px 6px -2px rgba(0,0,0,.18);transition:transform .34s cubic-bezier(.2,.8,.2,1),width .34s cubic-bezier(.2,.8,.2,1)}
+.ui .mtabs button[aria-pressed="true"]{color:var(--tint-ink)}
+.mview{height:156px;border-radius:12px;position:relative;overflow:hidden;display:grid;place-items:center;font:600 12px var(--fu);color:var(--mute)}
+.mview.foto{background:repeating-linear-gradient(45deg,#EDEDED 0 9px,#E0E0E0 9px 18px)}
+.ui .mview.foto{background:radial-gradient(80% 70% at 70% 30%,rgba(255,255,255,.5),transparent 70%),linear-gradient(150deg,#D7E8DC,#B3D0BC)}
+.mview.mapa{background-color:#fff;background-image:linear-gradient(#ECECEC 1px,transparent 1px),linear-gradient(90deg,#ECECEC 1px,transparent 1px);background-size:22px 22px}
+.mview .mid{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.mview .mid .ic{width:24px;height:24px}
+.mview.mapa .mid .ic{width:30px;height:30px;color:#171717}
+.ui .mview.mapa .mid .ic{color:#E5483B}
+.mview svg.ai{position:absolute;inset:0;width:100%;height:100%}
+.mcap{position:absolute;left:8px;bottom:8px;display:inline-flex;gap:5px;align-items:center;font:600 11px/1 var(--fu);color:var(--ink);background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:6px 8px;border-radius:8px}
+.mcap .ic{width:13px;height:13px}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{from{transform:scale(.6);opacity:.7}to{transform:scale(2.2);opacity:0}}
+.ph{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.ph div{font:600 11px/1.2 var(--fu);color:var(--mute)}
+.ph div::before{content:"";display:block;height:6px;border-radius:3px;background:var(--ground);margin-bottom:6px}
+.ph div.on{color:var(--ink)}
+.ph.r div.on::before{background:var(--sr-dot)}.ph.a div.on::before{background:var(--sa-dot)}.ph.g div.on::before{background:var(--sg-dot)}
+.wf .ph div.on::before{background:#171717}
+.est{display:flex;align-items:center;gap:6px 8px;font:500 13px/1.35 var(--fu);border-top:1px solid var(--line);padding-top:12px;flex-wrap:wrap}
+.est .ic{width:16px;height:16px;color:var(--mute)}
+.est b{font-weight:800}
+.est span{color:var(--mute)}
+.note{display:flex;gap:9px;font:500 12.5px/1.45 var(--fu);border-radius:12px;padding:10px 11px;background:linear-gradient(180deg,#FFFFFF 0%,#F1F3F2 100%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.07),inset 0 1px 0 #fff}
+.note .ic{width:16px;height:16px;margin-top:1px}
+.mx{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{border-radius:14px;padding:11px;background:var(--surf);border:1px solid var(--line);box-shadow:var(--sh);font:600 11px/1.2 var(--fu);color:var(--mute)}
+.tile b{display:block;margin-top:6px;font:800 16px/1 var(--fu);color:var(--ink);white-space:nowrap}
+.tile.hi{background:var(--tint);border-color:transparent;color:var(--tint-ink)}
+.adv{background:var(--tint);border-radius:16px;padding:14px}
+.adv h3{display:flex;gap:7px;align-items:center;margin:0 0 8px;font:800 15px/1.2 var(--fu);color:var(--tint-ink)}
+.adv ul{margin:0;padding-left:18px;font:500 14px/1.5 var(--fu)}
+.adv li::marker{color:var(--tint-ink)}
+.adv li+li{margin-top:4px}
+.adv small{display:block;margin-top:10px;font:500 11.5px var(--fu);color:var(--mute)}
+.full{margin:0;font:500 14px/1.55 var(--fu)}
+.cm{display:flex;gap:10px;align-items:flex-start}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--tint);color:var(--tint-ink);font:800 11px var(--fu)}
+.cm div{font:500 13.5px/1.45 var(--fu)}
+.cm b{font-size:12.5px;font-weight:700}
+.cm span{font-size:11.5px;color:var(--mute);margin-left:4px}
+.cin{display:flex;align-items:center;gap:8px;width:100%;height:42px;padding:0 12px;border-radius:12px;border:0;background:var(--ground);font:500 13px var(--fu);color:var(--mute);cursor:pointer;text-align:left}
+.src{margin:0;text-align:center;font:500 11.5px/1.4 var(--fu);color:var(--mute)}
+.empty{text-align:center;padding:24px 14px;font:500 13.5px/1.5 var(--fu);color:var(--mute)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+.pbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;border-radius:14px;border:0;background:var(--btn);color:#fff;font:700 15px/1 var(--fu);cursor:pointer}
+.ui .pbtn{box-shadow:0 10px 20px -10px rgba(46,158,74,.7)}
+.sbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--surf);color:var(--ink);font:700 14px/1 var(--fu);cursor:pointer}
+.empty .pbtn{margin-top:14px}
+
+/* plovoucí Platí / Neplatí v detailu: celé přilepené k pravému okraji */
+.vfloat{position:absolute;right:0;bottom:calc(var(--navb) + 84px);z-index:7;display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding:8px 0 6px 5px;border-radius:16px 0 0 16px;
+  background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.95);border-right:0;-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);
+  box-shadow:-6px 10px 22px -12px rgba(16,40,25,.4),inset 0 1px 0 #fff}
+.vfloat>span{align-self:center;padding-right:5px;font:800 9px/1 var(--fu);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.vfloat button{width:40px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 6px;border-radius:11px 0 0 11px;border:0;font:800 11px/1 var(--fu);cursor:pointer;transition:background .2s,color .2s,transform .15s}
+.vfloat button:active{transform:scale(.94)}
+.vfloat button .ic{width:16px;height:16px;stroke-width:2.8}
+.vfloat .yes{background:#ECECEC;color:#171717}.vfloat .no{background:#F6F6F6;color:#171717}
+.ui .vfloat .yes{background:#EAF7EE;color:#1D7334}
+.ui .vfloat .no{background:#FDEDEB;color:#C0392B}
+.vfloat .yes[aria-pressed="true"],.vfloat .no[aria-pressed="true"]{background:#171717;color:#fff}
+.ui .vfloat .yes[aria-pressed="true"]{background:#2EAA4E;color:#fff}
+.ui .vfloat .no[aria-pressed="true"]{background:#E5483B;color:#fff}
+
+/* hláška u prvků, které ještě nejsou navržené */
+.toast{position:absolute;left:50%;top:calc(var(--sbh) + 10px);z-index:40;background:rgba(20,26,22,.88);color:#fff;font:600 12.5px/1.3 var(--fu);padding:10px 14px;border-radius:12px;white-space:nowrap;pointer-events:none;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 10px 24px -10px rgba(0,0,0,.5);animation:toast 2.2s ease forwards}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,-8px)}10%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,0)}}
+
+/* nahlášení */
+.tgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tcard{min-width:0}
+.tcard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:16px 8px 14px;border-radius:16px;border:1.5px solid var(--line);background:var(--surf);box-shadow:var(--sh);text-align:center;font:inherit;color:inherit;cursor:pointer;transition:transform .15s,border-color .2s}
+.tcard:active{transform:scale(.97)}
+.tcard[aria-pressed="true"]{border-color:var(--g)}
+.tcard b{font:700 13.5px/1.2 var(--fu);white-space:nowrap}
+.tcard .tl{width:42px;height:42px;border-radius:13px}
+.tchip{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;background:var(--glass);border:1px solid var(--glass-line);font:700 13px/1 var(--fu);color:var(--hdr-ink);cursor:pointer}
+.tchip .chg{font-weight:600;color:var(--hdr-mute);margin-left:2px;text-decoration:underline;text-underline-offset:2px}
+.tl.sm{width:26px;height:26px;border-radius:50%}.tl.sm .ic{width:14px;height:14px}
+.pfix{position:absolute;left:0;right:0;bottom:0;z-index:7;padding:20px 14px calc(var(--navb) + 4px);background:linear-gradient(to top,var(--ground) 62%,rgba(242,245,243,0))}
+.wf .pfix{background:linear-gradient(to top,var(--ground) 62%,rgba(242,242,242,0))}
+.screen.float2{padding-bottom:96px}
+.dbody.tight{gap:10px}
+.place .tl{width:32px;height:32px;border-radius:10px}
+/* přihlášení a registrace */
+.hd.auth{gap:8px;padding-bottom:22px}
+.dbody.auth{gap:8px;padding-top:14px}
+.aseg{display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:12px;background:#E4E9E5;margin-bottom:2px}
+.wf .aseg{background:#E4E4E4}
+.aseg button{height:32px;border-radius:9px;border:0;background:none;font:600 13px/1 var(--fu);color:var(--mute);cursor:pointer;transition:background .2s,color .2s}
+.aseg button[aria-pressed="true"]{background:var(--surf);color:var(--ink);box-shadow:0 2px 6px -2px rgba(0,0,0,.18)}
+.soc{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:44px;border-radius:12px;font:700 14px/1 var(--fu);cursor:pointer}
+.soc svg{width:18px;height:18px;flex:none}
+.soc.apple{background:#000;color:#fff;border:0}.soc.apple svg{margin-top:-2px}
+.soc.google{background:#fff;color:#1F1F1F;border:1px solid var(--line)}
+.socrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.soc.sm{height:42px;font-size:13.5px}
+.inp{width:100%;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surf);padding:0 14px;font:500 16px var(--fu);color:var(--ink);outline:none}
+.inp::placeholder{color:var(--mute)}
+.inp:focus{border-color:var(--g)}
+.lnk.c{align-self:center}
+.avrow{display:flex;gap:12px;align-items:center;background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:8px 10px}
+.avp{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:24px;line-height:1;flex:none;box-shadow:inset 0 -2px 0 rgba(0,0,0,.06);transition:background .25s}
+.avopts{display:flex;flex-direction:column;gap:7px;min-width:0}
+.avs{display:flex;gap:4px}
+.av-o{width:30px;height:30px;border-radius:50%;border:1.5px solid transparent;background:var(--ground);font-size:16px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}
+.av-o[aria-pressed="true"]{border-color:var(--g);background:var(--tint)}
+.cols{display:flex;gap:7px;padding-left:2px}
+.col-o{width:18px;height:18px;border-radius:50%;border:0;background:var(--c);cursor:pointer;padding:0;box-shadow:0 0 0 2px var(--surf)}
+.col-o[aria-pressed="true"]{box-shadow:0 0 0 2px var(--surf),0 0 0 4px var(--c)}
+/* nápověda a hlášky mimo telefon */
+#tip{position:fixed;z-index:200;transform:translate(-50%,-100%);background:#141A16;color:#fff;font:600 12px/1.3 var(--sans);padding:7px 10px;border-radius:9px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 8px 20px -8px rgba(0,0,0,.4)}
+#tip.on{opacity:1}
+#ptoast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:200;background:#141A16;color:#fff;font:600 13px/1.3 var(--sans);padding:11px 16px;border-radius:12px;white-space:nowrap;pointer-events:none;box-shadow:0 12px 28px -10px rgba(0,0,0,.45);animation:ptoast 2.4s ease forwards}
+@keyframes ptoast{0%{opacity:0;transform:translate(-50%,8px)}10%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,0)}}
+.soonnav{opacity:.2;cursor:help}
+.selrow{display:flex;align-items:center;gap:12px}
+.selrow b{display:block;font:700 15px/1.2 var(--fu)}
+.selrow small{font:500 12px var(--fu);color:var(--mute)}
+.selrow button{margin-left:auto;font:700 13px var(--fu);color:var(--tint-ink);background:none;border:0;cursor:pointer;padding:8px 0}
+.mini{height:88px;border-radius:12px;background-color:#fff;background-image:linear-gradient(#ECECEC 1px,transparent 1px),linear-gradient(90deg,#ECECEC 1px,transparent 1px);background-size:18px 18px;display:grid;place-items:center;border:1px solid var(--line)}
+.mini .ic{width:28px;height:28px;color:var(--g)}
+.place{display:flex;align-items:center;gap:8px;font:600 13px/1.35 var(--fu)}
+.place small{display:block;font-weight:500;color:var(--mute);font-size:11.5px}
+.pchips{display:flex;flex-wrap:wrap;gap:7px}
+textarea{width:100%;min-height:64px;resize:none;border-radius:12px;border:1px solid var(--line);background:var(--ground);padding:10px 12px;font:500 16px/1.4 var(--fu);color:var(--ink)}
+textarea::placeholder{color:var(--mute)}
+.prow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.photo{position:relative;height:96px;border-radius:12px;background:repeating-linear-gradient(45deg,#EDEDED 0 9px,#E0E0E0 9px 18px);display:grid;place-items:center;font:600 12px var(--fu);color:var(--mute)}
+.ui .photo{background:linear-gradient(150deg,#D7E8DC,#B3D0BC)}
+.photo button{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(255,255,255,.9);display:grid;place-items:center;cursor:pointer;color:var(--ink)}
+.photo button .ic{width:14px;height:14px}
+.hint{display:flex;gap:8px;font:500 12px/1.45 var(--fu);color:var(--mute);margin:0}
+.hint .ic{width:15px;height:15px;margin-top:1px}
+.okc{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:var(--glass);border:1px solid var(--glass-line);margin-top:10px}
+.okc .ic{width:34px;height:34px;stroke-width:2.4}
+
+/* spuštění a účet */
+.splashs{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--hdr);color:var(--hdr-ink);padding:calc(var(--sbh) + 56px) 24px 56px;text-align:center;cursor:pointer}
+.splashs b{font:800 28px/1 var(--fu);letter-spacing:-.02em}
+.splashs small{font:500 13px/1.4 var(--fu);color:var(--hdr-mute)}
+.loadbar{width:120px;height:4px;border-radius:4px;background:var(--glass);overflow:hidden;margin-top:18px}
+.loadbar i{display:block;width:40%;height:100%;border-radius:4px;background:var(--hdr-ink);animation:lb 1.2s ease-in-out infinite}
+@keyframes lb{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+.splash{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding-top:calc(var(--sbh) + 56px);padding-bottom:56px;background:var(--hdr);color:var(--hdr-ink);animation:splashout .4s ease .8s forwards}
+.splash b{font:800 26px/1 var(--fu);letter-spacing:-.02em}
+@keyframes splashout{to{opacity:0;visibility:hidden}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>span{font:600 12px/1 var(--fu);color:var(--mute)}
+.field input{height:48px;border-radius:14px;border:1px solid var(--line);background:var(--ground);padding:0 14px;font:500 16px var(--fu);color:var(--ink);outline:none;width:100%}
+.field input:focus{border-color:var(--g);background:var(--surf)}
+.field small{font:500 11.5px/1.35 var(--fu);color:var(--mute)}
+.frow{display:flex;justify-content:flex-end}
+.lnk{font:700 13px var(--fu);color:var(--tint-ink);background:none;border:0;padding:4px 0;cursor:pointer}
+.or{display:flex;align-items:center;gap:10px;font:600 12px var(--fu);color:var(--mute)}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.agree{display:flex;gap:10px;align-items:flex-start;font:500 13px/1.45 var(--fu);text-align:left;background:none;border:0;padding:0;color:var(--ink);cursor:pointer}
+.box{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line);display:grid;place-items:center;flex:none;background:var(--surf);color:transparent;transition:all .2s}
+.agree[aria-pressed="true"] .box{background:var(--g);border-color:var(--g);color:#fff}
+.box .ic{width:14px;height:14px;stroke-width:3}
+
+/* plovoucí lišta */
+.nav{position:absolute;left:10px;right:10px;bottom:var(--navb);z-index:7;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding:7px 4px;border-radius:24px;
+  background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.85);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+  box-shadow:0 14px 30px -12px rgba(16,40,25,.32),inset 0 1px 0 #fff}
+.nv{display:flex;flex-direction:column;align-items:center;gap:3px;font:600 10px/1 var(--fu);color:var(--mute);background:none;border:0;padding:0;cursor:pointer;min-width:0}
+.nv span:last-child{white-space:nowrap}
+.nvi{width:38px;height:30px;border-radius:999px;display:grid;place-items:center;transition:background .3s,width .3s cubic-bezier(.2,.8,.2,1)}
+.nvi .ic{width:20px;height:20px}
+.nv.on{color:var(--tint-ink);font-weight:800}
+.nv.on .nvi{background:var(--tint);width:50px}
+.wf .nv.on{color:#171717}.wf .nv.on .nvi{background:#171717;color:#fff}
+.fab{justify-self:center;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--tint);color:var(--tint-ink);border:0;cursor:pointer}
+.wf .fab{background:#171717;color:#fff}
+.fab .ic{width:22px;height:22px;stroke-width:2.6}
+
+/* načítání a pohyb */
+.sk{display:block;background:linear-gradient(90deg,var(--sk1) 0%,var(--sk2) 50%,var(--sk1) 100%);background-size:200% 100%;animation:shim 1.15s linear infinite;border-radius:8px}
+.ui .hd .sk{--sk1:rgba(255,255,255,.18);--sk2:rgba(255,255,255,.36)}
+.wf .hd .sk{--sk1:rgba(0,0,0,.06);--sk2:rgba(0,0,0,.11)}
+.skc{padding:14px;gap:10px}
+.skc .row{display:flex;gap:8px}
+@keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
+@keyframes rise{from{opacity:0;transform:translateY(16px) scale(.975)}to{opacity:1;transform:none}}
+.stagger>*{animation:rise .56s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 60ms)}
+
+/* user flow */
+.flowv{display:flex;flex-direction:column;gap:10px}
+.boardwrap{overflow:auto;border-radius:20px;border:1px solid var(--line);cursor:grab;scrollbar-width:thin;scrollbar-color:#C2CAC5 transparent;
+  background-color:#FAFBFA;background-image:radial-gradient(#D3DAD5 1px,transparent 1px);background-size:18px 18px}
+.board{display:flex;flex-direction:column;gap:18px;padding:26px 28px;min-width:max-content}
+.lane{display:grid;grid-template-columns:150px auto;align-items:center;gap:18px}
+.lane.sep{border-top:1.5px dashed #CDD4CF;padding-top:22px;margin-top:4px}
+.lanel{display:flex;flex-direction:column;gap:3px;font:700 13px/1.25 var(--sans);color:var(--fg)}
+.lanel small{font-weight:500;font-size:11.5px;color:var(--mute)}
+.lrow{display:flex;align-items:center}
+.node{display:flex;gap:10px;align-items:center;width:178px;height:78px;padding:10px 12px 10px 10px;border-radius:14px;border:1px solid var(--line);background:#fff;text-align:left;font:inherit;color:inherit;cursor:pointer;
+  box-shadow:0 4px 12px -6px rgba(20,30,25,.2);transition:transform .2s,box-shadow .2s,border-color .2s}
+.node:hover{transform:translateY(-2px);box-shadow:0 10px 22px -10px rgba(20,30,25,.3);border-color:#BFD8C6}
+.node b{display:block;font:700 13px/1.25 var(--sans)}
+.node small{display:block;margin-top:3px;font:500 11px/1.3 var(--sans);color:var(--mute)}
+.node.cur{border-color:var(--brand);box-shadow:0 0 0 3px rgba(46,158,74,.16)}
+.node.later{border-style:dashed;background:rgba(255,255,255,.6);cursor:default;opacity:.55}
+.node.later:hover{transform:none;box-shadow:0 4px 12px -6px rgba(20,30,25,.2);border-color:var(--line)}
+.arr{width:36px;height:2px;background:var(--conn);position:relative;flex:none}
+.arr::after{content:"";position:absolute;right:-2px;top:-4px;border-style:solid;border-width:5px 0 5px 7px;border-color:transparent transparent transparent var(--conn)}
+.gap{width:14px;flex:none}
+.loop{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--sans);padding:9px 12px;border-radius:999px;border:1px dashed #9FD3AE;background:#F1FAF3;color:#23843D;cursor:pointer}
+.loop .ic{width:14px;height:14px}
+.mph{width:34px;height:58px;border-radius:8px;border:2px solid #1B211D;background:#F2F4F3;overflow:hidden;flex:none;display:flex;flex-direction:column;gap:3px}
+.mph i{display:block;height:15px;background:#DEDEDE}
+.mph.ui i{background:linear-gradient(135deg,#46C867,#2C9E4B)}
+.mph.tall i{height:24px}
+.mph.full i{height:100%}
+.mph u{display:block;height:4px;margin:0 4px;border-radius:2px;background:#D4D9D6;text-decoration:none}
+.mph u:nth-of-type(2){width:60%}
+.flowhint{margin:0;font-size:12.5px;color:var(--mute);display:flex;gap:6px;align-items:center}
+.flowhint .ic{width:15px;height:15px}
+
+/* hlavní navigace stránky: Analýza, User flow, Prototyp, Nápady, Poznámky */
+body:not(.v-proto) .po{display:none!important}
+.row1{display:flex;flex-wrap:nowrap;gap:10px;align-items:flex-start}
+.row1>.bl{flex:1;min-width:0}
+.fseg.navx{flex:none;margin-left:auto}
+.navx .fchip{min-height:36px;padding:8px 11px}
+.subrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.subrow .steps{flex:1;min-width:0}
+.tools{display:flex;gap:6px;padding-left:10px;border-left:1px solid var(--line)}
+.tools .tb{border-color:transparent;background:var(--soft);font-size:12.5px}
+.tools .tb:hover{background:#E8ECEA}
+.foot{margin-top:36px;padding:24px 0 8px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:center;font-size:12.5px;color:var(--mute);text-align:center}
+.foot a{color:var(--fg);font-weight:600;text-decoration:none}
+.foot a:hover{text-decoration:underline}
+.flogo{display:inline-flex}
+body:not(.v-flow) #flowview,body:not(.v-ideas) #ideasview,body:not(.v-an) #anview,body:not(.v-notes) #notesview{display:none}
+.vhead h2{margin:0;font-size:21px;font-weight:800;letter-spacing:-.01em}
+.vhead p{margin:6px 0 0;font-size:14px;line-height:1.55;color:var(--mute);max-width:72ch}
+.card2{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 8px 22px -18px rgba(20,30,25,.3)}
+.card2 h3{margin:0 0 12px;font-size:15px;font-weight:800}
+.notes{display:flex;flex-direction:column;gap:16px}
+.notes ul{margin:0;padding-left:18px;font-size:14px;line-height:1.6;color:#2B332E}
+.notes li+li{margin-top:6px}
+/* filtry ve stylu přepínačů */
+.ifil{display:flex;flex-direction:column;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px}
+.ifrow{display:flex;align-items:center;gap:10px;min-width:0}
+.ifrow .lab{min-width:56px}
+.fseg{position:relative;display:flex;flex-wrap:wrap;gap:2px;padding:4px;border-radius:14px;background:var(--soft);flex:1;min-width:0}
+.fchip{position:relative;z-index:1;display:inline-flex;align-items:center;gap:7px;font:600 13px/1 var(--sans);padding:9px 12px;min-height:36px;border-radius:10px;border:0;background:none;color:var(--mute);cursor:pointer;transition:background .2s,color .2s,box-shadow .2s}
+.fchip:hover{color:var(--fg)}
+.fchip .ic{width:15px;height:15px}
+.fchip small{font:700 11px/1 var(--sans);color:#A3ABA6}
+.fchip i{width:7px;height:7px;border-radius:50%;display:block}
+.fchip[aria-pressed="true"]{color:var(--fg)}
+/* nápady */
+.ideasv,.anv{display:flex;flex-direction:column;gap:16px}
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.idea{display:flex;flex-direction:column;gap:12px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 22px -18px rgba(20,30,25,.3)}
+.ihd{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.icat{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--sans);color:var(--mute)}
+.icat .ic{width:15px;height:15px}
+.ist{display:inline-flex;align-items:center;gap:6px;font:600 11.5px/1 var(--sans);padding:6px 10px;border-radius:999px;background:var(--soft);color:var(--fg);white-space:nowrap}
+.ist i,.sev i{width:7px;height:7px;border-radius:50%;display:block}
+.idea h3{margin:0;font-size:16px;line-height:1.3;font-weight:800;text-wrap:balance}
+.ilb{display:block;font:700 10.5px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-bottom:5px}
+.itx{margin:0;font-size:13.5px;line-height:1.55;color:#2B332E}
+.inav{background:var(--soft);border-radius:12px;padding:11px 13px}
+.iwarn{display:flex;gap:7px;margin:0;font-size:12.5px;line-height:1.45;color:var(--mute)}
+.iwarn .ic{width:15px;height:15px;margin-top:1px}
+.ifoot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;border-top:1px solid var(--line);padding-top:12px}
+.src2{display:inline-flex;align-items:center;gap:5px;font:600 11.5px/1 var(--sans);padding:6px 9px;border-radius:999px;background:var(--soft);color:#3B443F}
+.src2 b{font-weight:800}
+.igo{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font:700 12.5px/1 var(--sans);color:var(--brand);background:none;border:0;padding:6px 2px;cursor:pointer}
+.igo .ic{width:14px;height:14px}
+.iempty{grid-column:1/-1;text-align:center;padding:32px;color:var(--mute);font-size:14px;background:#fff;border:1px dashed var(--line);border-radius:18px}
+/* analýza */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.stat b{display:block;font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:4px;font-size:12.5px;line-height:1.4;color:var(--mute)}
+.process{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.pstep{display:flex;gap:10px;align-items:flex-start;background:var(--soft);border-radius:14px;padding:12px}
+.pstep .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;font:700 12px/1 var(--sans);background:#fff;color:var(--brand);box-shadow:0 0 0 1px var(--line)}
+.pstep .pd{display:block;font:700 10.5px/1.2 var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--brand);margin-bottom:3px}
+.pstep b{display:block;font-size:13.5px}
+.pstep small{display:block;margin-top:3px;font-size:12px;line-height:1.4;color:var(--mute)}
+.okg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.okg div{background:var(--soft);border-radius:14px;padding:12px 14px}
+.okg b{display:block;font-size:14px}
+.okg p{margin:4px 0 0;font-size:13px;line-height:1.5;color:var(--mute)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.alist{margin:0;padding-left:18px;font-size:13.5px;line-height:1.6;color:#2B332E}
+.alist li+li{margin-top:4px}
+.iss{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px}
+.inum{font:800 13px/1.6 var(--sans);color:#A3ABA6;font-variant-numeric:tabular-nums}
+.iss h3{margin:0;font-size:16px;line-height:1.35}
+.sev{display:inline-flex;align-items:center;gap:6px;font:600 11.5px/1 var(--sans);padding:5px 9px;border-radius:999px;background:var(--soft);margin-bottom:8px}
+.iss .ibody{display:flex;flex-direction:column;gap:12px}
+.thumbs{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;cursor:grab}
+.shot,.gcard{display:flex;flex-direction:column;gap:7px;background:none;border:0;padding:0;text-align:left;font:inherit;color:inherit;cursor:zoom-in}
+.shot{flex:none;width:96px}
+.shot img,.gcard img{display:block;width:100%;height:auto;aspect-ratio:358/780;object-fit:cover;object-position:top;border-radius:14px;border:1px solid var(--line);box-shadow:0 8px 18px -12px rgba(0,0,0,.35);background:var(--soft);transition:transform .2s}
+.shot:hover img,.gcard:hover img{transform:translateY(-2px)}
+.shot span{font-size:11.5px;line-height:1.3;color:var(--mute)}
+.ggroup{display:flex;flex-direction:column;gap:12px}
+.ggroup h3{margin:0;font-size:15px;font-weight:800;display:flex;gap:8px;align-items:baseline}
+.ggroup h3 small{font-size:12.5px;font-weight:600;color:var(--mute)}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:18px 14px}
+.gcard b{font-size:13.5px;line-height:1.3}
+.gcard small{font-size:11.5px;line-height:1.4;color:var(--mute)}
+.lb{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;gap:28px;padding:24px max(24px,env(safe-area-inset-left,0px));background:rgba(15,20,17,.84);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:lbin .2s ease}
+@keyframes lbin{from{opacity:0}to{opacity:1}}
+.lb img{max-height:calc(100dvh - 48px);max-width:min(88vw,400px);border-radius:22px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.lb .cap{color:#fff;max-width:300px}
+.lb .cap b{display:block;font-size:17px}
+.lb .cap small{display:block;margin-top:6px;font-size:12.5px;color:rgba(255,255,255,.6)}
+.lb .cap p{margin:10px 0 0;font-size:14px;line-height:1.55;color:rgba(255,255,255,.85)}
+.lbx{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:max(14px,env(safe-area-inset-right,0px));width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;cursor:pointer}
+@media (max-width:699px){.ifrow{flex-direction:column;align-items:stretch;gap:6px}.ifrow .lab{padding-left:4px}.lb{flex-direction:column;gap:14px}.lb img{max-height:68dvh}.lb .cap{text-align:center}}
+
+@media (max-width:699px){
+  .bl{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .row1{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .row1>.bl{display:contents}
+  #topnav{grid-column:1/-1;order:1}
+  .fseg.navx{grid-column:1/-1;order:2;justify-content:center;margin:0}
+  .row1>.bl>.seg.po{grid-column:1/-1;order:3}
+  .tools{width:100%;padding:8px 0 0;border-left:0;border-top:1px solid var(--line)}
+  .tools .tb{flex:1}
+  .bl>.seg{grid-column:1/-1}
+  .bl>.seg button{flex:1}
+  .steps{flex-direction:column;align-items:stretch}
+  .step{width:100%}
+  .link{width:2px;height:26px;margin:-7px 0 -7px 18px}
+}
+@media (prefers-reduced-motion:reduce){.stagger>*,.sk,.pulse,.loadbar i,.subin{animation:none}.splash{animation:splashout .01s linear .8s forwards}.seg .thumb,.nvi,.ec:active,.vfloat button:active,.tcard:active,.node:hover{transform:none}}
+/* vizuály nápadů */
+.ivis{position:relative;height:148px;margin:-6px -6px 2px;border-radius:14px;display:grid;place-items:center;overflow:hidden;font-family:var(--fu);color:#16201B;
+  background:radial-gradient(#D3E3D8 1px,transparent 1.2px) 0 0/14px 14px,linear-gradient(140deg,#EEF7F1,#E3ECE7)}
+.ivis .ic{width:13px;height:13px}
+.ivis .mk{background:#fff;border-radius:12px;box-shadow:0 10px 24px -12px rgba(20,40,30,.35),0 0 0 1px rgba(20,30,25,.05);padding:10px 12px;font-size:11.5px;display:flex;flex-direction:column;gap:6px;max-width:calc(100% - 28px)}
+.ivis .mk.w{width:236px}.ivis .mk.cl2{gap:5px}.ivis .mk.c{align-items:center;text-align:center}
+.ivis .mk.wx{flex-direction:row;align-items:center;gap:11px;width:236px}.ivis .mk.wx>div{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.ivis .r{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ivis .mut{color:#6A766F}.ivis .sm{font-size:10.5px;line-height:1.35}.ivis b{font-weight:700}.ivis .o{color:#D9820A}
+.ivis .big2{font-size:14px;line-height:1.2;font-weight:800}
+.ivis .gauge{position:relative;height:6px;border-radius:3px;background:linear-gradient(90deg,#3DBA5E,#F2C14A 55%,#E2553D)}
+.ivis .gauge i{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid #16201B;transform:translate(-50%,-50%)}
+.ivis .tags{display:flex;flex-wrap:wrap;gap:4px}.ivis .tags>span{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:4px 7px;border-radius:999px;background:#F1F5F2}
+.ivis .fld{display:flex;align-items:center;gap:6px;padding:7px 9px;border-radius:9px;background:#F1F5F2}.ivis .fld .mut{margin-left:auto}
+.ivis .rt{display:flex;align-items:center;gap:0;padding:4px 2px}.ivis .rt i{flex:1;height:3px;background:#2E9E4A}
+.ivis .dot{width:10px;height:10px;border-radius:50%;border:2.5px solid #2E9E4A;background:#fff}.ivis .dot.e{background:#2E9E4A}
+.ivis .evd{width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.08)}.ivis .evd.r{background:#E2553D}.ivis .evd.o{background:#F29A0B}
+.ivis .fl2{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:8px;background:#F1F5F2;font-weight:600}.ivis .fl2 small{width:38px;font-size:9px;color:#6A766F;font-weight:600;text-transform:uppercase;letter-spacing:.05em}.ivis .fl2.ph2{color:#8A948E}
+.ivis .btn{align-self:stretch;text-align:center;padding:7px;border-radius:9px;background:#2E9E4A;color:#fff;font-weight:700}
+.ivis .mseg{display:flex;padding:3px;border-radius:9px;background:#F1F5F2}.ivis .mseg span{flex:1;text-align:center;padding:5px;border-radius:7px;font-weight:600;color:#6A766F}.ivis .mseg .on{background:#fff;color:#16201B;box-shadow:0 2px 6px -2px rgba(0,0,0,.2)}
+.ivis .li{display:flex;align-items:center;gap:7px;padding:4px 0}.ivis .li>b{flex:1}.ivis .li+.li{border-top:1px solid #EEF1EF}
+.ivsh{font:800 9.5px/1 var(--fu);padding:3px 5px;border-radius:4px;color:#fff;flex:none}.ivsh.d{background:#D63B3B}.ivsh.i{background:#2F6FD6}
+.ivis .sosw{display:flex;align-items:center;gap:12px}.ivis .sosb{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:#E2553D;color:#fff;font-weight:800;font-size:16px;box-shadow:0 0 0 8px rgba(226,85,61,.16),0 0 0 16px rgba(226,85,61,.08)}
+.ivis .av3{display:flex;align-items:center;gap:2px;font-size:10px;color:#6A766F}.ivis .av3 i{font-style:normal;width:18px;height:18px;border-radius:50%;background:#F1F5F2;display:grid;place-items:center;font-size:11px;margin-right:-5px;border:1.5px solid #fff}.ivis .av3 i:last-of-type{margin-right:4px}
+.ivis .vt{display:flex;gap:8px}.ivis .vt>span{width:100px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 8px;border-radius:14px;background:#fff;box-shadow:0 10px 24px -12px rgba(20,40,30,.35);font-size:13px}
+.ivis .vt .ic{width:20px;height:20px}.ivis .vt .yes{background:#2E9E4A;color:#fff}.ivis .vt small{font-size:11px;opacity:.8}
+.ivis .ln{height:6px;border-radius:3px;background:#EEF1EF;width:100%}.ivis .ln.s{width:62%}
+.ivis .imgph{width:100%;height:34px;border-radius:8px;display:grid;place-items:center;color:#8A948E;background:repeating-linear-gradient(135deg,#F1F5F2 0 6px,#E7ECE9 6px 12px)}
+.ivis .aip{padding:8px}.ivis .aip svg{display:block;width:100%;height:80px}.ivis .cap2{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:#6A766F}
+.ivis .dp{font-weight:800;font-size:11px;padding:4px 8px;border-radius:999px;min-width:56px;text-align:center}.ivis .dp.g{background:#E3F4E7;color:#227A3A}.ivis .dp.o{background:#FDEFD6;color:#A6620A}.ivis .dp.r{background:#FBE1DC;color:#B23A25}
+.ivis .wi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#EAF1FB;color:#2F6FD6;flex:none;font-size:18px}.ivis .wi .ic{width:20px;height:20px}.ivis .wi.mic{border-radius:50%;background:#2E9E4A;color:#fff}
+.ivis .acts{display:flex;gap:14px}.ivis .acts>span{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:600}.ivis .acts i{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#fff;box-shadow:0 10px 24px -12px rgba(20,40,30,.35),0 0 0 1px rgba(20,30,25,.05)}.ivis .acts .ic{width:18px;height:18px}
+.ivis .pts{font-weight:800;font-size:13px;color:#227A3A;background:#E3F4E7;padding:4px 9px;border-radius:999px}
+.ivis .bar2{height:6px;border-radius:3px;background:#EEF1EF;overflow:hidden}.ivis .bar2 i{display:block;height:100%;background:#2E9E4A;border-radius:3px}
+.ivis .nt{flex-direction:row;gap:9px;width:250px;border-radius:16px;background:rgba(255,255,255,.92)}.ivis .nt>div{display:flex;flex-direction:column;gap:2px;flex:1}.ivis .lg{flex:none;width:30px;height:30px;border-radius:8px;background:#fff;box-shadow:0 0 0 1px #E6ECE8;display:grid;place-items:center}.ivis .lg svg{width:22px;height:22px}
+.ivis .ring{width:52px;height:52px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(#2E9E4A 0 92%,#EEF1EF 0);position:relative}.ivis .ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:#fff}.ivis .ring b{position:relative;font-size:15px}
+.ivis .wave{display:flex;align-items:center;gap:3px;height:20px}.ivis .wave i{width:3px;border-radius:2px;background:#2E9E4A}
+.ivis .chat{display:flex;flex-direction:column;gap:6px;width:240px;font-size:11px}.ivis .chat span{padding:8px 10px;border-radius:12px;line-height:1.35;box-shadow:0 8px 20px -12px rgba(20,40,30,.35)}.ivis .chat .me{align-self:flex-end;background:#2E9E4A;color:#fff;border-bottom-right-radius:4px}.ivis .chat .bot{align-self:flex-start;background:#fff;border-bottom-left-radius:4px;display:flex;gap:5px}.ivis .chat .bot .ic{flex:none;color:#2E9E4A;margin-top:1px}
+.ivis .plate{display:flex;align-items:stretch;border:2px solid #16201B;border-radius:6px;overflow:hidden;font:800 20px/1 var(--fu);letter-spacing:.06em}.ivis .plate i{font-style:normal;font-size:10px;background:#2F4FC9;color:#fff;display:grid;place-items:end center;padding:3px 5px 4px;letter-spacing:0}.ivis .plate{padding-right:10px;gap:9px}.ivis .plate>i+*{}.ivis .plate{align-items:center}.ivis .plate i{align-self:stretch}
+.ivis .pk{width:42px;height:42px;border-radius:10px;background:#2F6FD6;color:#fff;font-weight:800;font-size:22px;display:grid;place-items:center;flex:none}
+.ivis .cam{width:236px;height:112px;border-radius:12px;position:relative;overflow:hidden;background:linear-gradient(170deg,#9BB0BF 0%,#C9D3D8 45%,#5E6A70 46%,#3E474C 100%);box-shadow:0 10px 24px -12px rgba(20,40,30,.45)}
+.ivis .cam::before{content:"";position:absolute;left:30%;right:30%;bottom:0;top:46%;background:linear-gradient(90deg,transparent 48%,#E8E8E8 48% 52%,transparent 52%) 0 0/100% 14px;clip-path:polygon(40% 0,60% 0,100% 100%,0 100%)}
+.ivis .live{position:absolute;left:8px;top:8px;display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;color:#fff;background:rgba(0,0,0,.45);padding:4px 7px;border-radius:999px;text-transform:uppercase}.ivis .live i{width:6px;height:6px;border-radius:50%;background:#FF4D3D}
+.ivis .cl{position:absolute;left:8px;bottom:8px;font-size:10.5px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.ivis .tagc{font-size:9.5px;font-weight:700;color:#227A3A;background:#E3F4E7;padding:3px 6px;border-radius:999px}
+/* šipky a blueprint */
+.phones{position:relative}
+svg.links{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:6}
+svg.links .ln{fill:none;stroke:var(--conn);stroke-width:1.6;stroke-linecap:round;transition:stroke .5s}
+svg.links .ln.off{stroke-dasharray:4 5}
+svg.links .ln.fresh,svg.links .ln.hv{stroke:var(--brand);stroke-width:2}
+svg.links .sd{fill:#fff;stroke:var(--conn);stroke-width:1.6;transition:stroke .5s}
+svg.links .sd.fresh,svg.links .sd.hv{stroke:var(--brand);fill:var(--brand)}
+svg.links .pulse{fill:none;stroke:var(--brand);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:lpulse 1s cubic-bezier(.2,.8,.2,1) .15s both}
+@keyframes lpulse{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(5)}}
+body.bp .phone [data-hot]{outline:1.5px dashed rgba(46,158,74,.85);outline-offset:1px}
+body.bp .phone [data-hot="todo"]{outline-color:rgba(110,120,115,.5)}
+body.bp .phone [data-hot]:hover{outline-style:solid;outline-width:2px}
+body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(46,158,74,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(46,158,74,.08) 1px,transparent 1px);background-size:24px 24px}
+.labrow{display:flex;align-items:center;gap:12px;min-height:26px}
+.labrow .lab{margin-right:auto}
+.kbh{display:none;align-items:center;gap:5px;font:600 11.5px/1 var(--sans);color:var(--mute)}
+.kbh kbd{font:700 10.5px/1 var(--sans);min-width:20px;padding:4px 5px;border-radius:6px;background:var(--soft);border:1px solid var(--line);border-bottom-width:2px;text-align:center;color:var(--fg)}
+.kbh kbd+span{margin-right:6px}
+@media (hover:hover) and (pointer:fine){.kbh{display:inline-flex}}
+.bpt{display:inline-flex;align-items:center;gap:8px;font:600 12.5px/1 var(--sans);color:var(--mute);background:none;border:0;padding:4px 4px 4px 8px;border-radius:999px;cursor:pointer}
+.bpt:hover{color:var(--fg)}
+.bpt .sw{position:relative;width:32px;height:18px;border-radius:9px;background:#D3D9D5;transition:background .25s}
+.bpt .sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.bpt[aria-pressed="true"]{color:var(--fg)}
+.bpt[aria-pressed="true"] .sw{background:var(--brand)}
+.bpt[aria-pressed="true"] .sw::after{transform:translateX(14px)}
+/* galerie */
+.lbc{display:flex;align-items:center;justify-content:center;gap:28px}
+.lbar{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;cursor:pointer;transition:background .2s}
+.lbar:hover{background:rgba(255,255,255,.24)}
+.lbar .ic{width:20px;height:20px}
+.lbar.l{left:max(16px,env(safe-area-inset-left,0px))}.lbar.r{right:max(16px,env(safe-area-inset-right,0px))}
+.lbn{display:inline-block;margin-bottom:8px;font:700 11px/1 var(--sans);letter-spacing:.06em;color:rgba(255,255,255,.55)}
+.lb img{cursor:pointer}
+@media (max-width:699px){.lbc{flex-direction:column;gap:14px}.lbar{top:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:none}}
+@media (max-width:699px){.lb{padding-bottom:84px}}
+</style>
+
+<div class="wrap">
+  <header class="brand">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="tlogo" x="0" y="0" width="57.52" height="57.52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="1.59"/><feGaussianBlur stdDeviation="2.38"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter></defs></svg><span class="logo" style="--s:44px"><svg viewBox="0 0 58 58" fill="none" aria-hidden="true"><g filter="url(#tlogo)"><rect x="4.76" y="3.17" width="48" height="48" rx="11.5" fill="#fff"/><circle cx="28.76" cy="18.08" r="5.82" fill="#E53935"/><circle cx="28.76" cy="27.61" r="5.82" fill="#F9A825"/><circle cx="28.76" cy="36.27" r="5.82" fill="#34A853"/></g></svg></span>
+    <div><h1>Treffik</h1><p>Návrh redesignu aplikace: analýza současného stavu, cesta uživatele, proklikávací prototyp a nápady k rozhodnutí.</p></div>
+  </header>
+
+  <div class="bar">
+    <div class="row1">
+      <div class="bl">
+        <div class="seg" id="topnav" role="group" aria-label="Pohled"><span class="thumb"></span>
+          <button type="button" data-view="flow" aria-pressed="false"></button><button type="button" data-view="proto" aria-pressed="true"></button></div>
+        <div class="seg po" role="group" aria-label="Podoba"><span class="thumb"></span>
+          <button type="button" data-look="wf" aria-pressed="true"></button><button type="button" data-look="ui" aria-pressed="false"></button></div>
+        <div class="seg po" role="group" aria-label="Zobrazení"><span class="thumb"></span>
+          <button type="button" data-mode="all" aria-pressed="true"></button><button type="button" data-mode="one" aria-pressed="false"></button></div>
+      </div>
+      <div class="fseg navx" role="group" aria-label="Podklady"><span class="thumb"></span>
+        <button type="button" class="fchip" data-view="an" aria-pressed="false"></button><button type="button" class="fchip" data-view="ideas" aria-pressed="false"></button><button type="button" class="fchip" data-view="notes" aria-pressed="false"></button></div>
+    </div>
+    <div class="secwrap po">
+      <div class="labrow"><span class="lab">Sekce a obrazovky</span><span class="kbh" id="kbh"></span>
+        <button type="button" class="bpt" id="bptgl" aria-pressed="false" data-tip="Ukáže, kde se dá klepnout a kam to vede"><span class="sw"></span>Blueprint</button></div>
+      <div class="secbox">
+        <div class="sxw" id="sxw"><div class="sx" id="sx"><div class="seg" id="sect" role="group" aria-label="Sekce aplikace"><span class="thumb"></span></div></div>
+          <button type="button" class="sxbtn l" id="sxbtnl" aria-label="Posunout sekce doleva"></button><button type="button" class="sxbtn" id="sxbtn" aria-label="Posunout sekce doprava"></button></div>
+        <div class="sub" id="sub"><div class="subrow"><nav class="steps" id="steps" aria-label="Obrazovky sekce"></nav>
+          <div class="tools"><button type="button" class="tb" id="reload"></button><button type="button" class="tb" id="fullbtn"></button></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phones po" id="phones"></div>
+
+  <section class="flowv" id="flowview" aria-label="User flow"></section>
+
+  <section class="ideasv" id="ideasview" aria-label="Nápady"></section>
+
+  <section class="anv" id="anview" aria-label="Analýza"></section>
+
+  <section class="notes" id="notesview" aria-label="Poznámky">
+    <div class="vhead"><h2>Předpoklady a poznámky pro tým</h2><p>Rozhodnutí a předpoklady, na kterých prototyp stojí. Hodí se pro Davida i programátora.</p></div>
+    <div class="card2"><ul>
+      <li>Stav události (Řeší se → Zlepšuje se → Vyřešeno) mění jen potvrzení od ŘSD nebo hlasování Platí / Neplatí. Odhad konce je samostatná informace. Když uplyne, aplikace to napíše, ale stav nechá. To jde proti původnímu nápadu, kdy semafor postupoval podle třetin odhadované doby.</li>
+      <li>Lajky: tlačítko „Děkuji“ nahrazuje Platí / Neplatí. V detailu je plovoucí vpravo dole, protože hlas zároveň potvrzuje stav události. Žádné další lajky ani srdíčka nejsou, aby se hodnocení nedublovalo.</li>
+      <li>Komentáře: v detailu je náhled posledních příspěvků. Psaní je zatím ztlumené. Otevřená otázka: komentovat i hlášení od řidičů, nebo jen události od ŘSD, a kdo bude komentáře moderovat.</li>
+      <li>Oblast má dvě volby: V okolí (40 km od polohy telefonu) a celý kraj. Hledání prohledává celou ČR a oblast při něm neplatí. Aplikace se aktualizuje sama, proto čas aktualizace není vidět.</li>
+      <li>Nahlášení má tři kroky: typ, kontrola, hotovo. Místo se bere z polohy telefonu. Řidič nevybírá, komu se událost zobrazí ani na kolik dní: vidí ji řidiči v okolí a zmizí, až ji ostatní označí jako neplatnou nebo ji uzavře ŘSD.</li>
+      <li>Přihlášení a registrace se vejdou na jednu obrazovku bez posouvání. Apple a Google jsou nahoře, e-mail pod nimi. Při registraci si řidič vybere ikonku a barvu, která ho pak bude reprezentovat u hlášení. Doba zobrazení zpráv v registraci není (klient ji ruší) a SPZ se zatím nevyplňuje.</li>
+      <li>AI vizualizace je orientační ilustrace situace. Jak ji bude generovat, je otázka na programátora.</li>
+      <li>Podklady určují barvu jen pro dálnice a silnice I. třídy. Silnice II. a III. třídy mají bílý štítek s tmavým rámečkem.</li>
+      <li>Upozornění, Profil (s kartou řidiče, oblíbenými, sledujícími, pozvánkami a zvuky), AI asistent a Ceny PHM teprve přijdou na řadu. Všechna data jsou ukázková.</li>
+    </ul></div>
+  </section>
+
+  <footer class="foot"><span class="flogo"></span><span>Návrh redesignu aplikace Treffik · listopad 2026</span><span>Design a UX: <a href="https://vojtechsvoboda.cz" target="_blank" rel="noopener">Vojtěch Svoboda · vojtechsvoboda.cz</a></span></footer>
+</div>
+
+<script>
+/* Ikony podle Lucide (lucide.dev) */
+const I={
+ left:'<path d="m15 18-6-6 6-6"/>',right:'<path d="m9 18 6-6-6-6"/>',
+ search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+ pin:'<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+ map:'<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+ clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+ timer:'<line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/>',
+ info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+ share:'<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/>',
+ car:'<path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.646 5H8.4a2 2 0 0 0-1.903 1.257L5 10 3 8"/><path d="M7 14h.01"/><path d="M17 14h.01"/><rect width="18" height="8" x="3" y="10" rx="2"/><path d="M5 18v2"/><path d="M19 18v2"/>',
+ route:'<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+ plus:'<path d="M5 12h14"/><path d="M12 5v14"/>',
+ bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+ user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+ alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+ siren:'<path d="M7 18v-6a5 5 0 1 1 10 0v6"/><path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2z"/><path d="M21 12h1"/><path d="M18.5 4.5 18 5"/><path d="M2 12h1"/><path d="M12 2v1"/><path d="m4.929 4.929.707.707"/><path d="M12 12v6"/>',
+ ban:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+ works:'<rect x="2" y="6" width="20" height="8" rx="1"/><path d="M17 14v7"/><path d="M7 14v7"/><path d="M17 3v3"/><path d="M7 3v3"/><path d="M10 14 2.3 6.3"/><path d="m14 6 7.7 7.7"/><path d="m8 6 8 8"/>',
+ snow:'<line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/>',
+ sparkles:'<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>',
+ image:'<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+ camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+ msg:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+ file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 13H8"/><path d="M16 17H8"/><path d="M16 13h-2"/>',
+ locate:'<line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/>',
+ refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+ max:'<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
+ min:'<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
+ dashed:'<path d="M5 3a2 2 0 0 0-2 2"/><path d="M19 3a2 2 0 0 1 2 2"/><path d="M21 19a2 2 0 0 1-2 2"/><path d="M5 21a2 2 0 0 1-2-2"/><path d="M9 3h1"/><path d="M9 21h1"/><path d="M14 3h1"/><path d="M14 21h1"/><path d="M3 9v1"/><path d="M21 9v1"/><path d="M3 14v1"/><path d="M21 14v1"/>',
+ palette:'<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+ cols:'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/>',
+ rows:'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M21 9H3"/><path d="M21 15H3"/>',
+ bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',
+ users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+ mic:'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>',
+ db:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+ quote:'<path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/>',
+ phone:'<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
+ flow:'<rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/>',
+ pointer:'<path d="M12.034 12.681a.498.498 0 0 1 .647-.647l9 3.5a.5.5 0 0 1-.033.943l-3.444 1.068a1 1 0 0 0-.66.66l-1.067 3.443a.5.5 0 0 1-.943.033z"/><path d="M5 3a2 2 0 0 0-2 2"/><path d="M19 3a2 2 0 0 1 2 2"/><path d="M5 21a2 2 0 0 1-2-2"/><path d="M9 3h1"/><path d="M9 21h2"/><path d="M14 3h1"/><path d="M3 9v1"/><path d="M21 9v2"/><path d="M3 14v1"/>',
+ undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/>'
+};
+const ic=(n,s)=>`<svg class="ic"${s?` style="width:${s}px;height:${s}px"`:""} viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+const LOGO='<svg viewBox="0 0 58 58" fill="none" aria-hidden="true"><g filter="url(#tlogo)"><rect x="4.76" y="3.17" width="48" height="48" rx="11.5" fill="#fff"/><circle cx="28.76" cy="18.08" r="5.82" fill="#E53935"/><circle cx="28.76" cy="27.61" r="5.82" fill="#F9A825"/><circle cx="28.76" cy="36.27" r="5.82" fill="#34A853"/></g></svg>';
+const logo=s=>`<span class="logo" style="--s:${s}px">${LOGO}</span>`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const plural=(n,a,b,c)=>n===1?a:(n>=2&&n<=4?b:c);
+const km=d=>String(d).replace(".",",");
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ovládací panel */
+const setBtn=(sel,icon,txt)=>{document.querySelector(sel).innerHTML=ic(icon)+txt};
+setBtn('[data-view="an"]',"search","Analýza");setBtn('[data-view="flow"]',"flow","User flow");setBtn('[data-view="proto"]',"pointer","Prototyp");setBtn('[data-view="ideas"]',"bulb","Nápady");setBtn('[data-view="notes"]',"file","Poznámky");
+setBtn('[data-look="wf"]',"dashed","Wireframe");setBtn('[data-look="ui"]',"palette","UI");
+setBtn('[data-mode="all"]',"cols","Vedle sebe");setBtn('[data-mode="one"]',"phone","Proklik");
+setBtn("#reload","refresh","Znovu načíst");setBtn("#fullbtn","max","Celá obrazovka");document.querySelector(".flogo").innerHTML=logo(22);
+document.getElementById("sxbtn").innerHTML=`<span class="cb">${ic("right")}</span>`;document.getElementById("sxbtnl").innerHTML=`<span class="cb">${ic("left")}</span>`;
+const SECTIONS=[["start","Přihlášení"],["feed","Doprava"],["routes","Moje cesty"],["report","Nahlásit událost"],["s1","Upozornění","brzy","Upozornění zatím nejsou navržená"],["s2","Profil","","Profil zatím není navržený"],["s3","AI asistent","","AI asistent zatím není navržený"],["s4","Ceny PHM","","Ceny PHM zatím nejsou navržené"]];
+document.getElementById("sect").insertAdjacentHTML("beforeend",SECTIONS.map(([k,l,tag,tip])=>tip?`<button type="button" class="soonb" data-sect="${k}" aria-disabled="true" data-tip="${tip}">${l}${tag?` <small>${tag}</small>`:""}</button>`:`<button type="button" data-sect="${k}" aria-pressed="false">${l}</button>`).join(""));
+const AV=["👨","👴","👩","👵","🐶"],AVC=["#2EAA4E","#2F6FD6","#F29A0B","#D63B6F","#8B4FD6"];
+const APPLE='<svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>';
+const GOOGLE='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>';
+
+/* Ukázková data. Čas v prototypu je 18:12. */
+const ST={r:"Řeší se",a:"Zlepšuje se",g:"Vyřešeno"};
+const PH={r:1,a:2,g:3};
+const RT={
+ kolona:{l:"Kolona",h:"Stojí se nebo jede krokem",i:"car",c:"red",p:["Stojí se","Jede se krokem","Zablokovaný pruh","Kolona za nehodou"]},
+ nehoda:{l:"Nehoda",h:"Srážka nebo havárie",i:"siren",c:"orange",p:["Bez zranění","Zablokovaný pruh","Na místě je policie","Na místě je záchranka"]},
+ uzavirka:{l:"Uzavírka",h:"Zavřený pruh nebo silnice",i:"ban",c:"purple",p:["Úplná uzavírka","Uzavřený pruh","Je objízdná trasa"]},
+ prace:{l:"Práce na silnici",h:"Zúžení nebo semafory",i:"works",c:"yellow",p:["Zúžení na jeden pruh","Řízeno semafory","Pracovníci na silnici"]},
+ prekazka:{l:"Překážka",h:"Něco leží na silnici",i:"alert",c:"teal",p:["Předmět na vozovce","Zvíře na silnici","Odstavené auto"]},
+ pocasi:{l:"Kluzká vozovka",h:"Náledí, voda nebo mlha",i:"snow",c:"blue",p:["Náledí","Zatopená vozovka","Hustá mlha"]}
+};
+const FILTERS=["vse","kolona","nehoda","uzavirka","prace"];
+const FL={vse:"Vše",kolona:"Kolony",nehoda:"Nehody",uzavirka:"Uzavírky",prace:"Práce"};
+const EV={
+ e1:{road:"D1",cls:"d",place:"km 184 · Brno-západ",dir:"směr Praha",town:"Brno",type:"kolona",t:"Kolona po poruše kamionu",s:"r",conf:"Potvrdilo ŘSD v 17:58",rep:"17:58",ago:"před 14 min",est:"19:30",estT:"za 1 h 18 min",delay:12,dist:8,
+  text:"Na 184. km ve směru na Prahu stojí porouchaný kamion a blokuje pravý pruh. Provoz jede jedním pruhem a před místem se tvoří kolona dlouhá asi 3 km. Odtahová služba je na cestě.",
+  tips:["Řaďte se do levého pruhu včas, už před km 186.","Počítejte s kolonou asi 3 km.","Objízdná trasa přes Rosice (I/23) vychází na +6 min."],yes:24,no:1},
+ e2:{road:"II/396",cls:"i2",place:"Moravský Krumlov · ul. Ivančická",dir:"oba směry",town:"Moravský Krumlov",type:"uzavirka",t:"Havárie vodovodu, hrozí aquaplaning",s:"r",conf:"Potvrdilo ŘSD v 16:45",rep:"16:40",ago:"před 1 h 32 min",est:"17:30",elapsed:"uplynul před 42 min",delay:5,dist:31,
+  text:"V ulici Ivančická došlo k havárii vodovodního potrubí v délce 281 metrů. Vozovka je mokrá a místy zatopená, hrozí aquaplaning. Provoz jede jedním pruhem střídavě.",
+  tips:["Zpomalte, vozovka může být zatopená.","Ulicí Ivančická jeďte jen v jednom pruhu, střídavě.","Objízdná trasa: Znojemská → Zámecká, +3 min."],yes:12,no:2},
+ e3:{road:"I/23",cls:"i1",place:"Rosice · průtah obcí",dir:"směr Brno",town:"Rosice",type:"prace",t:"Oprava povrchu, provoz řídí semafory",s:"a",conf:"Zlepšení potvrdilo ŘSD v 17:20",rep:"7:00",ago:"od 7:00",est:"18:45",estT:"za 33 min",delay:4,dist:18,
+  text:"V průtahu Rosicemi se frézuje povrch. Provoz řídí dočasné semafory. Pracovníci už v části úseku uvolnili druhý pruh.",
+  tips:["U semaforů počítejte s čekáním do 3 minut.","Ve zúženém úseku platí 30 km/h."],yes:7,no:0},
+ e4:{road:"I/50",cls:"i1",place:"Slavkov u Brna · u čerpací stanice",dir:"směr Vyškov",town:"Slavkov u Brna",type:"nehoda",t:"Srážka dvou osobních aut",s:"g",conf:"Vyřešení potvrdilo 9 řidičů v 18:05",rep:"17:20",ago:"před 52 min",est:null,estT:"Vyřešeno, odhad už není potřeba",delay:0,dist:21,
+  text:"Na výjezdu ze Slavkova se srazila dvě osobní auta. Vozidla už jsou odklizená a oba pruhy jsou průjezdné.",
+  tips:["Cesta je volná, jeďte normálně.","U krajnice může ještě stát policie, zpomalte."],yes:9,no:1},
+ e5:{road:"D1",cls:"d",place:"km 112 · Velké Meziříčí",dir:"směr Praha",town:"Velké Meziříčí",type:"prace",t:"Oprava mostu, zúžení na jeden pruh",s:"a",conf:"Zlepšení potvrdilo ŘSD v 16:10",rep:"6:00",ago:"od 6:00",est:"20:00",estT:"za 1 h 48 min",delay:6,dist:84,
+  text:"Na mostě Vysočina se opravuje svodidlo. Platí zúžení na jeden pruh a rychlost 80 km/h. Část techniky už odjela.",
+  tips:["Dodržujte 80 km/h, úsek se měří.","Objízdná trasa se nevyplatí, zdržení je krátké."],yes:9,no:0},
+ e6:{road:"I/52",cls:"i1",place:"Pohořelice · sjezd na Ivančice",dir:"směr Brno",town:"Pohořelice",type:"kolona",t:"Hustý provoz, kolona před Brnem",s:"r",conf:"Nahlásil řidič v 17:50 · potvrdili 4 řidiči",rep:"17:50",ago:"před 22 min",est:null,estT:"Odhad konce zatím není",delay:8,dist:24,
+  text:"Od sjezdu na Ivančice směrem na Brno jede provoz krokem. Příčina zatím není známá a ŘSD událost zatím nepotvrdilo.",
+  tips:["Počítejte se zdržením kolem 8 minut.","Do Brna můžete jet přes Želešice (II/152)."],yes:4,no:0},
+ e7:{road:"D2",cls:"d",place:"km 48 · Podivín",dir:"směr Břeclav",town:"Podivín",type:"nehoda",t:"Auto po nehodě stojí v pravém pruhu",s:"a",conf:"Zlepšení potvrdilo ŘSD v 18:01",rep:"17:33",ago:"před 39 min",est:"18:30",estT:"za 18 min",delay:2,dist:56,
+  text:"V pravém pruhu stojí auto po lehké nehodě. Policie místo zajistila a provoz plynule jede levým pruhem.",
+  tips:["Přejeďte včas do levého pruhu.","Zpomalte, na místě pracuje policie."],yes:5,no:0}
+};
+const CM={
+ e1:[["MK","Martin K.","před 6 min","Stojíme u Popůvek, jede se tak po minutě."],["JS","Jana S.","před 11 min","Odtahovka už je na místě."]],
+ e2:[["PV","Petr V.","před 20 min","Pořád tam stojí voda, jeďte opravdu pomalu."]],
+ e3:[["LH","Lucie H.","před 35 min","Semafory mají krátké intervaly, čekal jsem asi 2 minuty."]],
+ e6:[["TB","Tomáš B.","před 9 min","Kolona končí až u Ořechova."]]
+};
+const ROUTES=[
+ {name:"Do Prahy",from:"Brno",to:"Praha",via:[["D1","d"]],upd:"před 2 min",ev:[["e1",12],["e5",84]]},
+ {name:"K rodičům",from:"Brno",to:"Mor. Krumlov",via:[["I/52","i1"],["II/396","i2"]],upd:"před 4 min",ev:[["e2",31]]},
+ {name:"Do práce",from:"Pozořice",to:"Brno-střed",via:[["I/50","i1"],["I/42","i1"]],upd:"před 1 min",ev:[]}
+];
+const FLOWS={start:["splash","login","register"],feed:["feed","detail"],routes:["routes","events","detail"],report:["rtype","rconfirm","rdone"]};
+const NAMES={splash:"Načítání",login:"Přihlášení",register:"Registrace",feed:"Doprava",detail:"Detail události",routes:"Moje cesty",events:"Události na trase",rtype:"Co se děje",rconfirm:"Kontrola",rdone:"Hotovo"};
+
+const st={anTab:"sum",icat:"vse",ist:"vse",av:0,avc:0,view:"proto",look:"wf",mode:matchMedia("(max-width: 699px)").matches?"one":"all",full:false,flow:"feed",screen:"feed",feedEv:"e2",route:1,rIdx:0,
+  area:"okoli",filter:"vse",q:"",searchOpen:false,loading:false,splash:false,votes:{},media:{},agree:false,
+  rType:"kolona",rPresets:[],rNote:"",rPhoto:false,lastReport:null,prevFlow:"feed"};
+let nCount=0,subAnim=true,lastView=null,poAnims=[];
+const EZ="cubic-bezier(.2,.8,.2,1)";
+function poEls(){return {segs:[...document.querySelectorAll(".row1 .seg.po")],sec:document.querySelector(".secwrap")}}
+function vKeys(el,mt){const cs=getComputedStyle(el);return [{height:"0px",opacity:0,marginTop:mt,paddingTop:"0px",borderTopWidth:"0px",overflow:"hidden"},{height:el.offsetHeight+"px",opacity:1,marginTop:cs.marginTop,paddingTop:cs.paddingTop,borderTopWidth:cs.borderTopWidth,overflow:"hidden"}]}
+function protoIn(){if(reduce)return;poAnims.forEach(a=>a.cancel());poAnims=[];const {segs,sec}=poEls(),stack=innerWidth<700;
+  segs.forEach((g,i)=>{if(stack)poAnims.push(g.animate(vKeys(g,"-10px"),{duration:380,easing:EZ,delay:i*50,fill:"backwards"}));
+    poAnims.push(g.animate([{opacity:0,transform:"translateX(-18px)"},{opacity:1,transform:"none"}],{duration:420,easing:EZ,delay:i*60+(stack?60:0),fill:"backwards"}))});
+  poAnims.push(sec.animate(vKeys(sec,"-10px"),{duration:460,easing:EZ,delay:stack?80:60,fill:"backwards"}));
+  const ph=document.getElementById("phones");poAnims.push(ph.animate([{opacity:0,transform:"translateY(10px)"},{opacity:1,transform:"none"}],{duration:420,easing:EZ,delay:160,fill:"backwards"}))}
+function protoOut(done){if(reduce){done();return}poAnims.forEach(a=>a.cancel());const {segs,sec}=poEls(),stack=innerWidth<700,o={duration:240,easing:"cubic-bezier(.4,0,.6,1)",fill:"forwards"};
+  const list=[sec.animate(vKeys(sec,"-10px").reverse(),o),document.getElementById("phones").animate([{opacity:1},{opacity:0}],{duration:180,fill:"forwards"})];
+  segs.forEach(g=>{list.push(g.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateX(-18px)"}],o));if(stack)list.push(g.animate(vKeys(g,"-10px").reverse(),o))});
+  setTimeout(()=>{done();list.forEach(a=>a.cancel())},230)}
+function setView(v){if(st.view===v)return;const go2=()=>{st.view=v;scrollTo({top:0});render(v==="proto"?{anim:{screen:st.screen,dir:"tab"}}:{})};
+  if(st.view==="proto")protoOut(go2);else go2()}
+const mem={};
+const key=s=>s==="detail"?"detail-"+st.flow:s;
+
+const SB=`<div class="sb"><span>18:12</span><span class="isl"></span><span class="r">
+ <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+ <svg width="25" height="12" viewBox="0 0 25 12" aria-hidden="true"><rect x=".5" y=".5" width="21" height="11" rx="3.5" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="15" height="8" rx="2" fill="currentColor"/><rect x="22.6" y="4" width="1.8" height="4" rx=".9" fill="currentColor" opacity=".45"/></svg></span></div>`;
+function nav(on){
+  return `<nav class="nav" aria-label="Hlavní navigace">
+   <button type="button" class="nv ${on==="feed"?"on":""}" data-tab="feed"><span class="nvi">${ic("car")}</span><span>Doprava</span></button>
+   <button type="button" class="nv ${on==="routes"?"on":""}" data-tab="routes"><span class="nvi">${ic("route")}</span><span>Moje cesty</span></button>
+   <button type="button" class="fab" data-report aria-label="Nahlásit událost">${ic("plus")}</button>
+   <button type="button" class="nv soonnav" data-todo="Upozornění zatím nejsou navržená"><span class="nvi">${ic("bell")}</span><span>Upozornění</span></button>
+   <button type="button" class="nv soonnav" data-todo="Profil zatím není navržený"><span class="nvi">${ic("user")}</span><span>Profil</span></button></nav>`;
+}
+const sh=e=>`<span class="sh ${e.cls}">${e.road}</span>`;
+const shs=via=>`<span class="shs">${via.map(([r,c])=>sh({road:r,cls:c})).join("")}</span>`;
+const pill=(s,txt)=>`<span class="pill ${s}"><i></i>${txt||ST[s]}</span>`;
+const dch=e=>`<span class="dch" title="Zdržení">${ic("timer")}${e.delay==null?"<small>neznámé</small>":e.delay?"+"+e.delay+" min":"<small>bez zdržení</small>"}</span>`;
+const sk=(w,h,r)=>`<span class="sk" style="width:${w};height:${h}px${r?";border-radius:"+r:""}"></span>`;
+const skCards=n=>Array.from({length:n},()=>`<div class="ec skc">${sk("45%",11)}${sk("90%",15)}${sk("62%",15)}<span class="row">${sk("76px",24,"999px")}${sk("64px",24,"999px")}</span></div>`).join("");
+
+/* karta události */
+function card(e,{i=0,start=null,click=true}={}){
+  const tag=click?"button":"div";
+  const attr=!click?"":start!=null?`data-rev="${i}"`:`data-ev="${e.id}"`;
+  const d=start!=null?`<span class="dist">${start} km <small>od startu</small></span>`:`<span class="dist">${km(e.dist)} km <small>od vás</small></span>`;
+  return `<${tag} ${tag==="button"?'type="button"':""} class="ec" ${attr}>
+    <span class="ec-w">${sh(e)}<span class="pl">${e.place}</span>${d}</span>
+    <span class="ec-b"><span class="ec-t">${esc(e.t)}</span>
+      <span class="ec-f">${pill(e.s)}${dch(e)}${e.mine?`<span class="mine" style="margin-left:auto">Vaše hlášení</span>`:`<span class="ago">${start!=null?"":e.ago}</span>`}</span>
+      ${e.elapsed?`<span class="exp"><span class="ei">${ic("clock")}</span><span><b>Odhad ${e.est} už uplynul</b>Stav zatím nikdo nepotvrdil</span></span>`:""}</span>
+  </${tag}>`;
+}
+
+/* ---------- Spuštění a účet ---------- */
+function sSplash(){
+  return `<div class="splashs" data-next="login">${logo(78)}<b>Treffik</b><small>Doprava kolem vás v lidské řeči</small><span class="loadbar"><i></i></span></div>`;
+}
+const aseg=on=>`<div class="aseg" role="group" aria-label="Přihlášení nebo registrace"><button type="button" data-authtab="login" aria-pressed="${on==="login"}">Přihlásit se</button><button type="button" data-authtab="register" aria-pressed="${on==="register"}">Registrace</button></div>`;
+function sLogin(){
+  return `<header class="hd center auth">${logo(48)}
+     <h1 class="dt" style="font-size:22px">Vítejte v Treffiku 👋</h1>
+     <p class="hsub" style="margin:0">Doprava kolem vás v lidské řeči.</p></header>
+   <div class="dbody auth" data-stagger>
+     ${aseg("login")}
+     <button type="button" class="soc apple" data-login>${APPLE}Pokračovat přes Apple</button>
+     <button type="button" class="soc google" data-login>${GOOGLE}Pokračovat přes Google</button>
+     <div class="or">nebo e-mailem</div>
+     <input class="inp" id="l-mail" type="email" placeholder="E-mail" aria-label="E-mail" autocomplete="off">
+     <input class="inp" id="l-pass" type="password" placeholder="Heslo" aria-label="Heslo" autocomplete="off">
+     <button type="button" class="pbtn" data-login>Přihlásit se</button>
+     <button type="button" class="lnk c" data-todo="Obnova hesla zatím není navržená">Zapomenuté heslo?</button>
+   </div>`;
+}
+function sRegister(){
+  const c=AVC[st.avc];
+  return `<header class="hd center auth">
+     <h1 class="dt" style="font-size:22px">Vytvořte si účet</h1>
+     <p class="hsub" style="margin:0">Zabere to minutu.</p></header>
+   <div class="dbody auth" data-stagger>
+     ${aseg("register")}
+     <div class="socrow"><button type="button" class="soc apple sm" data-login>${APPLE}Apple</button><button type="button" class="soc google sm" data-login>${GOOGLE}Google</button></div>
+     <div class="or">nebo e-mailem</div>
+     <div class="avrow"><span class="avp" style="background:color-mix(in srgb,${c} 24%,#fff)">${AV[st.av]}</span>
+       <div class="avopts"><div class="avs" role="group" aria-label="Ikonka">${AV.map((a,i)=>`<button type="button" class="av-o" data-avatar="${i}" aria-pressed="${st.av===i}">${a}</button>`).join("")}</div>
+       <div class="cols" role="group" aria-label="Barva">${AVC.map((x,i)=>`<button type="button" class="col-o" data-avcolor="${i}" style="--c:${x}" aria-pressed="${st.avc===i}" aria-label="Barva ${i+1}"></button>`).join("")}</div></div></div>
+     <input class="inp" id="r-nick" type="text" placeholder="Přezdívka, uvidí ji ostatní" aria-label="Přezdívka" autocomplete="off">
+     <input class="inp" id="r-mail" type="email" placeholder="E-mail" aria-label="E-mail" autocomplete="off">
+     <input class="inp" id="r-pass" type="password" placeholder="Heslo, aspoň 8 znaků" aria-label="Heslo" autocomplete="off">
+     <button type="button" class="agree" data-agree aria-pressed="${st.agree}"><span class="box">${ic("check")}</span><span>Souhlasím s podmínkami a zpracováním údajů.</span></button>
+     <button type="button" class="pbtn" data-login>Vytvořit účet</button>
+   </div>`;
+}
+
+/* ---------- Doprava ---------- */
+function base(){
+  const q=norm(st.q.trim());
+  let l=Object.entries(EV).map(([id,e])=>({id,...e}));
+  l=q?l.filter(e=>norm([e.road,e.place,e.town,e.t,e.dir].join(" ")).includes(q)):l.filter(e=>e.dist<=(st.area==="okoli"?40:60));
+  return l.sort((a,b)=>a.dist-b.dist);
+}
+function counts(){const b=base(),c={vse:b.length};FILTERS.forEach(k=>{if(k!=="vse")c[k]=b.filter(e=>e.type===k).length});return c}
+function listHTML(){
+  if(st.loading)return `<div class="fmeta"><span>Načítám události…</span><span></span></div><div class="flist">${skCards(4)}</div>`;
+  const all=base(),l=st.filter==="vse"?all:all.filter(e=>e.type===st.filter),n=l.length,q=st.q.trim();
+  const meta=q?`Výsledky pro „${esc(q)}“ · celá ČR`:`${n} ${plural(n,"událost","události","událostí")} · ${st.area==="okoli"?"do 40 km":"celý kraj"}`;
+  const body=n?l.map(e=>card(e)).join("")
+   :`<div class="empty"><b>Nic jsme nenašli</b>${q?`Pro „${esc(q)}“`:"V této oblasti"}${st.filter!=="vse"?` s filtrem ${FL[st.filter]}`:""} teď není žádná událost.<button type="button" class="pbtn" data-clear>Zrušit hledání a filtr</button></div>`;
+  return `<div class="fmeta"><span>${meta}</span><span>podle vzdálenosti</span></div><div class="flist" data-stagger>${body}</div>`;
+}
+function sFeed(){
+  const c=counts();
+  const top=st.searchOpen
+   ?`<div class="searchrow"><label class="search">${ic("search")}<input data-q type="search" id="q" placeholder="Město nebo silnice" value="${esc(st.q)}" autocomplete="off" enterkeyhint="search"></label><button type="button" class="circ" data-searchclose aria-label="Zavřít hledání">${ic("x")}</button></div>`
+   :`<div class="hrow"><h2 class="big">Doprava</h2><button type="button" class="circ" data-search aria-label="Hledat město nebo silnici">${ic("search")}</button></div>`;
+  return `<header class="hd">${top}
+     <div class="gseg" role="group" aria-label="Oblast"><span class="thumb"></span>
+       <button type="button" data-area="okoli" aria-pressed="${st.area==="okoli"}">${ic("locate")}V okolí 40 km</button>
+       <button type="button" data-area="kraj" aria-pressed="${st.area==="kraj"}">${ic("map")}Celý kraj</button></div>
+   </header>
+   <div class="stick"><div class="chips" role="group" aria-label="Typ události">${FILTERS.map(k=>`<button type="button" class="chip" data-f="${k}" aria-pressed="${st.filter===k}">${k==="vse"?"":ic(RT[k].i)}${FL[k]}<small data-n="${k}">${c[k]}</small></button>`).join("")}</div></div>
+   <div class="fl">${listHTML()}</div>`;
+}
+function refreshFeed(){
+  const p=$p.querySelector('[data-screen="feed"]');if(!p)return;
+  const c=counts();
+  p.querySelectorAll("[data-f]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.f===st.filter));
+  p.querySelectorAll("[data-n]").forEach(s=>s.textContent=c[s.dataset.n]);
+  p.querySelectorAll("[data-area]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.area===st.area));
+  p.querySelector(".fl").innerHTML=listHTML();placeThumbs();tagHot();linksSoon();
+
+  stagger(p);
+}
+
+/* ---------- Detail ---------- */
+function aiSvg(e){
+  const block=e.type==="prace"||e.type==="uzavirka"?"#F29A0B":"#E5483B";
+  return `<svg class="ai" viewBox="0 0 280 156" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+   <rect width="280" height="156" fill="#EDF3EF"/>
+   <path d="M-20 150 C 70 128 150 78 300 52 L 300 96 C 170 118 100 160 -20 196 Z" fill="#CBD3CE"/>
+   <path d="M-20 172 C 80 146 160 98 300 74" stroke="#fff" stroke-width="2" stroke-dasharray="9 8" fill="none"/>
+   ${[[40,163],[68,155],[96,146],[124,135],[150,123]].map(([x,y])=>`<rect x="${x}" y="${y}" width="18" height="9" rx="3" fill="#7B8A81" transform="rotate(-17 ${x+9} ${y+4})"/>`).join("")}
+   ${[[60,138],[118,116],[210,86]].map(([x,y])=>`<rect x="${x}" y="${y}" width="18" height="9" rx="3" fill="#2E9E4A" transform="rotate(-17 ${x+9} ${y+4})"/>`).join("")}
+   <circle class="pulse" cx="182" cy="108" r="12" fill="${block}" opacity=".5"/>
+   <circle cx="182" cy="108" r="9" fill="${block}"/>
+   <path d="M178 104l8 8M186 104l-8 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+   <path d="M150 112 C 160 92 175 84 196 80" stroke="#2E9E4A" stroke-width="2.4" fill="none" stroke-dasharray="4 4"/>
+   <path d="M190 75l7 5-8 4" stroke="#2E9E4A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+const curEv=()=>st.flow==="routes"?(ROUTES[st.route].ev[st.rIdx]||[])[0]:st.feedEv;
+function sDetail(){
+  const fromRoute=st.flow==="routes",r=ROUTES[st.route];
+  const pair=fromRoute?r.ev[st.rIdx]:[st.feedEv];
+  const bar=`<div class="hbar"><button type="button" class="circ" data-back aria-label="Zpět na ${fromRoute?esc(r.name):"Dopravu"}">${ic("left")}</button><h2 class="htitle">Detail události</h2><button type="button" class="circ" data-todo="Sdílení zatím není navržené" aria-label="Sdílet">${ic("share")}</button></div>`;
+  if(st.loading)return `<header class="hd">${bar}<div class="hero">${sk("50%",12)}${sk("92%",22)}${sk("66%",22)}${sk("110px",24,"999px")}</div></header>
+    <div class="dbody"><div class="mcard">${sk("100%",30)}${sk("100%",156)}</div>${[0,1].map(()=>`<div class="card">${sk("38%",10)}${sk("100%",14)}${sk("78%",14)}</div>`).join("")}</div>`;
+  if(!pair)return `<header class="hd">${bar}</header><div class="dbody"><div class="card empty"><b>Tahle cesta je bez událostí</b>Vraťte se na Moje cesty a vyberte jinou.</div></div>`;
+  const id=pair[0],e=EV[id],media=st.media[id]||"foto",cms=CM[id]||[];
+  const est=e.est?`<div class="est">${ic("clock")}<span>Odhad konce</span><b>${e.est}</b><span>${e.elapsed||e.estT}</span></div>`:`<div class="est">${ic("clock")}<span>${e.estT}</span></div>`;
+  const note=e.elapsed?`<div class="note">${ic("info")}<span>Odhadovaný čas uplynul, ale nikdo zatím nepotvrdil zlepšení. Stav zůstává <b>${ST[e.s]}</b>, dokud ho nezmění ŘSD nebo hlasování řidičů.</span></div>`:"";
+  const view=media==="ai"?`${aiSvg(e)}<span class="mcap">${ic("sparkles")}AI vizualizace · orientační</span>`
+    :media==="mapa"?`<span class="mid">${ic("pin")}${e.place.split(" · ")[0]}</span>`
+    :`<span class="mid">${ic("image")}Foto ulice</span>`;
+  return `<header class="hd">${bar}
+    <div class="hero">
+      ${fromRoute?`<span class="ctx">${ic("route")}Na vaší cestě ${esc(r.name)}</span>`:""}
+      <div class="dw">${sh(e)}<span>${e.place} <em>· ${e.dir}</em></span></div>
+      <h1 class="dt">${esc(e.t)}</h1>
+      <div class="srow">${pill(e.s)}<small>${e.conf}</small></div>
+    </div></header>
+   <div class="dbody" data-stagger>
+    <div class="mcard"><div class="mtabs" role="group" aria-label="Pohled na místo"><span class="thumb"></span>
+      <button type="button" data-media="foto" aria-pressed="${media==="foto"}">Foto</button>
+      <button type="button" data-media="mapa" aria-pressed="${media==="mapa"}">Mapa</button>
+      <button type="button" data-media="ai" aria-pressed="${media==="ai"}">AI náhled</button></div>
+      <div class="mview ${media}">${view}</div></div>
+    <div class="card"><span class="lbl">${ic("timer")}Stav a odhad</span>
+      <div class="ph ${e.s}">${["r","a","g"].map(k=>`<div class="${PH[k]<=PH[e.s]?"on":""}">${ST[k]}</div>`).join("")}</div>${est}${note}</div>
+    <div class="mx">
+      <div class="tile hi">Zdržení<b>${e.delay==null?"neznámé":e.delay?"+"+e.delay+" min":"žádné"}</b></div>
+      <div class="tile">${fromRoute?"Od startu":"Od vás"}<b>${fromRoute?pair[1]:km(e.dist)} km</b></div>
+      <div class="tile">Nahlášeno<b>${e.rep}</b></div></div>
+    <div class="adv"><h3>${ic("sparkles")}Co mám dělat?</h3><ul>${e.tips.map(t=>`<li>${t}</li>`).join("")}</ul><small>AI rada pro řidiče podle hlášení</small></div>
+    <div class="card"><span class="lbl">${ic("file")}Co se stalo</span><p class="full">${esc(e.text)}</p></div>
+    <div class="card"><span class="lbl">${ic("msg")}Komentáře · ${cms.length}</span>
+      ${cms.length?cms.map(([a,n,t,txt])=>`<div class="cm"><span class="av">${a}</span><div><b>${n}</b><span>${t}</span><br>${txt}</div></div>`).join(""):`<span class="src" style="text-align:left">Zatím bez komentářů.</span>`}
+      <button type="button" class="cin" data-todo="Psaní komentářů zatím není navržené">${ic("msg")}Napsat komentář…</button></div>
+    <p class="src">Zdroj: ${e.mine?"vaše hlášení":"ŘSD · přepsáno do srozumitelné češtiny"}</p>
+   </div>`;
+}
+function voteFloat(){
+  const id=curEv();if(!id||st.loading)return "";
+  const e=EV[id],v=st.votes[id];
+  return `<div class="vfloat" role="group" aria-label="Platí to ještě?"><span>Platí?</span>
+    <button type="button" class="yes" data-vote="yes" aria-pressed="${v==="yes"}" aria-label="Platí">${ic("check")}${e.yes+(v==="yes"?1:0)}</button>
+    <button type="button" class="no" data-vote="no" aria-pressed="${v==="no"}" aria-label="Neplatí">${ic("x")}${e.no+(v==="no"?1:0)}</button></div>`;
+}
+
+/* ---------- Moje cesty ---------- */
+const rsum=r=>r.ev.reduce((a,[id])=>a+(EV[id].s!=="g"?EV[id].delay||0:0),0);
+function sRoutes(){
+  const list=st.loading?skCards(3):ROUTES.map((r,i)=>{
+    const n=r.ev.filter(([id])=>EV[id].s!=="g").length;
+    return `<button type="button" class="ec" data-route="${i}">
+      <span class="ec-w" style="align-items:center"><span class="rname">${r.name}</span><span class="go">${ic("right")}</span></span>
+      <span class="ec-b"><span class="rline"><span>${r.from}</span><span class="ln"></span><span>${r.to}</span></span>
+      <span class="rvia">přes ${shs(r.via)}</span>
+      <span class="ec-f">${n?pill("r",`${n} ${plural(n,"problém","problémy","problémů")} · +${rsum(r)} min`):pill("g","Bez problémů")}<span class="ago">${r.upd}</span></span></span>
+    </button>`}).join("");
+  return `<header class="hd">
+     <div class="hrow"><h2 class="big">Moje cesty</h2><button type="button" class="circ" data-todo="Přidání cesty zatím není navržené" aria-label="Přidat cestu">${ic("plus")}</button></div>
+     <p class="hsub">Hlídáme ${ROUTES.length} uložené cesty a upozorníme vás, když se na nich něco stane.</p>
+   </header>
+   <div class="flist" style="padding-top:14px" ${st.loading?"":"data-stagger"}>${list}</div>`;
+}
+function sEvents(){
+  const r=ROUTES[st.route],n=r.ev.length;
+  const bar=`<div class="hbar"><button type="button" class="circ" data-back aria-label="Zpět na Moje cesty">${ic("left")}</button><h2 class="htitle">${esc(r.name)}</h2><span></span></div>`;
+  const body=st.loading?skCards(2)
+    :n?r.ev.map(([id,k],i)=>card({id,...EV[id]},{i,start:k})).join("")
+    :`<div class="card empty"><b>Na cestě je klid</b>Žádná událost na trase ${r.from} → ${r.to}. Ověřeno ${r.upd}.</div>`;
+  return `<header class="hd">${bar}
+     <div class="hero"><span class="kicker">${r.from} → ${r.to} · přes ${shs(r.via)}</span>
+       ${n?`<div class="gsum"><b>+${rsum(r)} min</b><span>${n} ${plural(n,"událost","události","událostí")} na cestě,<br>seřazeno podle pořadí na trase</span></div>`:`<div class="gsum"><b>0 min</b><span>Bez problémů,<br>ověřeno ${r.upd}</span></div>`}
+     </div></header>
+   <div class="flist" style="padding-top:14px" ${st.loading?"":"data-stagger"}>${body}</div>`;
+}
+
+/* ---------- Nahlásit událost ---------- */
+function draft(){
+  const t=RT[st.rType],p=st.rPresets;
+  return {id:"draft",road:"D1",cls:"d",place:"km 186 · Brno-západ",dir:"směr Praha",town:"Brno",type:st.rType,
+    t:p.length?`${t.l}: ${p.join(", ").toLowerCase()}`:t.l,s:"r",conf:"Nahlásili jste vy v 18:12",rep:"18:12",ago:"právě teď",est:null,estT:"Odhad konce zatím není",delay:null,dist:0.4,
+    text:st.rNote.trim()||(p.length?p.join(". ")+".":"Řidič nahlásil událost bez dalšího popisu."),
+    tips:["Zpomalte a sledujte provoz před sebou.","Ostatní řidiči teď hlášení potvrdí nebo vyvrátí."],yes:0,no:0,mine:true};
+}
+const rBar=(left,title)=>`<div class="hbar">${left}<h2 class="htitle">${title}</h2><span></span></div>`;
+function sRType(){
+  return `<header class="hd">${rBar(`<button type="button" class="circ" data-close aria-label="Zavřít">${ic("x")}</button>`,"Nahlásit událost")}
+     <div class="hero"><span class="kicker">Krok 1 ze 3</span><h1 class="dt" style="font-size:24px">Co se děje?</h1></div></header>
+   <div class="dbody"><div class="tgrid" data-stagger>${Object.entries(RT).map(([k,t])=>`<button type="button" class="tcard" data-rtype="${k}" aria-pressed="${st.rType===k}"><span class="tl ${t.c}">${ic(t.i)}</span><b>${t.l}</b></button>`).join("")}</div>
+   <p class="hint">${ic("locate")}Místo vezmeme z polohy telefonu, nic dalšího vyplňovat nemusíte.</p></div>`;
+}
+function sRConfirm(){
+  const t=RT[st.rType];
+  return `<header class="hd">${rBar(`<button type="button" class="circ" data-back aria-label="Zpět na výběr typu">${ic("left")}</button>`,"Nahlásit událost")}
+     <div class="hero"><span class="kicker">Krok 2 ze 3</span><h1 class="dt" style="font-size:21px">Zkontrolujte a zveřejněte</h1>
+     <button type="button" class="tchip" data-back><span class="tl sm ${t.c}">${ic(t.i)}</span>${t.l}<span class="chg">Změnit</span></button></div></header>
+   <div class="dbody tight" data-stagger>
+    <div class="card" style="padding:12px 14px"><div class="place"><span class="tl green">${ic("locate")}</span><span>D1 · km 186, směr Praha<small>Podle polohy telefonu</small></span><button type="button" class="lnk" style="margin-left:auto" data-todo="Úprava místa zatím není navržená">Upravit</button></div></div>
+    <div class="card" style="gap:10px"><span class="lbl">${ic("check")}Co přesně? (nepovinné)</span>
+      <div class="pchips">${t.p.map(x=>`<button type="button" class="chip" data-preset="${esc(x)}" aria-pressed="${st.rPresets.includes(x)}">${x}</button>`).join("")}</div>
+      <textarea id="rnote" data-rnote rows="2" placeholder="Nebo napište vlastními slovy">${esc(st.rNote)}</textarea></div>
+    <div class="card" style="gap:10px"><span class="lbl">${ic("camera")}Fotka (nepovinné)</span>
+      ${st.rPhoto?`<div class="photo">${ic("image")}<span>Fotka připojena</span><button type="button" data-photox aria-label="Odebrat fotku">${ic("x")}</button></div>`
+        :`<div class="prow"><button type="button" class="sbtn" style="height:42px" data-photo>${ic("camera")}Vyfotit</button><button type="button" class="sbtn" style="height:42px" data-photo>${ic("image")}Z galerie</button></div>`}</div>
+    <p class="hint">${ic("info")}Uvidí to řidiči v okolí. Událost zmizí sama, až ji ostatní označí jako neplatnou nebo ji uzavře ŘSD.</p>
+   </div>`;
+}
+const pfix=()=>`<div class="pfix"><button type="button" class="pbtn" data-publish>${ic("check")}Zveřejnit</button></div>`;
+function sRDone(){
+  const e=st.lastReport?{id:st.lastReport,...EV[st.lastReport]}:draft();
+  return `<header class="hd center">
+     <div class="okc">${ic("check")}</div>
+     <span class="kicker">Krok 3 ze 3</span>
+     <h1 class="dt" style="font-size:24px">Hotovo, díky!</h1>
+     <p class="hsub" style="margin:0">Řidiči v okolí teď hlášení uvidí a můžou ho potvrdit.</p></header>
+   <div class="dbody" data-stagger>
+     <span class="lbl">Takhle ho uvidí ostatní</span>
+     ${card(e,{click:!!st.lastReport})}
+     <button type="button" class="pbtn" data-tofeed>${ic("car")}Zpět na Dopravu</button>
+   </div>`;
+}
+const SCREENS={splash:sSplash,login:sLogin,register:sRegister,feed:sFeed,detail:sDetail,routes:sRoutes,events:sEvents,rtype:sRType,rconfirm:sRConfirm,rdone:sRDone};
+
+
+/* ---------- nápady: z chatu s Davidem, jeho PDF a review prototypu ---------- */
+const ICAT={scenar:["Hlavní scénář","route"],detail:["Detail události","file"],komunita:["Komunita a body","users"],jizda:["Za jízdy a AI","mic"],data:["Data a partneři","db"]};
+const ISTAT={rozh:"K rozhodnutí",doplnit:"Doplnit do návrhu",vproto:"V prototypu",pozdeji:"Později"};
+const IORD={rozh:0,doplnit:1,vproto:2,pozdeji:3};
+const IDEAS=[
+ {v:"dnes",c:"jizda",s:"rozh",t:"Dnešek na silnicích: jaký je den",p:"Řidič vidí jednotlivé události, ale nedozví se, jaký je den jako celek. Jestli je dnes horší než obvykle, musí si poskládat sám.",n:"Nahoře na Dopravě krátká karta Dnešek: srovnání s běžným dnem (třeba o 30 % hustší provoz než obvykle ve středu), počasí a co může ovlivnit (ráno náledí, mlha na D1) a na co si dát pozor (zápas, svátek, plná nákupní centra). AI to shrne do jedné věty, po klepnutí rozpis.",w:"Potřebuje historická data pro srovnání s běžným dnem a zdroj vytíženosti obchodů. Na začátek stačí počasí a počet událostí proti průměru.",src:[["Vojta","nápad 4. 11."]],go:"feed:feed"},
+ {v:"kam",c:"scenar",s:"rozh",t:"Kam jedete? Kontrola cesty na jedno použití",p:"Prototyp začíná až uloženou cestou. Hledání Prahy ukáže události ve městě, ne na cestě do Prahy.",n:"Na Dopravě nahoře pole „Kam jedete?“ s výchozím místem Moje poloha a zkratkami uložených cest. Po zadání cíle trasa Brno → Praha přes D1, mapa a události v pořadí, jak je řidič potká. Uložení cesty je volitelné.",w:"Nová funkce, ne redesign. Programátor by potřeboval výpočet skutečné trasy, ne jen seznam měst.",src:[["Vojta","review prototypu 4. 11."]]},
+ {v:"nova",c:"scenar",s:"doplnit",t:"Přidání nové cesty",p:"Moje cesty ukazují uložené trasy, ale přidání nové cesty zatím není navržené.",n:"Jedna obrazovka jako dnes: název, odkud, kam a města po cestě. Po uložení rovnou ukázat stav cesty.",src:[["PDF","bod 16, Moje cesta"]],go:"routes:routes"},
+ {v:"razeni",c:"scenar",s:"doplnit",t:"Řazení podle času i vzdálenosti",p:"Dnes jde zprávy řadit podle času (nejvýš 24 hodin zpět) nebo podle km. Prototyp řadí jen podle vzdálenosti.",n:"Malý přepínač Nejbližší / Nejnovější vedle počtu událostí na Dopravě.",src:[["PDF","bod 2, řazení zpráv"]],go:"feed:feed"},
+ {v:"sos",c:"scenar",s:"doplnit",t:"SOS, pomoc od řidičů v okolí",p:"SOS je dnes samostatné tlačítko, pro které se nenašlo místo. V prototypu chybí.",n:"Červená volba „Potřebuji pomoc“ jako první položka v Nahlásit událost, se stejně krátkým postupem.",src:[["PDF","bod 15"],["Analýza","menu tlačítka +"]],go:"report:rtype"},
+ {v:"vote",c:"detail",s:"rozh",t:"Platí / Neplatí velké a výrazné",p:"David chce tlačítka velká a jasná. Budou nejčastější akcí a jsou na ně navázané body. V prototypu jsou teď malá a připnutá vpravo.",n:"Zvážit širší lištu dole v detailu s Platí / Neplatí přes celou šířku a stejná dvě tlačítka i přímo na kartě v Dopravě.",src:[["David","11. 7. a 1. 11."]],go:"feed:detail"},
+ {v:"text",c:"detail",s:"rozh",t:"Text nad obrázkem",p:"S Davidem jsme se shodli, že má být nejdřív text a pod ním obrázek. V detailu je teď náhled hned pod záhlavím.",n:"Rozhodnout pořadí: Co se stalo a pod tím náhled, nebo nechat náhled nahoře pro rychlou orientaci a krátké shrnutí nechat v záhlaví.",src:[["David","9. 10."],["Vojta","review 4. 11."]],go:"feed:detail"},
+ {v:"ai",c:"detail",s:"vproto",t:"AI piktogram místo prázdné fotky",p:"Fotka z mapy často nic neříká. David chystá AI simulační náhled nehody podle zprávy ŘSD.",n:"Přepínač Mapa / Street View / AI, výchozí AI, označení „AI piktogram“. Alternativa: jednotné ilustrace podle typu události, zdarma a hned načtené.",w:"V prototypu je zatím Foto / Mapa / AI náhled. Doplnit Street View a přejmenovat na AI piktogram.",src:[["David","28. a 29. 10."],["Vojta","28. 10."]],go:"feed:detail"},
+ {v:"delay",c:"detail",s:"doplnit",t:"Zdržení barevně podle délky",p:"V aplikaci má zdržení barevný rámeček: zelený do 15 minut, oranžový do 30, červený nad 30. Prototyp ho ukazuje neutrálně.",n:"Barevná tečka jen u čísla zdržení, aby se nepletla se stavem události.",src:[["PDF","bod 9"]],go:"feed:feed"},
+ {v:"pocasi",c:"detail",s:"doplnit",t:"Počasí v místě události",p:"Počasí s legendou je dnes u každé zprávy. V prototypu zatím chybí.",n:"Čtvrtá dlaždice vedle Zdržení, Od vás a Nahlášeno. Klepnutí ukáže krátkou legendu.",src:[["PDF","bod 13"]],go:"feed:detail"},
+ {v:"share",c:"detail",s:"rozh",t:"Oblíbené, sdílení a odpovědi",p:"Dnes jde zprávu dát do oblíbených, přesdílet sledujícím a odpovědět na ni. V prototypu je jen tlačítko sdílení.",n:"Srdíčko a sdílení do záhlaví detailu, odpověď jako komentář. Rozhodnout, jestli zůstanou sledující.",src:[["PDF","bod 12"]]},
+ {v:"body",c:"komunita",s:"rozh",t:"Body za hlasování a slevy",p:"Za hlasování Platí / Neplatí dostane řidič body a vymění je za slevy, je domluvený Slevomat.",n:"Po hlasu krátká animace „+2 body“, stav bodů v profilu a jednoduchý přehled odměn.",src:[["David","11. 7."]]},
+ {v:"notif",c:"komunita",s:"rozh",t:"Upozornění a důvod se vracet",p:"Investor bude sledovat počet lidí a retenci. Aplikace potřebuje důvod, proč ji otevřít každý den.",n:"Ranní upozornění na uložené cesty („Do práce je volno“, „Na D1 kolona +12 min“), týdenní souhrn a pozvání přátel.",src:[["Vojta","21. 7."],["David","22. 7., investor"]]},
+ {v:"hra",c:"komunita",s:"pozdeji",t:"Hra Jeď bezpečně",p:"Body za dodržování rychlosti, které otevřou slevy. Mohlo by zaujmout i ŘSD.",n:"Volitelný režim před jízdou se souhrnem po dojetí. Až po spuštění základní aplikace.",src:[["David","22. 7. a 22. 9."]]},
+ {v:"hlas",c:"jizda",s:"rozh",t:"Hlasové předčítání za jízdy",p:"Za volantem nikdo nebude číst zprávy. David chce play tlačítko u zprávy, které přečte hlavní zprávu i komentáře.",n:"Ikona přehrát na kartě a v detailu. Později režim Za jízdy, který sám čte události na trase.",src:[["David","31. 10."]]},
+ {v:"asist",c:"jizda",s:"pozdeji",t:"AI asistent na dotazy o dopravě",p:"Tlačítko, kde se řidič zeptá na cokoliv z dopravy.",n:"Položka v liště nebo „Zeptat se“ v detailu s kontextem události. Zatím v sekci Připravujeme.",src:[["David","22. 9. a 30. 9."]]},
+ {v:"spz",c:"data",s:"pozdeji",t:"SPZ a údaje o voze (Cebia)",p:"Řidič zadá jen SPZ a technické údaje se doplní samy. Data pak poslouží reklamě autodílů a pojišťoven.",n:"Nepovinné pole v profilu, ne v registraci, aby registrace zůstala krátká.",src:[["David","23. 7."]]},
+ {v:"park",c:"data",s:"pozdeji",t:"Volná parkovací místa",p:"Když řidič odjíždí, aplikace to pozná a pošle místo řidičům v okolí. Velký problém hlavně v Praze 1.",n:"Samostatná vrstva na mapě s navigací. Technicky i právně náročné, až po startu.",src:[["David","22. 9."]]},
+ {v:"kamery",c:"data",s:"pozdeji",t:"Dálniční kamery a odstavná parkoviště",p:"Živý přenos z dálničních kamer a parkování pro kamiony z databanky ŘSD.",n:"Kamera jako další přepínač u náhledu v detailu, parkoviště jako filtr.",src:[["David","25. 6."]]},
+ {v:"nabidky",c:"data",s:"pozdeji",t:"Lokální nabídky partnerů",p:"Monetizace přes B2B: třeba cukrárna v okolí nabídne slevu, aplikace naviguje a kód ukáže až na místě. První reklama zdarma.",n:"Nenápadná karta partnera mezi událostmi, jasně označená, nejvýš jedna na obrazovce.",src:[["David","22. 9."]]},
+ {v:"phm",c:"data",s:"pozdeji",t:"Ceny PHM",p:"Dnes je to tlačítko u hledání: tabulka nejlevnějších pump po výběru města.",n:"Zatím v sekci Připravujeme. Možná jako filtr Pumpy na Dopravě.",src:[["PDF","hledání a Ceny PHM"]]}
+];
+const IDOT={rozh:"#F29A0B",doplnit:"#2F6FD6",vproto:"#2EAA4E",pozdeji:"#A3ABA6"};
+/* ---------- vizuály k nápadům ---------- */
+const ivsh=(t,k)=>`<span class="ivsh ${k}">${t}</span>`;
+const IVIS={
+ dnes:()=>`<div class="mk w"><div class="r"><b>Dnešek na silnicích</b><span class="mut">st 4. 11.</span></div>
+   <div class="gauge"><i style="left:70%"></i></div><div class="r mut sm"><span>klid</span><b class="o">o 30 % hustší než obvykle</b><span>hustá</span></div>
+   <div class="tags"><span>${ic("snow")}Ráno náledí</span><span>${ic("users")}Zápas v 18:00</span><span>${ic("car")}Plná nákupní centra</span></div></div>`,
+ kam:()=>`<div class="mk w"><div class="fld">${ic("search")}<b>Kam jedete?</b><span class="mut">Praha</span></div>
+   <div class="rt"><span class="dot"></span><i></i><span class="evd r"></span><i></i><span class="evd o"></span><i></i><span class="dot e"></span></div>
+   <div class="r mut sm"><span>Brno</span><span>2 události · +18 min</span><span>Praha</span></div></div>`,
+ nova:()=>`<div class="mk w cl2"><div class="fl2"><small>Odkud</small>Brno, Bystrc</div><div class="fl2"><small>Kam</small>Olomouc</div><div class="fl2 ph2"><small>Přes</small>Vyškov, Prostějov</div><span class="btn">Uložit cestu</span></div>`,
+ razeni:()=>`<div class="mk w cl2"><div class="mseg"><span class="on">Nejbližší</span><span>Nejnovější</span></div>
+   <div class="li">${ivsh("D1","d")}<b>Kolona po poruše</b><span class="mut">8 km</span></div><div class="li">${ivsh("I/23","i")}<b>Oprava povrchu</b><span class="mut">18 km</span></div></div>`,
+ sos:()=>`<div class="sosw"><span class="sosb">SOS</span><div class="mk"><b>Píchlé kolo</b><span class="mut sm">D1 · km 196, směr Praha</span><span class="av3"><i>👨</i><i>👩</i><i>👴</i>3 řidiči do 5 km</span></div></div>`,
+ vote:()=>`<div class="vt"><span class="yes">${ic("check")}<b>Platí</b><small>12</small></span><span class="no">${ic("x")}<b>Neplatí</b><small>2</small></span></div>`,
+ text:()=>`<div class="mk w cl2"><b class="big2">Havárie vodovodu, hrozí aquaplaning</b><span class="ln"></span><span class="ln s"></span><span class="imgph">${ic("image")}</span></div>`,
+ ai:()=>`<div class="mk w aip"><svg viewBox="0 0 220 84" aria-hidden="true"><rect width="220" height="84" rx="10" fill="#EAF4EC"/><path d="M0 62 Q110 40 220 56 V84 H0Z" fill="#CFE3D4"/><path d="M60 84 L104 34 H116 L160 84Z" fill="#6E7B73"/><path d="M110 40 v6 M110 54 v8 M110 70 v10" stroke="#fff" stroke-width="2.5"/><path d="M128 66 l6-16 l6 16z" fill="#F29A0B"/><path d="M80 70 l5-13 l5 13z" fill="#F29A0B"/><circle cx="178" cy="22" r="9" fill="#FFD25A"/></svg><span class="cap2">${ic("sparkles")}AI vizualizace · orientační</span></div>`,
+ delay:()=>`<div class="mk w cl2"><div class="li"><span class="dp g">+4 min</span><span class="mut">Oprava povrchu</span></div><div class="li"><span class="dp o">+12 min</span><span class="mut">Kolona po poruše</span></div><div class="li"><span class="dp r">+35 min</span><span class="mut">Srážka aut</span></div></div>`,
+ pocasi:()=>`<div class="mk wx"><span class="wi">${ic("snow")}</span><div><b class="big2">−2 °C</b><span class="mut sm">Sněží · na mostě hrozí náledí</span></div></div>`,
+ share:()=>`<div class="acts"><span><i>${ic("pin")}</i>Uložit</span><span><i>${ic("share")}</i>Sdílet</span><span><i>${ic("msg")}</i>Odpovědět</span></div>`,
+ body:()=>`<div class="mk w"><div class="r"><span class="pts">+5 bodů</span><span class="mut sm">za potvrzení</span></div><div class="bar2"><i style="width:64%"></i></div><div class="r mut sm"><span>64 / 100</span><span>Sleva na mytí auta</span></div></div>`,
+ notif:()=>`<div class="mk nt"><span class="lg">${logo(26)}</span><div><div class="r"><b>Treffik</b><span class="mut sm">teď</span></div><span class="sm">Na cestě do práce kolona: D1 km 184, +12 min. Vyjeďte o 10 min dřív.</span></div></div>`,
+ hra:()=>`<div class="mk wx"><span class="ring"><b>92</b></span><div><b>Jeď bezpečně</b><span class="mut sm">7 dní bez prudkého brzdění</span><span class="tags"><span>🥇 Týden</span><span>Klidná jízda</span></span></div></div>`,
+ hlas:()=>`<div class="mk wx"><span class="wi mic">${ic("mic")}</span><div><span class="wave">${[6,12,18,10,16,8,14,6,10].map(h=>`<i style="height:${h}px"></i>`).join("")}</span><span class="sm">„Za 2 km kolona, zdržení 12 minut.“</span></div></div>`,
+ asist:()=>`<div class="chat"><span class="me">Jak je teď na D1 do Prahy?</span><span class="bot">${ic("sparkles")}U Velkého Meziříčí kolona, asi +15 min. Zbytek bez omezení.</span></div>`,
+ spz:()=>`<div class="mk w cl2 c"><span class="plate"><i>CZ</i>1BA 2345</span><span class="sm"><b>Škoda Octavia</b> · 2019 · STK do 5/2027</span></div>`,
+ park:()=>`<div class="mk wx"><span class="pk">P</span><div><b>Janáčkovo divadlo</b><span class="mut sm">38 volných z 120</span><div class="bar2"><i style="width:32%"></i></div></div></div>`,
+ kamery:()=>`<div class="cam"><span class="live"><i></i>Živě</span><span class="cl">D1 · km 182 · Kývalka</span></div>`,
+ nabidky:()=>`<div class="mk wx"><span class="wi">☕</span><div><b>−20 % káva na cestu</b><span class="mut sm">Čerpací stanice Rosice · 3 km od trasy</span></div></div>`,
+ phm:()=>`<div class="mk w cl2"><div class="li"><b>Natural 95</b><span class="mut">Rosice</span><b>38,90 Kč</b></div><div class="li"><b>Nafta</b><span class="tagc">nejlevnější</span><b>36,40 Kč</b></div><div class="li"><b>LPG</b><span class="mut">Bystrc</span><b>17,90 Kč</b></div></div>`
+};
+function renderIdeas(){
+  const list=IDEAS.filter(i=>(st.icat==="vse"||i.c===st.icat)&&(st.ist==="vse"||i.s===st.ist)).sort((a,b)=>IORD[a.s]-IORD[b.s]);
+  const cnt=(c,s2)=>IDEAS.filter(i=>(c==="vse"||i.c===c)&&(s2==="vse"||i.s===s2)).length,gridHTML=ideaGrid(list);
+  const iv=document.getElementById("ideasview"),fresh=!iv.querySelector(".ifil");
+  if(!fresh){
+    iv.querySelectorAll("[data-icat]").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.icat===st.icat);b.querySelector("small").textContent=cnt(b.dataset.icat,st.ist)});
+    iv.querySelectorAll("[data-ist]").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.ist===st.ist);b.querySelector("small").textContent=cnt(st.icat,b.dataset.ist)});
+    iv.querySelector(".igrid").outerHTML=gridHTML;placeThumbs();stagger(iv);return}
+  iv.innerHTML=`<div class="vhead"><h2>Nápady a podněty</h2>
+     <p>Sebrané z chatu s Davidem, z jeho PDF s popisem aplikace a z review prototypu. Slouží k rozhodnutí, co jde do návrhu teď a co později.</p></div>
+   <div class="ifil">
+     <div class="ifrow"><span class="lab">Oblast</span><div class="fseg" role="group" aria-label="Oblast"><span class="thumb"></span>
+       <button type="button" class="fchip" data-icat="vse" aria-pressed="${st.icat==="vse"}">Vše<small>${cnt("vse",st.ist)}</small></button>
+       ${Object.entries(ICAT).map(([k,[l,icn]])=>`<button type="button" class="fchip" data-icat="${k}" aria-pressed="${st.icat===k}">${ic(icn)}${l}<small>${cnt(k,st.ist)}</small></button>`).join("")}</div></div>
+     <div class="ifrow"><span class="lab">Stav</span><div class="fseg" role="group" aria-label="Stav"><span class="thumb"></span>
+       <button type="button" class="fchip" data-ist="vse" aria-pressed="${st.ist==="vse"}">Vše<small>${cnt(st.icat,"vse")}</small></button>
+       ${Object.entries(ISTAT).map(([k,l])=>`<button type="button" class="fchip" data-ist="${k}" aria-pressed="${st.ist===k}"><i style="background:${IDOT[k]}"></i>${l}<small>${cnt(st.icat,k)}</small></button>`).join("")}</div></div>
+   </div>
+   ${gridHTML}`;
+  placeThumbs();stagger(iv);
+}
+function ideaGrid(list){return `<div class="igrid" data-stagger>${list.length?list.map(i=>`<article class="idea">${i.v&&IVIS[i.v]?`<div class="ivis" aria-hidden="true">${IVIS[i.v]()}</div>`:""}
+     <div class="ihd"><span class="icat">${ic(ICAT[i.c][1])}${ICAT[i.c][0]}</span><span class="ist"><i style="background:${IDOT[i.s]}"></i>${ISTAT[i.s]}</span></div>
+     <h3>${i.t}</h3>
+     <div><span class="ilb">Problém</span><p class="itx">${i.p}</p></div>
+     <div class="inav"><span class="ilb">Návrh</span><p class="itx">${i.n}</p></div>
+     ${i.w?`<p class="iwarn">${ic("info")}<span>${i.w}</span></p>`:""}
+     <div class="ifoot">${i.src.map(([a,b])=>`<span class="src2"><b>${a}</b>${b}</span>`).join("")}${i.go?`<button type="button" class="igo" data-goto="${i.go}">Otevřít v prototypu${ic("right")}</button>`:""}</div>
+   </article>`).join(""):`<div class="iempty">V téhle kombinaci zatím žádný nápad není.</div>`}</div>`}
+
+/* ---------- analýza současné aplikace (build z 3. 10., testováno 13.–16. 10.) ---------- */
+const SHOTS=[
+ ["Vstup","spuštění",[["login","Přihlášení","Spuštění","„Ještě nemáte účet?“ je mezi zapomenutým heslem a tlačítkem. Bílý text na tlačítku má nízký kontrast."]]],
+ ["Hlavní výpis","feed",[["feed","Hlavní výpis","Spuštění","Seznam karet Treffik Live. Na každé kartě je 14 prvků."],["feed-mapa","Foto / mapa","Karta → ikona mapy","Přepnutí fotky ulice na mapu."],["rsd","Poskytovatel dat","Karta → ikona dálnice","Okno s jedinou větou o ŘSD, podmínka pro odběr dat."],["pocasi","Legenda počasí","Karta → teplota","Vysvětlení ikon počasí."],["dr-d8","Dopravní řešení","Karta → Dopravní řešení","AI rada v okně. Placená, s denním limitem, nekonzistentní výstup."],["detail","Detail a komentáře","Karta → počet komentářů","Text zůstává zkrácený i v detailu."],["komentar","Nový komentář","Karta → Odpovědět","Fotka, text a Zveřejnit."]]],
+ ["Záhlaví","4 ikony",[["notif-min","Upozornění","Feed → zvonek","Seznam „Nová zpráva“, tlačítko OK přeřadí feed."],["notif-km","Řazení podle km","Zvonek → Km","Stejný seznam seřazený podle vzdálenosti."],["hledani","Hledání","Feed → lupa","Záložky Události / Ceny PHM a výběr města."],["hledani-vysledek","Feed podle města","Lupa → město","Aktivní filtr je poznat jen podle tmavší lupy."],["phm","Ceny PHM","Lupa → Ceny PHM","Dlouhé okno s pumpami."],["okoli","V okolí","Feed → ikona polohy","Přepínač filtru, vypadá jako navigace."]]],
+ ["Přidat","tlačítko + a SOS",[["plus","Nabídka +","Feed → +","Moje cesta a Nová zpráva."],["zprava1","Nová zpráva","+ → Nová zpráva","3 kroky: fotka a text, kde zveřejnit, doba (ruší se)."],["sos","SOS","Feed → štítek SOS","Červená varianta nové zprávy, štítek překrývá kartu."]]],
+ ["Nastavení","ozubené kolo",[["menu","Menu","Feed → ozubené kolo","Mix nastavení, obsahu a účtu v jednom seznamu."],["oznameni","Oznámení","Menu → Nastavení oznámení","Dva přepínače a výběr zvuku."],["zvuk","Zvuk","Oznámení → Vybrat zvuk","Zvuk 1, Zvuk 2, Default bez ukázky."],["karta1","Karta řidiče","Menu → Karta řidiče","11 polí osobních údajů."],["prispevky","Moje příspěvky","Karta řidiče → příspěvky","Prázdný stav bez výzvy."],["oblibene","Oblíbené","Menu → Oblíbené","Prázdný stav bez výzvy."],["pozvat","Pozvat přátele","Menu → Pozvat přátele","Systémové sdílení s textem pozvánky."],["sledovat","Sledující","Menu → Sledující","„Sledovat“ je akce, ale tváří se jako záložka."],["okruhy","Dopravní okruhy","Menu → Dopravní okruhy","Vybraná volba vypadá jako tlačítko Uložit."],["cesta","Moje cesta","Menu → Moje cesta","Seznam cest a vytvoření nové."],["cesta-nova","Nová cesta","Moje cesta → Vytvořit","Název a města na cestě."],["premium","Treffik Premium","Menu → Premium","Prázdná stránka. Ruší se, aplikace bude zdarma."]]],
+ ["Další stavy","nafocené detaily",[["cesta-mesto","Výběr města na cestě","Nová cesta → město",""],["dr-nacitani","Dopravní řešení: načítání","Telefon klienta",""],["dr-d2","Dopravní řešení D2","Karta → Dopravní řešení","Objížďka u Břeclavi, 50 km od místa."],["dr-d52","Dopravní řešení D52","Karta → Dopravní řešení",""],["dr-mesto","Rada pro správce silnice","Karta → Dopravní řešení","Radí správci silnice, ne řidiči."],["limit","Limit vyčerpán","Dopravní řešení","„Zkuste to zítra“, reset přes noc nepřišel."],["notif-detail","Upozornění: detail","Zvonek → zpráva","Stav Vyřešeno vypadá jako tlačítko."],["karta2","Karta řidiče, pokračování","Karta řidiče",""],["pozvat-sdileni","Pozvat přátele: sdílení","Pozvat přátele",""],["sleduji","Sleduji","Sledující → Sleduji",""],["sledujici","Sledující","Sledující → Sledující",""]]]
+];
+const SHOT={};SHOTS.forEach(([g,,a])=>a.forEach(([id,t,p,n])=>SHOT[id]={t,p,n,g}));
+const ISSUES=[
+ {sev:2,t:"Navigace: ikony bez popisků a funkce schované v nastavení",d:"Záhlaví má 4 ikony bez textu. Poloha a lupa jsou filtry feedu, které se zapnou bez jasného označení. Moje cesta, Oblíbené a Sledující jsou v menu nastavení vedle Smazat účet.",fix:"Spodní lišta s popsanými záložkami Doprava, Moje cesty, +, Upozornění, Profil. Filtry jako čipy nad přehledem.",s:["feed","okoli","hledani-vysledek","menu"]},
+ {sev:2,t:"Karta události je přetížená a nemá hierarchii",d:"Na jedné kartě je 14 prvků ve třech zelených pruzích. Text je zkrácený i v detailu. Tečka u „Treffik Live“ nese stav, ale nikde se nevysvětluje.",fix:"Pořadí podle otázek řidiče: kde, jak vážné, co dělat. Tečku nahradí popsaný štítek stavu.",s:["feed","detail","notif-detail"]},
+ {sev:2,t:"Všechno je zelené a bílý text nejde přečíst",d:"Bílý text na světle zelené má kontrast 1,8 : 1 (norma žádá 4,5 : 1). Zelená je značka, pozadí, tlačítko i barva „vyřešeno“, takže ztrácí význam.",fix:"Zelená jen pro značku a akce, světlé neutrální plochy, semaforové barvy jen pro stav.",s:["login","oznameni","okruhy"]},
+ {sev:2,t:"Dopravní řešení je nekonzistentní a drahé",d:"Funkce je placená a má denní limit. Výstupy se liší tónem i adresátem: jednou radí řidiči, jindy správci silnice. U D2 doporučuje objížďku 50 km od místa.",fix:"Pevná šablona rady pro řidiče (co čekat, co udělat, alternativa). Výsledek uložit k události, ať se neplatí za každé klepnutí.",s:["dr-nacitani","dr-d8","dr-d2","dr-mesto","limit"]},
+ {sev:1,t:"Upozornění: seznam stejných „Nová zpráva“",d:"Každá položka má stejný nadpis, liší se jen obcí a časem. Tlačítko „OK“ přeřadí hlavní feed, což není poznat.",fix:"Nadpis podle typu a silnice („Nehoda · D1 km 184“), stav štítkem, řazení jako přepínač s popisem.",s:["notif-min","notif-km"]},
+ {sev:1,t:"Prázdné stavy a chybějící zpětná vazba",d:"Oblíbené, Sledující a Moje příspěvky jsou prázdná bílá plocha. Nová zpráva bez textu po klepnutí na Pokračovat nic neudělá a neřekne proč.",fix:"Každý prázdný stav vysvětlí, co se tu objeví, a nabídne první akci. Formulář ukáže chybu u pole.",s:["oblibene","sledujici","prispevky","zprava1"]},
+ {sev:1,t:"Formuláře a texty",d:"Zástupný text je tučný a vypadá vyplněně. Karta řidiče chce 11 osobních údajů a neříká proč. Nová zpráva má 3 kroky, z nichž jeden se ruší.",fix:"Jednotný vzor polí. Karta řidiče: nejdřív SPZ, u citlivých údajů vysvětlit důvod.",s:["zprava1","karta1","karta2","komentar"]},
+ {sev:1,t:"Hledání a výběr města",d:"„Brno 60200“ je v seznamu dvakrát. Po výběru se feed tiše vyfiltruje. Ceny PHM vyskočí jako dlouhé okno.",fix:"Poslední výběr jako čip, aktivní filtr viditelně nad přehledem, Ceny PHM jako přehledná tabulka.",s:["hledani","hledani-vysledek","phm"]},
+ {sev:0,t:"SOS a přidávání obsahu",d:"Štítek SOS je přilepený k pravému okraji a překrývá kartu. Tlačítko + se při scrollu mění na šipku nahoru.",fix:"SOS jako volba v nabídce +, tlačítko + pevně ve spodní liště.",s:["sos","plus"]}
+];
+const SEV=[["Nízká","#A3ABA6"],["Střední","#F29A0B"],["Vysoká","#E5483B"]];
+const shotBtn=(id,cls)=>`<button type="button" class="${cls}" data-shot="${id}"><img src="s/${id}.jpg" alt="Screenshot: ${SHOT[id].t}" loading="lazy" width="358" height="780">${cls==="shot"?`<span>${SHOT[id].t}</span>`:`<b>${SHOT[id].t}</b><small>${SHOT[id].p}${SHOT[id].n?" · "+SHOT[id].n:""}</small>`}</button>`;
+function renderAn(){
+  const tabs=[["sum","Shrnutí","file"],["iss","Problémy · "+ISSUES.length,"alert"],["gal","Screenshoty · "+Object.keys(SHOT).length,"phone"]];
+  let body="";
+  if(st.anTab==="sum")body=`
+   <div class="card2"><h3>Jak návrh vznikal</h3><div class="process">
+     ${[["červen–červenec","Seznámení s aplikací","Proklikání na telefonu, popis aplikace v PDF od Davida (12. 7.)"],["13.–16. 10.","Testování","Build z 3. 10. v simulátoru, 40 obrazovek a stavů"],["říjen–listopad","Analýza","9 problémů seřazených podle priority"],["říjen–listopad","Mapa a user flow","Dnešní a navržená struktura, počty kroků"],["4. 11.","Wireframy a UI","Obsah, navigace a první vizuální směr"],["4. 11.","Prototyp a nápady","Proklikávací prototyp a 20 podnětů k rozhodnutí"]].map(([d,b,t],i)=>`<div class="pstep"><span class="n">${i+1}</span><div><span class="pd">${d}</span><b>${b}</b><small>${t}</small></div></div>`).join("")}</div></div>
+   <div class="card2"><h3>Co funguje a stojí za to zachovat</h3><div class="okg">
+     <div><b>Data z ŘSD v lidské řeči</b><p>AI přepis z hesel do vět je hlavní hodnota. Řidič rozumí bez dekódování zkratek.</p></div>
+     <div><b>Semafor jako časová osa</b><p>Červená, oranžová, zelená podle postupu řešení. Dnes ale splývá se zelenou značkou.</p></div>
+     <div><b>Kontext k události</b><p>Vzdálenost, zdržení, počasí a foto / mapa odpovídají na otázku „týká se mě to?“.</p></div>
+     <div><b>Moje cesta</b><p>Nejsilnější důvod aplikaci otevírat denně. Dnes je schovaná ve dvou různých místech.</p></div></div></div>
+   <div class="two">
+     <div class="card2"><h3>Co se podle klienta mění</h3><ul class="alist">
+       <li>Treffik Premium se ruší, aplikace bude zdarma.</li><li>Doba zobrazení zprávy se ruší v nastavení, registraci i nové zprávě.</li>
+       <li>„Děkuji“ nahradí Platí / Neplatí s body za hodnocení.</li><li>Text nad obrázkem.</li><li>Logo semaforu je schválené, i jako ikona aplikace.</li><li>Všechny funkce zůstávají, rozložení je na návrhu.</li></ul></div>
+     <div class="card2"><h3>Co zatím není nafocené</h3><ul class="alist">
+       <li>Registrace a zapomenuté heslo (aplikace musí být odhlášená).</li><li>Nová zpráva, krok 2 a 3 (v simulátoru nejde vložit text), popis je z PDF.</li>
+       <li>Potvrzení odhlášení a smazání účtu.</li><li>Push notifikace (fungují jen na fyzickém telefonu).</li></ul></div>
+   </div>`;
+  else if(st.anTab==="iss")body=`<div class="stats">
+     <div class="stat"><b>14</b><span>prvků na jedné kartě události v hlavním výpisu (problém 02)</span></div>
+     <div class="stat"><b>1,8 : 1</b><span>kontrast bílého textu na světle zelené, třeba na tlačítku Přihlásit se. Pro čitelný text je potřeba aspoň 4,5 : 1 (problém 03)</span></div>
+     <div class="stat"><b>4 + 7</b><span>ikony v záhlaví bez popisku a položky v menu nastavení (problém 01)</span></div>
+     <div class="stat"><b>3</b><span>prázdné obrazovky bez vysvětlení a výzvy k akci (problém 06)</span></div>
+   </div>`+ISSUES.map((x,i)=>`<article class="card2 iss"><span class="inum">${String(i+1).padStart(2,"0")}</span>
+     <div class="ibody"><div><span class="sev"><i style="background:${SEV[x.sev][1]}"></i>Priorita: ${SEV[x.sev][0]}</span><h3>${x.t}</h3></div>
+       <p class="itx">${x.d}</p><div class="inav"><span class="ilb">Návrh</span><p class="itx">${x.fix}</p></div>
+       <div class="thumbs">${x.s.map(id=>shotBtn(id,"shot")).join("")}</div></div></article>`).join("");
+  else body=`<p class="itx" style="color:var(--mute)">${Object.keys(SHOT).length} obrazovek a stavů nafocených 13.–16. 10. z buildu z 3. 10. Klikněte na obrázek pro zvětšení.</p>`+SHOTS.map(([g,sub,a])=>`<div class="ggroup"><h3>${g}<small>${sub} · ${a.length}</small></h3><div class="gal">${a.map(([id])=>shotBtn(id,"gcard")).join("")}</div></div>`).join("");
+  const av=document.getElementById("anview");
+  if(av.querySelector("#anseg")){av.querySelectorAll("[data-antab]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.antab===st.anTab));av.querySelector(".anv").innerHTML=body;placeThumbs();stagger(av);return}
+  av.innerHTML=`<div class="vhead"><h2>Analýza současné aplikace</h2>
+     <p>Užitečná data, ale obsluha jako palubní deska letadla. Aplikaci jsem prošel obrazovku po obrazovce v buildu z 3. 10. a sepsal, co funguje, co brzdí a jak to vyřešit.</p></div>
+   <div class="ifil" style="padding:6px"><div class="seg" id="anseg" role="group" aria-label="Část analýzy" style="flex-wrap:wrap"><span class="thumb"></span>${tabs.map(([k,l,icn])=>`<button type="button" data-antab="${k}" aria-pressed="${st.anTab===k}">${ic(icn)}${l}</button>`).join("")}</div></div>
+   <div class="anv" data-stagger>${body}</div>`;
+  placeThumbs();stagger(av);
+}
+let shotId=null;
+const shotKeys=()=>Object.keys(SHOT);
+function lbHTML(id){const x=SHOT[id],k=shotKeys();return `<img src="s/${id}.jpg" alt="Screenshot: ${x.t}"><div class="cap"><span class="lbn">${k.indexOf(id)+1} / ${k.length}</span><b>${x.t}</b><small>${x.g} · ${x.p}</small>${x.n?`<p>${x.n}</p>`:""}</div>`}
+function openShot(id){if(!SHOT[id])return;shotId=id;
+  document.body.insertAdjacentHTML("beforeend",`<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Screenshoty"><div class="lbc" id="lbc">${lbHTML(id)}</div><button type="button" class="lbar l" data-lbnav="-1" aria-label="Předchozí screenshot">${ic("left")}</button><button type="button" class="lbar r" data-lbnav="1" aria-label="Další screenshot">${ic("right")}</button><button type="button" class="lbx" aria-label="Zavřít">${ic("x")}</button></div>`);
+  const lb=document.getElementById("lb");let sx=null;lb.addEventListener("pointerdown",e=>{sx=e.clientX});lb.addEventListener("pointerup",e=>{if(sx!=null&&Math.abs(e.clientX-sx)>50){shotNav(e.clientX<sx?1:-1);lb.dataset.sw=1;setTimeout(()=>delete lb.dataset.sw,0)}sx=null})}
+function shotNav(d){const k=shotKeys();shotId=k[(k.indexOf(shotId)+d+k.length)%k.length];const c=document.getElementById("lbc");if(!c)return;c.innerHTML=lbHTML(shotId);
+  if(!reduce)c.animate([{opacity:0,transform:`translateX(${d*28}px)`},{opacity:1,transform:"none"}],{duration:280,easing:"cubic-bezier(.2,.8,.2,1)"})}
+document.addEventListener("click",e=>{const lb=document.getElementById("lb");
+  if(lb){if(lb.dataset.sw)return;const n=e.target.closest("[data-lbnav]");if(n){shotNav(+n.dataset.lbnav);return}if(e.target.closest(".lb img")){shotNav(1);return}if(e.target===lb||e.target.id==="lbc"||e.target.closest(".lbx")){lb.remove();return}if(lb.contains(e.target))return}
+  const sh=e.target.closest("[data-shot]");if(sh){openShot(sh.dataset.shot);return}
+  const t=e.target.closest("[data-antab]");if(t&&st.anTab!==t.dataset.antab){st.anTab=t.dataset.antab;renderAn()}});
+
+/* ---------- šipky mezi obrazovkami a blueprint ---------- */
+const SECNAME={start:"Přihlášení",feed:"Doprava",routes:"Moje cesty",report:"Nahlásit událost",back:""};
+const HOT=[
+ ["[data-ev]","detail","Otevře detail události"],["[data-route]","events","Otevře události na této cestě"],["[data-rev]","detail","Otevře detail události na cestě"],
+ ["[data-next]","login","Po načtení se samo otevře přihlášení"],['[data-authtab="register"]',"register","Přepne na registraci"],['[data-authtab="login"]',"login","Přepne na přihlášení"],
+ ["[data-login]","@feed","Přihlásí a otevře Dopravu"],['[data-tab="feed"]',"@feed","Otevře Dopravu"],['[data-tab="routes"]',"@routes","Otevře Moje cesty"],
+ ["[data-report]","@report","Otevře nahlášení události"],["[data-close]","@back","Zavře hlášení bez uložení"],["[data-back]","<","Vrátí se o krok zpět"],
+ ["[data-rtype]","rconfirm","Vybere typ a pokračuje na kontrolu"],["[data-publish]","rdone","Zveřejní hlášení ostatním řidičům"],["[data-tofeed]","@feed","Vrátí se na Dopravu, nové hlášení je nahoře"],
+ ["[data-search]","","Otevře hledání města nebo silnice"],["[data-searchclose]","","Zavře hledání"],["[data-q]","","Hledá v celé ČR podle města nebo silnice"],
+ ["[data-f]","","Vyfiltruje typ události"],["[data-area]","","Přepne okruh: okolí 40 km nebo celý kraj"],["[data-clear]","","Zruší hledání a filtry"],
+ ["[data-vote]","","Potvrdí ostatním, jestli událost pořád platí"],["[data-media]","","Přepne foto, mapu nebo AI náhled"],
+ ["[data-preset]","","Doplní rychlý detail k hlášení"],["[data-photo]","","Přidá fotku k hlášení"],["[data-photox]","","Odebere fotku"],["[data-rnote]","","Volitelná poznámka k hlášení"],
+ ["[data-avatar]","","Vybere ikonku profilu"],["[data-avcolor]","","Vybere barvu ikonky"],["[data-agree]","","Souhlas s podmínkami"],["[data-todo]","todo",null]];
+function tagHot(){$p.querySelectorAll(".phone").forEach(ph=>{const s=ph.dataset.screen,f=FLOWS[st.flow];
+  HOT.forEach(([sel,to,txt])=>ph.querySelectorAll(sel).forEach(el=>{if(el.dataset.hot!==undefined)return;
+    let t=to,info=txt||el.dataset.todo;
+    if(t==="<")t=f[f.indexOf(s)-1]||(s==="detail"?"feed":"");
+    if(t==="todo"){el.dataset.hot="todo";el.dataset.hinfo=info;return}
+    if(t[0]==="@"){const fl=t.slice(1);el.dataset.hot="";el.dataset.hinfo=info+(SECNAME[fl]?` · sekce ${SECNAME[fl]}`:"");return}
+    el.dataset.hot=t;el.dataset.hinfo=t?`${info} → ${NAMES[t]}`:info}))})}
+let linkAnim=false,hoverHot=null,linkTs=[],linkRaf=0;
+const linksOn=()=>st.view==="proto"&&!st.full&&st.mode==="all"&&!st.loading;
+function pickSrc(ph,to){const c=[...ph.querySelectorAll(`[data-hot="${to}"]`)];if(!c.length)return null;
+  return c.find(e=>(e.dataset.ev&&e.dataset.ev===st.feedEv)||(e.dataset.route!==undefined&&+e.dataset.route===st.route)||(e.dataset.rev!==undefined&&+e.dataset.rev===st.rIdx)||(e.dataset.rtype&&e.dataset.rtype===st.rType))||c[0]}
+function linkGeo(el,tph,box){
+  const ph=el.closest(".phone"),sc=ph.querySelector(".scr").getBoundingClientRect(),pr=ph.closest(".device").getBoundingClientRect(),tr=tph.closest(".device").getBoundingClientRect(),er=el.getBoundingClientRect();
+  if(!er.width)return null;
+  let sy=er.top+er.height/2;const off=sy<sc.top+6||sy>sc.bottom-6;sy=Math.max(sc.top+16,Math.min(sc.bottom-16,sy));
+  const X=v=>(v-box.left).toFixed(1),Y=v=>(v-box.top).toFixed(1),ov=tr.top<pr.bottom&&tr.bottom>pr.top;
+  if(ov&&tr.left>=pr.right-4){const sx=Math.min(er.right,pr.right)-10,ex=tr.left+2,ey=Math.max(tr.top+80,Math.min(tr.bottom-80,sy)),dx=Math.max(26,(ex-sx)*.55);
+    return {d:`M${X(sx)},${Y(sy)} C${X(sx+dx)},${Y(sy)} ${X(ex-dx)},${Y(ey)} ${X(ex)},${Y(ey)}`,off,x:X(sx),y:Y(sy)}}
+  if(ov&&tr.right<=pr.left+4){const sx=Math.max(er.left,pr.left)+10,ex=tr.right-2,ey=Math.max(tr.top+80,Math.min(tr.bottom-80,sy)),dx=Math.max(26,(sx-ex)*.55);
+    return {d:`M${X(sx)},${Y(sy)} C${X(sx-dx)},${Y(sy)} ${X(ex+dx)},${Y(ey)} ${X(ex)},${Y(ey)}`,off,x:X(sx),y:Y(sy)}}
+  const sx=Math.min(er.right,pr.right)-10,gx=Math.max(pr.right,tr.right)+16,ey=tr.top+96,ex=tr.right-2,r=12,dn=ey>sy?1:-1;
+  return {d:`M${X(sx)},${Y(sy)} H${X(gx-r)} Q${X(gx)},${Y(sy)} ${X(gx)},${Y(sy+dn*r)} V${Y(ey-dn*r)} Q${X(gx)},${Y(ey)} ${X(gx-r)},${Y(ey)} H${X(ex)}`,off,x:X(sx),y:Y(sy)}}
+function drawLinks(anim){
+  let svg=$p.querySelector("svg.links");
+  if(!linksOn()){if(svg)svg.remove();return}
+  if(!svg){$p.insertAdjacentHTML("beforeend",`<svg class="links" aria-hidden="true"><defs>
+    <marker id="ahg" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="8" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse"><path d="M2,1.5 L8,5 L2,8.5" fill="none" stroke="#A3ADA7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="ahb" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="userSpaceOnUse"><path d="M2,1.5 L8,5 L2,8.5" fill="none" stroke="#2E9E4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><g></g></svg>`);svg=$p.querySelector("svg.links")}
+  const box=$p.getBoundingClientRect(),phs=[...$p.querySelectorAll(".phone")],L=[];
+  phs.forEach((ph,i)=>{const nx=phs[i+1];if(!nx)return;const src=pickSrc(ph,nx.dataset.screen);if(src)L.push([src,nx,"p"])});
+  if(hoverHot&&document.body.classList.contains("bp")&&$p.contains(hoverHot)){const t=hoverHot.dataset.hot,own=hoverHot.closest(".phone"),tp=phs.find(p=>p!==own&&p.dataset.screen===t);
+    if(tp){const ex=L.find(l=>l[0]===hoverHot);if(ex)ex[2]="h";else L.push([hoverHot,tp,"h"])}}
+  const G=L.map(([el,tp,k])=>{const g=linkGeo(el,tp,box);return g&&{...g,k}}).filter(Boolean);
+  const g=svg.querySelector("g"),cur=g.querySelectorAll("path.ln");
+  if(!anim&&cur.length===G.length){G.forEach((o,i)=>{const p=cur[i],d=g.querySelectorAll("circle.sd")[i];p.setAttribute("d",o.d);p.classList.toggle("off",o.off);p.classList.toggle("hv",o.k==="h");p.setAttribute("marker-end",`url(#${o.k==="h"||p.classList.contains("fresh")?"ahb":"ahg"})`);d.setAttribute("cx",o.x);d.setAttribute("cy",o.y);d.classList.toggle("hv",o.k==="h")});return}
+  g.innerHTML=G.map(o=>`<path class="ln ${o.off?"off":""} ${o.k==="h"?"hv":""} ${anim?"fresh":""}" d="${o.d}" marker-end="url(#${anim||o.k==="h"?"ahb":"ahg"})"/><circle class="sd ${o.k==="h"?"hv":""} ${anim?"fresh":""}" cx="${o.x}" cy="${o.y}" r="3.5"/>${anim?`<circle class="pulse" cx="${o.x}" cy="${o.y}" r="4"/>`:""}`).join("");
+  if(anim&&!reduce){g.querySelectorAll("path.ln").forEach(p=>{const l=p.getTotalLength();p.animate([{strokeDasharray:`${l} ${l}`,strokeDashoffset:l},{strokeDasharray:`${l} ${l}`,strokeDashoffset:0}],{duration:560,easing:"cubic-bezier(.4,0,.2,1)"})});
+    linkTs.push(setTimeout(()=>g.querySelectorAll(".fresh").forEach(x=>{x.classList.remove("fresh");if(x.tagName==="path"&&!x.classList.contains("hv"))x.setAttribute("marker-end","url(#ahg)")}),1500))}
+}
+function scheduleLinks(){linkTs.forEach(clearTimeout);linkTs=[];const a=linkAnim;linkAnim=false;
+  if(!linksOn()){drawLinks(false);return}
+  if(a){const s=$p.querySelector("svg.links");if(s)s.querySelector("g").innerHTML="";linkTs.push(setTimeout(()=>drawLinks(true),340),setTimeout(()=>drawLinks(false),980))}
+  else{requestAnimationFrame(()=>drawLinks(false));linkTs.push(setTimeout(()=>drawLinks(false),620))}}
+function linksSoon(){cancelAnimationFrame(linkRaf);linkRaf=requestAnimationFrame(()=>drawLinks(false))}
+
+/* ---------- historie (Ctrl/⌘ + Z) a klávesy ---------- */
+let hist=[],lastSnap=null,restoring=false;
+const snap=()=>({flow:st.flow,screen:st.screen,feedEv:st.feedEv,route:st.route,rIdx:st.rIdx,searchOpen:st.searchOpen});
+const sameSnap=(a,b)=>Object.keys(a).every(k=>a[k]===b[k]);
+function trackHist(){const c=snap();if(lastSnap&&!restoring&&!sameSnap(c,lastSnap)){hist.push(lastSnap);if(hist.length>12)hist.shift()}lastSnap=c}
+function undo(){const s=hist.pop();if(!s){ptoast("Není kam se vrátit, tohle je první krok");return}
+  restoring=true;if(s.flow!==st.flow)subAnim=true;Object.assign(st,s);go(s.screen,{dir:"back",pscroll:false});restoring=false;lastSnap=snap();
+  ptoast(`Zpět na: ${NAMES[s.screen]}`)}
+const ORDER=["start","feed","routes","report"];
+function stepKey(d){const f=FLOWS[st.flow],j=f.indexOf(st.screen)+d;
+  if(j>=0&&j<f.length){go(f[j],{dir:d>0?"fwd":"back",stg:true});return}
+  const k=ORDER.indexOf(st.flow)+d;if(k<0||k>=ORDER.length){ptoast(d>0?"Tohle je poslední obrazovka prototypu":"Tohle je první obrazovka prototypu");return}
+  const nf=ORDER[k];openFlow(nf,d>0?"fwd":"back",d>0?FLOWS[nf][0]:FLOWS[nf][FLOWS[nf].length-1])}
+/* ---------- user flow ---------- */
+const LANES=[
+ {lab:"Přihlášení",sub:"první otevření",flow:"start",nodes:[["splash","Načítání","Logo, data z okolí"],["login","Přihlášení","E-mail, Apple, Google"],["register","Registrace","Jedna obrazovka"]],loop:["feed","Pak Doprava"]},
+ {lab:"Doprava",sub:"spodní lišta",flow:"feed",nodes:[["feed","Doprava","Okolí, filtry, hledání"],["detail","Detail události","Stav, rada, foto, mapa, AI"]]},
+ {lab:"Moje cesty",sub:"spodní lišta",flow:"routes",nodes:[["routes","Moje cesty","Uložené trasy a stav"],["events","Události na trase","Problémy na cestě"],["detail","Detail události","Návrat na cestu"]]},
+ {lab:"Nahlásit událost",sub:"tlačítko + v liště",flow:"report",nodes:[["rtype","Co se děje","Typ jedním klepnutím"],["rconfirm","Kontrola","Místo, fráze, fotka"],["rdone","Hotovo","Hlášení je v Dopravě"]],loop:["feed","Zpět do Dopravy"]},
+ {lab:"Připravujeme",sub:"zatím nenavrženo",later:true,nodes:[["","Kam jedete?","Nápad, viz Nápady"],["","Upozornění","Hlášení na cestách"],["","Profil a nastavení","Karta řidiče, oblíbené, sledující"],["","AI asistent","Dotazy na dopravu"],["","Ceny PHM","Nejlevnější pumpy"]]}
+];
+function mph(s){
+  const lk="ui";const cls=s==="splash"?"full":["detail","events","register","rtype","rconfirm","rdone","login"].includes(s)?"tall":"";
+  return `<span class="mph ${lk} ${cls}"><i></i>${cls==="full"?"":"<u></u><u></u><u></u>"}</span>`;
+}
+function renderFlow(){
+  document.getElementById("flowview").innerHTML=`<div class="boardwrap" id="board"><div class="board">${LANES.map(L=>`
+    <div class="lane ${L.later?"sep":""}"><span class="lanel">${L.lab}<small>${L.sub}</small></span><div class="lrow">${L.nodes.map(([s,t,d],i)=>{
+      const arrow=i?(L.later?'<span class="gap"></span>':'<span class="arr"></span>'):"";
+      if(L.later)return `${arrow}<div class="node later" data-tip="${t} zatím není navržené">${mph("x")}<span><b>${t}</b><small>${d}</small></span></div>`;
+      const cur=st.flow===L.flow&&st.screen===s;
+      return `${arrow}<button type="button" class="node ${cur?"cur":""}" data-goto="${L.flow}:${s}">${mph(s)}<span><b>${t}</b><small>${d}</small></span></button>`}).join("")}
+      ${L.loop?`<span class="arr"></span><button type="button" class="loop" data-goto="feed:${L.loop[0]}">${ic("undo")}${L.loop[1]}</button>`:""}</div></div>`).join("")}
+  </div></div><p class="flowhint">${ic("pointer")}Klikněte na obrazovku a otevře se v prototypu. Plochu můžete posouvat tažením myši.</p>`;
+}
+
+/* ---------- vykreslení a pohyb ---------- */
+const $p=document.getElementById("phones");
+function save(){$p.querySelectorAll(".phone").forEach(ph=>{const sc=ph.querySelector(".scr");if(sc)mem[ph.dataset.key]=sc.scrollTop})}
+function stagger(root){
+  if(reduce)return;
+  root.querySelectorAll("[data-stagger]").forEach(el=>{[...el.children].forEach((c,i)=>c.style.setProperty("--i",i));el.classList.remove("stagger");void el.offsetWidth;el.classList.add("stagger")});
+}
+function animScreen(ph,dir){
+  if(reduce)return;
+  const sc=ph.querySelector(".screen");if(!sc)return;
+  const F={fwd:[{transform:"translateX(40px)",opacity:0},{transform:"none",opacity:1}],
+           back:[{transform:"translateX(-40px)",opacity:0},{transform:"none",opacity:1}],
+           up:[{transform:"translateY(60px)",opacity:0},{transform:"none",opacity:1}],
+           tab:[{transform:"translateY(14px) scale(.985)",opacity:0},{transform:"none",opacity:1}],
+           fade:[{opacity:.25},{opacity:1}]};
+  sc.animate(F[dir],{duration:dir==="fade"?260:420,easing:"cubic-bezier(.2,.8,.2,1)"});
+}
+function placeThumbs(){document.querySelectorAll(".seg>.thumb,.fseg>.thumb,.gseg>.thumb,.mtabs>.thumb").forEach(t=>{const b=t.parentElement.querySelector(':scope>[aria-pressed="true"]');
+  if(!b){t.style.opacity=0;t.dataset.on="";return}if(!b.offsetWidth)return;
+  const jump=!t.dataset.on;if(jump)t.style.transition="none";
+  t.style.opacity=1;t.style.width=b.offsetWidth+"px";t.style.height=b.offsetHeight+"px";t.style.transform=`translate(${b.offsetLeft}px,${b.offsetTop}px)`;
+  if(jump){t.dataset.on=1;void t.offsetWidth;t.style.transition=""}})}
+function hints(){
+  const w=document.getElementById("sxw"),x=document.getElementById("sx");
+  const fit=x.scrollWidth<=x.clientWidth+2;
+  w.classList.toggle("fit",fit);w.classList.toggle("end",!fit&&x.scrollLeft+x.clientWidth>=x.scrollWidth-2);w.classList.toggle("mid",x.scrollLeft>2);
+  document.querySelectorAll(".chips").forEach(c=>{const f=c.scrollWidth<=c.clientWidth+2;c.classList.toggle("fit",f);c.classList.toggle("end",!f&&c.scrollLeft+c.clientWidth>=c.scrollWidth-2)});
+  const b=document.querySelector('[data-sect][aria-pressed="true"]'),sub=document.getElementById("sub");
+  if(b&&sub){const br=b.getBoundingClientRect(),sr=sub.getBoundingClientRect(),xr=x.getBoundingClientRect(),c=br.left+br.width/2;sub.style.setProperty("--cx",(c-sr.left)+"px");sub.style.setProperty("--co",c<xr.left+10||c>xr.right-10?0:1)}
+}
+function fz(){return innerWidth<600?Math.max(1,Math.min(1.36,innerWidth/330)):1}
+function chrome(){
+  document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===st.view));
+  document.querySelectorAll("[data-look]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.look===st.look));
+  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===st.mode));
+  const stacked=document.querySelector(".wrap").clientWidth<660,mb=document.querySelector('[data-mode="all"]');
+  if(mb.dataset.st!==String(stacked)){mb.dataset.st=String(stacked);mb.innerHTML=ic(stacked?"rows":"cols")+(stacked?"Pod sebou":"Vedle sebe")}
+  document.querySelectorAll("[data-sect]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sect===st.flow));
+  const f=FLOWS[st.flow],ci=f.indexOf(st.screen);
+  const steps=document.getElementById("steps");
+  steps.innerHTML=f.map((s,i)=>`${i?`<span class="link ${i<=ci?"done":""}"></span>`:""}<button type="button" class="step ${i===ci?"on":i<ci?"done":""}" data-step="${s}" ${i===ci?'aria-current="step"':""}><span class="n">${i+1}</span>${NAMES[s]}</button>`).join("");
+  if(subAnim){steps.classList.remove("subin");void steps.offsetWidth;steps.classList.add("subin");subAnim=false}
+  document.body.classList.toggle("full",st.full&&st.view==="proto");
+  ["an","flow","proto","ideas","notes"].forEach(v=>document.body.classList.toggle("v-"+v,st.view===v));
+  if(st.view==="proto"&&lastView&&lastView!=="proto")protoIn();lastView=st.view;
+  document.body.style.setProperty("--fz",fz());
+  placeThumbs();hints();
+}
+function navFor(s){
+  if(["splash","login","register","rtype","rconfirm","rdone"].includes(s))return "";
+  if(s==="routes"||s==="events"||(s==="detail"&&st.flow==="routes"))return nav("routes");
+  return nav("feed");
+}
+function render(o={}){
+  if(st.view==="flow"){renderFlow();chrome();return}
+  if(st.view==="ideas"){renderIdeas();chrome();return}
+  if(st.view==="an"){renderAn();chrome();return}
+  if(st.view==="notes"){chrome();return}
+  save(); if(o.reset)mem[o.reset]=0; if(o.zero)Object.keys(mem).forEach(k=>mem[k]=0);
+  const one=st.full||st.mode==="one",list=one?[st.screen]:FLOWS[st.flow];
+  $p.className="phones po"+(one?" single":"");
+  $p.innerHTML=list.map(s=>{const n=navFor(s),fl=s==="detail"&&!st.loading,pf=s==="rconfirm";
+    return `<div class="col"><div class="device"><div class="phone ${st.look} ${s==="splash"?"":""}" data-screen="${s}" data-key="${key(s)}">${SB}<div class="scr"><div class="screen ${n?"":"nonav"} ${fl?"float":""} ${pf?"float2":""} ${s==="splash"?"bare":""}">${SCREENS[s]()}</div></div>${fl?voteFloat():""}${pf?pfix():""}${n}${st.splash?`<div class="splash">${logo(70)}<b>Treffik</b></div>`:""}</div></div></div>`}).join("")
+    +(st.full?`<button type="button" class="exitfull" data-exitfull aria-label="Ukončit celou obrazovku">${ic("min")}<span>Zpět do prototypu</span></button>`:"");
+  $p.querySelectorAll(".phone").forEach(ph=>{
+    const sc=ph.querySelector(".scr");sc.scrollTop=mem[ph.dataset.key]||0;ph.classList.toggle("scrolled",sc.scrollTop>6);
+    const s=ph.dataset.screen;
+    if(o.anim&&o.anim.screen===s)animScreen(ph,o.anim.dir);
+    if(o.fade)animScreen(ph,"fade");
+    if(o.stagger==="all"||o.stagger===s)stagger(ph);
+  });
+  chrome();tagHot();trackHist();scheduleLinks();
+}
+let splashT;
+function go(screen,{dir="fwd",reset=false,stg=false,pscroll=true}={}){
+  st.screen=screen;linkAnim=true;
+  render({reset:reset?key(screen):null,anim:{screen,dir},stagger:stg?screen:null});
+  clearTimeout(splashT);
+  if(screen==="splash"&&(st.mode==="one"||st.full))splashT=setTimeout(()=>{if(st.screen==="splash"&&st.view==="proto")go("login",{stg:true})},1800);
+  if(pscroll&&st.mode==="all"&&!st.full){const ph=$p.querySelector(`[data-screen="${screen}"]`);if(ph){const r=ph.getBoundingClientRect();if(r.top<0||r.bottom>innerHeight)ph.scrollIntoView({behavior:reduce?"auto":"smooth",block:"nearest"})}}
+}
+function openFlow(f,dir="tab",screen,pscroll=true){
+  if(f==="report"){if(st.flow!=="report")st.prevFlow=st.flow;st.rPresets=[];st.rNote="";st.rPhoto=false;st.lastReport=null;}
+  if(f!==st.flow)subAnim=true;
+  st.flow=f;go(screen||FLOWS[f][0],{dir,stg:true,reset:true,pscroll});
+  const b=document.querySelector(`[data-sect="${f}"]`),x=document.getElementById("sx");
+  if(b&&x){const l=b.offsetLeft-52,r=b.offsetLeft+b.offsetWidth+52-x.clientWidth,bh=reduce?"auto":"smooth";if(l<x.scrollLeft)x.scrollTo({left:Math.max(0,l),behavior:bh});else if(r>x.scrollLeft)x.scrollTo({left:r,behavior:bh})}
+}
+let loadT;
+function reload(){
+  clearTimeout(loadT);
+  const rb=document.getElementById("reload");rb.classList.remove("spin");void rb.offsetWidth;rb.classList.add("spin");
+  st.loading=true;st.splash=true;render({zero:true});
+  setTimeout(()=>{st.splash=false},1250);
+  loadT=setTimeout(()=>{st.loading=false;st.splash=false;render({stagger:"all"})},1900);
+}
+
+/* tažení myší: posouvání řádků filtrů, sekcí, plochy user flow i obsahu telefonu */
+let drag=null,suppress=false;
+document.addEventListener("pointerdown",e=>{
+  if(e.pointerType!=="mouse"||e.button!==0||e.target.closest("input,textarea"))return;
+  const el=e.target.closest(".chips,.sx,.boardwrap,.scr,.thumbs");if(!el)return;
+  drag={el,x:e.clientX,y:e.clientY,sl:el.scrollLeft,stp:el.scrollTop,moved:false,ax:el.matches(".scr")?"y":el.matches(".boardwrap")?"xy":"x"};
+});
+addEventListener("pointermove",e=>{
+  if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.moved&&Math.hypot(dx,dy)<6)return;
+  drag.moved=true;drag.el.classList.add("dragging");
+  if(drag.ax!=="y")drag.el.scrollLeft=drag.sl-dx;
+  if(drag.ax!=="x")drag.el.scrollTop=drag.stp-dy;
+});
+addEventListener("pointerup",()=>{if(!drag)return;if(drag.moved){suppress=true;setTimeout(()=>suppress=false,0)}drag.el.classList.remove("dragging");drag=null});
+document.addEventListener("click",e=>{if(suppress){e.stopPropagation();e.preventDefault();suppress=false}},true);
+document.addEventListener("dragstart",e=>e.preventDefault());
+document.addEventListener("scroll",e=>{const t=e.target;if(!t.classList)return;
+  if(t.classList.contains("scr")){t.parentElement.classList.toggle("scrolled",t.scrollTop>6);linksSoon()}
+  if(t.id==="sx"){const sb=document.getElementById("sub");sb.classList.add("noanim");clearTimeout(sxT);sxT=setTimeout(()=>sb.classList.remove("noanim"),150)}
+  if(t.classList.contains("chips")){hints();linksSoon()}if(t.id==="sx")hints()},true);
+let sxT;
+
+$p.addEventListener("click",ev=>{
+  const c=s=>ev.target.closest(s);let el;
+  if(c("[data-exitfull]")){st.full=false;render({fade:true});return}
+  if(st.loading)return;
+  if(el=c("[data-todo]")){const ph=el.closest(".phone");ph.querySelectorAll(".toast").forEach(t=>t.remove());ph.insertAdjacentHTML("beforeend",`<div class="toast" role="status">${el.dataset.todo}</div>`);return}
+  if(el=c("[data-tab]")){const t=el.dataset.tab;if(st.flow===t&&st.screen===FLOWS[t][0])return;openFlow(t)}
+  else if(c("[data-report]"))openFlow("report","up");
+  else if(c("[data-close]")){openFlow(st.prevFlow==="report"||st.prevFlow==="start"?"feed":st.prevFlow)}
+  else if(c("[data-next]"))go("login",{stg:true});
+  else if(el=c("[data-authtab]")){const t=el.dataset.authtab;if(t!==st.screen)go(t,{dir:t==="register"?"fwd":"back",stg:true,reset:true})}
+  else if(el=c("[data-avatar]")){st.av=+el.dataset.avatar;render()}
+  else if(el=c("[data-avcolor]")){st.avc=+el.dataset.avcolor;render()}
+  else if(c("[data-login]"))openFlow("feed");
+  else if(c("[data-agree]")){st.agree=!st.agree;const b=c("[data-agree]");b.setAttribute("aria-pressed",st.agree)}
+  else if(el=c("[data-ev]")){if(st.flow!=="feed")subAnim=true;st.flow="feed";st.feedEv=el.dataset.ev;go("detail",{reset:true,stg:true})}
+  else if(el=c("[data-route]")){st.flow="routes";st.route=+el.dataset.route;st.rIdx=0;go("events",{reset:true,stg:true})}
+  else if(el=c("[data-rev]")){st.flow="routes";st.rIdx=+el.dataset.rev;go("detail",{reset:true,stg:true})}
+  else if(el=c("[data-back]")){const s=el.closest(".phone").dataset.screen;
+    go(s==="events"?"routes":s==="rconfirm"?"rtype":s==="register"?"login":(st.flow==="feed"?"feed":"events"),{dir:"back"})}
+  else if(c("[data-search]")){st.searchOpen=true;render();const i=$p.querySelector("#q");if(i)i.focus()}
+  else if(c("[data-searchclose]")){st.searchOpen=false;st.q="";render()}
+  else if(el=c("[data-f]")){st.filter=el.dataset.f;refreshFeed()}
+  else if(el=c("[data-area]")){st.area=el.dataset.area;refreshFeed()}
+  else if(c("[data-qx]")){st.q="";const i=$p.querySelector("#q");if(i){i.value="";i.focus()}refreshFeed()}
+  else if(c("[data-clear]")){st.q="";st.filter="vse";const i=$p.querySelector("#q");if(i)i.value="";refreshFeed()}
+  else if(el=c("[data-vote]")){const id=curEv();st.votes[id]=st.votes[id]===el.dataset.vote?undefined:el.dataset.vote;render()}
+  else if(el=c("[data-media]")){const k=el.closest(".phone").dataset.key,t0=el.parentElement.querySelector(".thumb"),pv=t0&&[t0.style.width,t0.style.height,t0.style.transform];
+    st.media[curEv()]=el.dataset.media;render();
+    const t1=$p.querySelector(`.phone[data-key="${k}"] .mtabs>.thumb`);if(pv&&t1){t1.style.transition="none";[t1.style.width,t1.style.height,t1.style.transform]=pv;void t1.offsetWidth;t1.style.transition="";placeThumbs()}}
+  else if(el=c("[data-rtype]")){if(st.rType!==el.dataset.rtype){st.rType=el.dataset.rtype;st.rPresets=[]}go("rconfirm",{stg:true,reset:true})}
+  else if(el=c("[data-preset]")){const x=el.dataset.preset;st.rPresets=st.rPresets.includes(x)?st.rPresets.filter(y=>y!==x):[...st.rPresets,x];el.setAttribute("aria-pressed",st.rPresets.includes(x))}
+  else if(c("[data-photo]")){st.rPhoto=true;render()}
+  else if(c("[data-photox]")){st.rPhoto=false;render()}
+  else if(c("[data-publish]")){const d=draft(),id="n"+(++nCount);delete d.id;EV[id]=d;st.lastReport=id;go("rdone",{stg:true,reset:true})}
+  else if(c("[data-tofeed]")){st.filter="vse";st.q="";st.searchOpen=false;openFlow("feed")}
+});
+$p.addEventListener("input",ev=>{
+  if(ev.target.matches("[data-q]")){st.q=ev.target.value;refreshFeed()}
+  if(ev.target.matches("[data-rnote]"))st.rNote=ev.target.value;
+});
+$p.addEventListener("keydown",ev=>{if(ev.target.matches("[data-q]")&&ev.key==="Enter")ev.target.blur()});
+document.getElementById("ideasview").addEventListener("click",ev=>{
+  const g=ev.target.closest("[data-goto]");if(g){const [f,s]=g.dataset.goto.split(":");st.view="proto";openFlow(f,"tab",s);scrollTo({top:0,behavior:reduce?"auto":"smooth"});return}
+  const c=ev.target.closest("[data-icat]");if(c){st.icat=c.dataset.icat;renderIdeas();return}
+  const t=ev.target.closest("[data-ist]");if(t){st.ist=t.dataset.ist;renderIdeas()}
+});
+document.getElementById("flowview").addEventListener("click",ev=>{
+  const n=ev.target.closest("[data-goto]");if(!n)return;
+  const [f,s]=n.dataset.goto.split(":");
+  st.view="proto";
+  openFlow(f,"tab",s);
+});
+document.getElementById("steps").addEventListener("click",ev=>{const b=ev.target.closest("[data-step]");if(!b||st.loading)return;const f=FLOWS[st.flow],to=b.dataset.step;if(to===st.screen)return;go(to,{dir:f.indexOf(to)>f.indexOf(st.screen)?"fwd":"back",stg:true})});
+document.getElementById("sect").addEventListener("click",ev=>{const b=ev.target.closest("[data-sect]");if(!b)return;if(b.classList.contains("soonb")){ptoast(b.dataset.tip);return}if(st.loading)return;const f=b.dataset.sect;if(f===st.flow)return;openFlow(f,"tab",null,false)});
+["sxbtn","sxbtnl"].forEach((id,k)=>document.getElementById(id).addEventListener("click",()=>{document.getElementById("sx").scrollBy({left:k?-180:180,behavior:reduce?"auto":"smooth"})}));
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
+document.querySelectorAll("[data-look]").forEach(b=>b.addEventListener("click",()=>{if(st.look===b.dataset.look)return;st.look=b.dataset.look;render({fade:true})}));
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{if(st.mode===b.dataset.mode)return;st.mode=b.dataset.mode;render({anim:{screen:st.screen,dir:"tab"}})}));
+document.getElementById("reload").addEventListener("click",reload);
+{const mac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);document.getElementById("kbh").innerHTML=`<kbd>←</kbd><kbd>→</kbd><span>obrazovky</span><kbd>${mac?"⌘":"Ctrl"} Z</kbd><span>zpět</span>`}
+document.getElementById("bptgl").addEventListener("click",e=>{st.bp=!st.bp;e.currentTarget.setAttribute("aria-pressed",st.bp);document.body.classList.toggle("bp",st.bp);hoverHot=null;linksSoon();
+  ptoast(st.bp?"Blueprint zapnutý: přerušované rámečky jdou proklikat, najetím zjistíte, kam vedou":"Blueprint vypnutý")});
+addEventListener("keydown",ev=>{
+  const lb=document.getElementById("lb");
+  if(lb){if(ev.key==="ArrowRight"||ev.key==="ArrowLeft"){ev.preventDefault();shotNav(ev.key==="ArrowRight"?1:-1)}else if(ev.key==="Escape")lb.remove();return}
+  const tg=ev.target;if(tg&&tg.matches&&tg.matches("input,textarea,select,[contenteditable]"))return;
+  if(st.view!=="proto"||st.loading)return;
+  if((ev.metaKey||ev.ctrlKey)&&!ev.shiftKey&&!ev.altKey&&ev.key.toLowerCase()==="z"){ev.preventDefault();undo();return}
+  if(ev.metaKey||ev.ctrlKey||ev.altKey)return;
+  if(ev.key==="ArrowRight"||ev.key==="ArrowLeft"){ev.preventDefault();stepKey(ev.key==="ArrowRight"?1:-1)}});
+document.getElementById("fullbtn").addEventListener("click",()=>{st.full=true;render({anim:{screen:st.screen,dir:"tab"}})});
+addEventListener("keydown",ev=>{if(ev.key==="Escape"&&st.full){st.full=false;render()}});
+addEventListener("resize",()=>{document.body.style.setProperty("--fz",fz());chrome();linksSoon()});
+if(document.fonts)document.fonts.ready.then(()=>{placeThumbs();hints()});
+function ptoast(m){const o=document.getElementById("ptoast");if(o)o.remove();document.body.insertAdjacentHTML("beforeend",`<div id="ptoast" role="status">${m}</div>`)}
+const tipEl=document.createElement("div");tipEl.id="tip";tipEl.setAttribute("aria-hidden","true");document.body.appendChild(tipEl);
+document.addEventListener("mouseover",e=>{
+  if(st.bp){const h=e.target.closest(".phone [data-hot]");if(h!==hoverHot){hoverHot=h;linksSoon()}}
+  const t=(st.bp&&e.target.closest(".phone [data-hinfo]"))||e.target.closest("[data-tip],[data-todo]");if(!t||matchMedia("(hover: none)").matches){tipEl.classList.remove("on");return}
+  const r=t.getBoundingClientRect();tipEl.textContent=(st.bp&&t.dataset.hinfo)||t.dataset.tip||t.dataset.todo;tipEl.style.left=(r.left+r.width/2)+"px";tipEl.style.top=(r.top-8)+"px";tipEl.classList.add("on")});
+document.addEventListener("pointerdown",()=>tipEl.classList.remove("on"));
+addEventListener("scroll",()=>tipEl.classList.remove("on"),true);
+reload();
+</script>
