@@ -1661,7 +1661,7 @@ document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",(
 document.querySelectorAll("[data-look]").forEach(b=>b.addEventListener("click",()=>{if(st.look===b.dataset.look)return;st.look=b.dataset.look;render({fade:true})}));
 document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{if(st.mode===b.dataset.mode)return;st.mode=b.dataset.mode;if(st.mode==="canvas")cv.init=false;render({anim:{screen:st.screen,dir:"tab"}})}));
 document.getElementById("reload").addEventListener("click",reload);
-{const mac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);document.getElementById("kbh").innerHTML=`<kbd>←</kbd><kbd>→</kbd><span>obrazovky</span><kbd>${mac?"⌘":"Ctrl"} Z</kbd><span>zpět</span>`}
+{const mac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);document.getElementById("kbh").innerHTML=`<kbd>←</kbd><kbd>→</kbd><span>obrazovky</span>`}
 document.getElementById("bptgl").addEventListener("click",e=>{st.bp=!st.bp;e.currentTarget.setAttribute("aria-pressed",st.bp);document.body.classList.toggle("bp",st.bp);hoverHot=null;linksSoon();
   ptoast(st.bp?"Klikací místa zapnutá: přerušované rámečky jdou proklikat, po najetí myší uvidíte, kam vedou":"Klikací místa vypnutá")});
 document.body.classList.add("noarr");
@@ -1671,7 +1671,6 @@ addEventListener("keydown",ev=>{
   if(lb){if(ev.key==="ArrowRight"||ev.key==="ArrowLeft"){ev.preventDefault();shotNav(ev.key==="ArrowRight"?1:-1)}else if(ev.key==="Escape")lb.remove();return}
   const tg=ev.target;if(tg&&tg.matches&&tg.matches("input,textarea,select,[contenteditable]"))return;
   if(st.view!=="proto"||st.loading)return;
-  if((ev.metaKey||ev.ctrlKey)&&!ev.shiftKey&&!ev.altKey&&ev.key.toLowerCase()==="z"){ev.preventDefault();undo();return}
   if(ev.metaKey||ev.ctrlKey||ev.altKey)return;
   const cvm=st.mode==="canvas"&&!st.full;
   if(cvm&&ev.key==="Escape"){fitCv(true);return}
