@@ -754,6 +754,14 @@ body.cmon #phones .phone .cmsel{outline:2px solid #2F6FD6!important;outline-offs
 .ivis .old .obt{display:flex;gap:6px}.ivis .old .obt span{flex:1;text-align:center;padding:5px 4px;border-radius:999px;background:#4CC36A;color:#fff;font-size:9.5px;font-weight:700}
 .ivis .old .obt .oo{background:#fff;border:1.5px solid #E2553D;color:#E2553D}
 .pstep{flex-direction:column;gap:9px}
+
+/* interakce v plátně při komentářích a klikacích místech */
+body.cvint .canvas .phone{pointer-events:auto}
+body.cvint .canvas .phone .scr{overflow:hidden}
+body.bp .cv.tiny .cvc:not(.on) .phone [data-hot]{outline:none}
+.canvas .cmpin{transform:scale(var(--pin,1));transform-origin:2px 100%}
+svg.cvl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible}
+.cvc.tgt .device{box-shadow:0 0 0 6px rgba(46,158,74,.45),0 24px 50px -24px rgba(20,30,25,.45)}
 </style>
 
 <div class="wrap">
@@ -1580,7 +1588,7 @@ function reload(){
 let drag=null,suppress=false;
 document.addEventListener("pointerdown",e=>{
   if(e.pointerType!=="mouse"||e.button!==0||e.target.closest("input,textarea"))return;
-  const el=e.target.closest(".chips,.sx,.boardwrap,.scr,.thumbs");if(!el)return;
+  if(e.target.closest("#cv"))return;const el=e.target.closest(".chips,.sx,.boardwrap,.scr,.thumbs");if(!el)return;
   drag={el,x:e.clientX,y:e.clientY,sl:el.scrollLeft,stp:el.scrollTop,moved:false,ax:el.matches(".scr")?"y":el.matches(".boardwrap")?"xy":"x"};
 });
 addEventListener("pointermove",e=>{
@@ -1601,6 +1609,7 @@ let sxT;
 
 $p.addEventListener("click",ev=>{
   const c=s=>ev.target.closest(s);let el;
+  if(st.mode==="canvas"&&!st.full&&c(".cvc .phone")){ev.preventDefault();return}
   if(el=c("[data-cvz]")){const v=document.getElementById("cv");zoomAt(+el.dataset.cvz>0?1.25:.8,v.clientWidth/2,v.clientHeight/2,true);return}
   if(c("[data-cvfit]")){fitCv(true);return}
   if(el=c("[data-cvstep]")){cvStep(+el.dataset.cvstep);return}
@@ -1662,7 +1671,8 @@ document.querySelectorAll("[data-look]").forEach(b=>b.addEventListener("click",(
 document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{if(st.mode===b.dataset.mode)return;st.mode=b.dataset.mode;if(st.mode==="canvas")cv.init=false;render({anim:{screen:st.screen,dir:"tab"}})}));
 document.getElementById("reload").addEventListener("click",reload);
 {const mac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);document.getElementById("kbh").innerHTML=`<kbd>←</kbd><kbd>→</kbd><span>obrazovky</span>`}
-document.getElementById("bptgl").addEventListener("click",e=>{st.bp=!st.bp;e.currentTarget.setAttribute("aria-pressed",st.bp);document.body.classList.toggle("bp",st.bp);hoverHot=null;linksSoon();
+function cvInt(){document.body.classList.toggle("cvint",!!(st.cm||st.bp));cvHover(null)}
+document.getElementById("bptgl").addEventListener("click",e=>{st.bp=!st.bp;e.currentTarget.setAttribute("aria-pressed",st.bp);document.body.classList.toggle("bp",st.bp);cvInt();hoverHot=null;linksSoon();
   ptoast(st.bp?"Klikací místa zapnutá: přerušované rámečky jdou proklikat, po najetí myší uvidíte, kam vedou":"Klikací místa vypnutá")});
 document.body.classList.add("noarr");
 document.getElementById("arrgl").addEventListener("click",e=>{st.links=!st.links;e.currentTarget.setAttribute("aria-pressed",st.links);document.body.classList.toggle("noarr",!st.links);if(st.links)linkAnim=true;scheduleLinks()});
@@ -1684,7 +1694,7 @@ if(document.fonts)document.fonts.ready.then(()=>{placeThumbs();hints()});
 function ptoast(m){const o=document.getElementById("ptoast");if(o)o.remove();document.body.insertAdjacentHTML("beforeend",`<div id="ptoast" role="status">${m}</div>`)}
 const tipEl=document.createElement("div");tipEl.id="tip";tipEl.setAttribute("aria-hidden","true");document.body.appendChild(tipEl);
 document.addEventListener("mouseover",e=>{
-  if(st.bp){const h=e.target.closest(".phone [data-hot]");if(h!==hoverHot){hoverHot=h;linksSoon()}}
+  if(st.bp){const h=e.target.closest(".phone [data-hot]");if(h!==hoverHot){hoverHot=h;linksSoon()}if(st.mode==="canvas"&&!(cvDrag&&cvDrag.moved))cvHover(h&&h.closest(".cvc")?h:null)}
   const t=(st.bp&&e.target.closest(".phone [data-hinfo]"))||e.target.closest("[data-tip],[data-todo]");if(!t||matchMedia("(hover: none)").matches){tipEl.classList.remove("on");return}
   const r=t.getBoundingClientRect();tipEl.textContent=(st.bp&&t.dataset.hinfo)||t.dataset.tip||t.dataset.todo;const tw=Math.min(tipEl.offsetWidth,innerWidth-16);tipEl.style.left=Math.max(8+tw/2,Math.min(innerWidth-8-tw/2,r.left+r.width/2))+"px";const below=r.top<tipEl.offsetHeight+16;tipEl.classList.toggle("below",below);tipEl.style.top=(below?r.bottom+8:r.top-8)+"px";tipEl.classList.add("on")});
 document.addEventListener("pointerdown",()=>tipEl.classList.remove("on"));
@@ -1710,7 +1720,7 @@ function renderCanvas(){
 function cvSize(){const v=document.getElementById("cv");if(!v)return;if(!matchMedia("(pointer: fine)").matches||innerWidth<700){v.style.height="";return}
   v.style.height=Math.max(460,innerHeight-(v.getBoundingClientRect().top+scrollY)-16)+"px"}
 function applyCv(anim){const w=document.getElementById("cvw");if(!w)return;w.classList.toggle("anim",!!anim&&!reduce);
-  w.style.transform=`translate(${cv.x}px,${cv.y}px) scale(${cv.z})`;w.style.setProperty("--ls",Math.max(1,.56/cv.z));w.style.setProperty("--hs",Math.max(1,.42/cv.z));const p=document.getElementById("cvp");if(p)p.textContent=Math.round(cv.z*100)+" %";
+  w.style.transform=`translate(${cv.x}px,${cv.y}px) scale(${cv.z})`;w.style.setProperty("--ls",Math.max(1,.56/cv.z));w.style.setProperty("--hs",Math.max(1,.42/cv.z));w.style.setProperty("--pin",1/cv.z);const vv=document.getElementById("cv");if(vv)vv.classList.toggle("tiny",cv.z<.4);if(cvHov)cvHover(cvHov);const p=document.getElementById("cvp");if(p)p.textContent=Math.round(cv.z*100)+" %";
   document.querySelectorAll(".cvc").forEach(c=>c.classList.toggle("on",+c.dataset.ci===cv.focus))}
 function zoomAt(f,px,py,anim){const nz=Math.max(.12,Math.min(2.4,cv.z*f));cv.x=px-(px-cv.x)*nz/cv.z;cv.y=py-(py-cv.y)*nz/cv.z;cv.z=nz;applyCv(anim)}
 function fitCv(anim){const v=document.getElementById("cv"),w=document.getElementById("cvw");if(!v||!w)return;
@@ -1734,16 +1744,16 @@ function cvBar(){const v=document.getElementById("cv"),b=document.getElementById
 addEventListener("scroll",cvBar,{passive:true});addEventListener("resize",cvBar);
 function cvPos(e){const r=document.getElementById("cv").getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
 $p.addEventListener("pointerdown",e=>{const v=e.target.closest("#cv");if(!v||e.target.closest(".cvz,.cvfoc"))return;if(!cvDrag)cvPtr.clear();
-  cvPtr.set(e.pointerId,[e.clientX,e.clientY]);v.setPointerCapture(e.pointerId);
+  cvPtr.set(e.pointerId,[e.clientX,e.clientY]);
   if(cvPtr.size===1)cvDrag={x:e.clientX,y:e.clientY,ox:cv.x,oy:cv.y,moved:false,t:e.target};
   else{const [a,b]=[...cvPtr.values()];cvDrag={pinch:Math.hypot(a[0]-b[0],a[1]-b[1]),z:cv.z,moved:true}}});
 $p.addEventListener("pointermove",e=>{if(!cvDrag||!cvPtr.has(e.pointerId))return;cvPtr.set(e.pointerId,[e.clientX,e.clientY]);
   if(cvPtr.size>=2&&cvDrag.pinch){const [a,b]=[...cvPtr.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]),r=document.getElementById("cv").getBoundingClientRect();
     zoomAt(cvDrag.z*d/cvDrag.pinch/cv.z,(a[0]+b[0])/2-r.left,(a[1]+b[1])/2-r.top,false);return}
   const dx=e.clientX-cvDrag.x,dy=e.clientY-cvDrag.y;if(!cvDrag.moved&&Math.hypot(dx,dy)<5)return;
-  cvDrag.moved=true;document.getElementById("cv").classList.add("grab");cv.x=cvDrag.ox+dx;cv.y=cvDrag.oy+dy;applyCv(false)});
+  if(!cvDrag.moved){const v=document.getElementById("cv");try{v.setPointerCapture(e.pointerId)}catch(x){}cvHover(null)}cvDrag.moved=true;document.getElementById("cv").classList.add("grab");cv.x=cvDrag.ox+dx;cv.y=cvDrag.oy+dy;applyCv(false)});
 function cvUp(e){if(!cvPtr.has(e.pointerId))return;cvPtr.delete(e.pointerId);const v=document.getElementById("cv");if(v)v.classList.remove("grab");
-  if(cvDrag&&!cvDrag.moved&&cvPtr.size===0){const c=cvDrag.t.closest(".cvc");const ar=cvDrag.t.closest(".cvar");if(ar){focusCv(+ar.dataset.cvto)}else if(c){const i=+c.dataset.ci;if(i!==cv.focus)focusCv(i)}}
+  if(cvDrag&&!cvDrag.moved&&cvPtr.size===0){const c=st.cm&&cvDrag.t.closest(".phone")&&!cvDrag.t.closest(".cvn")?null:cvDrag.t.closest(".cvc");const ar=cvDrag.t.closest(".cvar");if(ar){focusCv(+ar.dataset.cvto)}else if(c){const i=+c.dataset.ci;if(i!==cv.focus)focusCv(i)}}
   if(cvPtr.size===0)cvDrag=null}
 $p.addEventListener("pointerup",cvUp);$p.addEventListener("lostpointercapture",e=>{if(cvPtr.has(e.pointerId))cvUp(e)});$p.addEventListener("pointercancel",cvUp);
 $p.addEventListener("wheel",e=>{if(!e.target.closest("#cv"))return;e.preventDefault();
@@ -1762,7 +1772,7 @@ function cmPick(t,ph){let el=t.closest(CMSEL);if(!el||!ph.contains(el)||el===ph)
 const cmAgo=ts=>{const m=Math.round((Date.now()-ts)/60000);return m<1?"právě teď":m<60?`před ${m} min`:m<1440?`před ${Math.round(m/60)} h`:new Date(ts).toLocaleDateString("cs-CZ")};
 const cmInit=n=>(n||"?").trim().charAt(0).toUpperCase()||"?";
 function cmCount(){const n=CMT.filter(c=>!c.done).length,b=document.getElementById("cmgl");if(b)b.querySelector("i").textContent=n||""}
-function cmPins(){$p.querySelectorAll(".cmpin").forEach(x=>x.remove());if(!st.cm||st.mode==="canvas")return;
+function cmPins(){$p.querySelectorAll(".cmpin").forEach(x=>x.remove());if(!st.cm)return;
   $p.querySelectorAll(".phone").forEach(ph=>{const pr=ph.getBoundingClientRect(),sc=pr.width/ph.offsetWidth||1,scr=ph.querySelector(".scr").getBoundingClientRect();
     CMT.forEach((c,i)=>{if(c.done||c.key!==ph.dataset.key)return;const el=cmFind(ph,c.path);if(!el)return;const r=el.getBoundingClientRect();
       const x=r.left+c.rx*r.width,y=r.top+c.ry*r.height,inScr=el.closest(".scr");if(inScr&&(y<scr.top+4||y>scr.bottom-4))return;
@@ -1796,13 +1806,25 @@ document.addEventListener("click",e=>{
   if(!st.cm){if(pop)cmClose();return}
   const pin=e.target.closest(".cmpin");if(pin){e.preventDefault();e.stopPropagation();cmThread(pin.dataset.cmid,pin);return}
   const ph=e.target.closest("#phones .phone");if(pop&&!ph)cmClose();
-  if(!ph||st.mode==="canvas")return;
+  if(!ph)return;
   const el=cmPick(e.target,ph);if(!el)return;e.preventDefault();e.stopPropagation();cmCompose(ph,el,e)},true);
-document.addEventListener("mouseover",e=>{if(!st.cm||st.mode==="canvas")return;const ph=e.target.closest("#phones .phone");const el=ph&&!e.target.closest(".cmpin")?cmPick(e.target,ph):null;
+document.addEventListener("mouseover",e=>{if(!st.cm||cvDrag&&cvDrag.moved)return;const ph=e.target.closest("#phones .phone");const el=ph&&!e.target.closest(".cmpin")?cmPick(e.target,ph):null;
   if(el!==cmHover){if(cmHover)cmHover.classList.remove("cmh");cmHover=el;if(el)el.classList.add("cmh")}});
 addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("cmpop")){cmClose();e.stopImmediatePropagation()}},true);
-document.getElementById("cmgl").addEventListener("click",e=>{st.cm=!st.cm;e.currentTarget.setAttribute("aria-pressed",st.cm);document.body.classList.toggle("cmon",st.cm);if(!st.cm){cmClose();if(cmHover){cmHover.classList.remove("cmh");cmHover=null}}
-  cmPins();ptoast(st.cm?(st.mode==="canvas"?"Komentáře: přepněte na Vedle sebe nebo Proklik a klikněte na místo, ke kterému chcete napsat poznámku":"Komentáře zapnuté: klikněte na místo v obrazovce a napište poznámku"):"Komentáře vypnuté")});
+document.getElementById("cmgl").addEventListener("click",e=>{st.cm=!st.cm;e.currentTarget.setAttribute("aria-pressed",st.cm);document.body.classList.toggle("cmon",st.cm);cvInt();if(!st.cm){cmClose();if(cmHover){cmHover.classList.remove("cmh");cmHover=null}}
+  cmPins();ptoast(st.cm?"Komentáře zapnuté: klikněte na místo v obrazovce a napište poznámku":"Komentáře vypnuté")});
 cmCount();
+
+/* šipka z klikacího místa na cílovou obrazovku v plátně */
+let cvHov=null;
+function cvHover(h){cvHov=h;document.querySelectorAll(".cvc.tgt").forEach(c=>c.classList.remove("tgt"));const v=document.getElementById("cv");if(!v)return;let svg=v.querySelector("svg.cvl");
+  if(!h||!st.bp||!document.body.contains(h)){if(svg)svg.innerHTML="";cvHov=null;return}
+  const t=h.dataset.hot,row=h.closest(".cvrow"),own=h.closest(".cvc"),tc=t&&t!=="todo"&&row?[...row.querySelectorAll(".cvc")].find(c=>c!==own&&c.querySelector(`.phone[data-screen="${t}"]`)):null;
+  if(!svg){v.insertAdjacentHTML("beforeend",'<svg class="cvl" aria-hidden="true"></svg>');svg=v.querySelector("svg.cvl")}
+  if(!tc){svg.innerHTML="";return}
+  const b=v.getBoundingClientRect(),er=h.getBoundingClientRect(),tr=tc.querySelector(".device").getBoundingClientRect(),fw=tr.left>=er.right;
+  const sx=(fw?er.right:er.left)-b.left,sy=er.top+er.height/2-b.top,ex=(fw?tr.left:tr.right)-b.left,ey=Math.max(tr.top+40,Math.min(tr.bottom-40,er.top+er.height/2))-b.top,dx=Math.max(30,Math.abs(ex-sx)*.5)*(fw?1:-1);
+  svg.innerHTML=`<defs><marker id="cvah" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="userSpaceOnUse"><path d="M2,1.5 L8,5 L2,8.5" fill="none" stroke="#2E9E4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><path d="M${sx},${sy} C${sx+dx},${sy} ${ex-dx},${ey} ${ex},${ey}" fill="none" stroke="#2E9E4A" stroke-width="2" stroke-linecap="round" marker-end="url(#cvah)"/><circle cx="${sx}" cy="${sy}" r="3.5" fill="#2E9E4A"/>`;
+  tc.classList.add("tgt")}
 reload();
 </script>
