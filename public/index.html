@@ -18,11 +18,11 @@
 *{box-sizing:border-box}
 html{scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#C2CAC5 transparent}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);margin:0;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
-.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
-.brand{display:flex;gap:14px;align-items:flex-start}
-.brand h1{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:0}
-.brand p{margin:4px 0 0;color:var(--mute);font-size:13px;line-height:1.5}
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 48px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.brand{display:flex;gap:12px;align-items:center}
+.brand h1{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0}
+.brand p{margin:2px 0 0;color:var(--mute);font-size:12.5px;line-height:1.45}
 .ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .noselect,.bar,.phones,.flowv{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .phone input,.phone textarea{-webkit-user-select:text;user-select:text}
@@ -659,23 +659,23 @@ body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(46,158,
 .cv{position:relative;height:min(calc(100dvh - 150px),720px);min-height:460px;border-radius:22px;overflow:hidden;border:1px solid var(--line);cursor:grab;touch-action:none;
   background:radial-gradient(#CDD5D0 1px,transparent 1.3px) 0 0/22px 22px,#F4F6F5}
 .cv.grab{cursor:grabbing}
-.cvw{position:absolute;left:0;top:0;transform-origin:0 0;display:grid;grid-template-columns:max-content;gap:130px 220px;align-items:start;padding:24px 40px 40px;will-change:transform}
+.cvw{position:absolute;left:0;top:0;transform-origin:0 0;display:grid;grid-template-columns:max-content;gap:130px 220px;align-items:start;padding:120px 40px 40px;will-change:transform}
 .cvw.c2{grid-template-columns:repeat(2,max-content)}.cvw.anim{transition:transform .6s cubic-bezier(.2,.8,.2,1)}
-.cvrow{display:flex;flex-direction:column;gap:26px}
-.cvh{margin:0;display:flex;align-items:baseline;gap:14px;font:800 40px/1 var(--sans);letter-spacing:-.02em;color:var(--fg)}
+.cvrow{display:flex;flex-direction:column;gap:70px}
+.cvh{transform-origin:0 100%;transform:scale(var(--hs,1));white-space:nowrap;margin:0;display:flex;align-items:baseline;gap:14px;font:800 40px/1 var(--sans);letter-spacing:-.02em;color:var(--fg)}
 .cvh small{font:600 18px/1 var(--sans);color:var(--mute);letter-spacing:0}
 .cvcells{display:flex;align-items:flex-end}
 .cvc{position:relative;display:flex;flex-direction:column;gap:16px;cursor:zoom-in}
 .cvc.on{cursor:pointer}
-.cvn{display:flex;align-items:center;gap:10px;font:700 19px/1 var(--sans);color:var(--mute)}
-.cvn i{font-style:normal;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid var(--line);font-size:14px;color:var(--fg)}
+.cvn{transform-origin:0 100%;transform:scale(var(--ls,1));width:calc(450px / var(--ls,1));white-space:nowrap;display:flex;align-items:center;gap:10px;font:700 19px/1 var(--sans);color:var(--mute)}
+.cvn i{font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid var(--line);font-size:14px;color:var(--fg)}
 .cvc.on .cvn{color:var(--fg)}.cvc.on .cvn i{background:var(--brand);border-color:var(--brand);color:#fff}
 .cvc .device{transition:box-shadow .25s}
 .cvc:hover .device{box-shadow:0 0 0 6px rgba(46,158,74,.22),0 24px 50px -24px rgba(20,30,25,.45)}
 .cvc.on .device{box-shadow:0 0 0 6px var(--brand),0 30px 60px -24px rgba(20,30,25,.5)}
 .canvas .phone{pointer-events:none}
-.cvar{position:relative;flex:none;width:96px;height:2px;margin:0 10px 300px;background:var(--conn);border-radius:2px}
-.cvar::after{content:"";position:absolute;right:-1px;top:50%;width:10px;height:10px;border-top:2px solid var(--conn);border-right:2px solid var(--conn);transform:translateY(-50%) rotate(45deg);border-radius:1px}
+.cvar{position:relative;flex:none;width:130px;height:3px;margin:0 10px 300px;background:var(--brand);border-radius:2px;cursor:pointer;transition:transform .2s}.cvar::before{content:"";position:absolute;inset:-22px -6px}.cvar:hover{transform:scaleY(1.6)}
+.cvar::after{content:"";position:absolute;right:-1px;top:50%;width:10px;height:10px;border-top:3px solid var(--brand);border-right:3px solid var(--brand);transform:translateY(-50%) rotate(45deg);border-radius:1px}
 body.noarr .cvar{visibility:hidden}
 .cvz{position:absolute;right:12px;top:12px;z-index:3;display:flex;align-items:center;gap:2px;padding:4px;border-radius:14px;background:#fff;box-shadow:0 8px 22px -12px rgba(20,30,25,.35),0 0 0 1px rgba(20,30,25,.05)}
 .cvz button{height:32px;min-width:32px;padding:0 8px;border:0;background:none;border-radius:10px;display:grid;place-items:center;font:600 12.5px/1 var(--sans);color:var(--fg);cursor:pointer}
@@ -694,11 +694,13 @@ body.noarr .cvar{visibility:hidden}
 @media (max-width:699px){.cv{height:72dvh;min-height:460px}.cvo span{display:none}.cvo{width:36px;padding:0;justify-content:center}}
 @media (max-width:699px){.labrow{gap:8px 16px}.labrow .lab{flex-basis:100%}.labrow .kbh{display:none}.labrow .bpt{padding-left:4px}}
 .cvfoc.fx{position:fixed;bottom:16px}
+.cvb[data-cvstep="1"]{background:var(--brand);color:#fff}.cvb[data-cvstep="1"]:hover{background:#278A40}
+.cvn{overflow:hidden}.cvn i{flex:none}.cvn span{overflow:hidden;text-overflow:ellipsis}
 </style>
 
 <div class="wrap">
   <header class="brand">
-    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="tlogo" x="0" y="0" width="57.52" height="57.52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="1.59"/><feGaussianBlur stdDeviation="2.38"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter></defs></svg><span class="logo" style="--s:44px"><svg viewBox="0 0 58 58" fill="none" aria-hidden="true"><g filter="url(#tlogo)"><rect x="4.76" y="3.17" width="48" height="48" rx="11.5" fill="#fff"/><circle cx="28.76" cy="18.08" r="5.82" fill="#E53935"/><circle cx="28.76" cy="27.61" r="5.82" fill="#F9A825"/><circle cx="28.76" cy="36.27" r="5.82" fill="#34A853"/></g></svg></span>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="tlogo" x="0" y="0" width="57.52" height="57.52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="1.59"/><feGaussianBlur stdDeviation="2.38"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter></defs></svg><span class="logo" style="--s:34px"><svg viewBox="0 0 58 58" fill="none" aria-hidden="true"><g filter="url(#tlogo)"><rect x="4.76" y="3.17" width="48" height="48" rx="11.5" fill="#fff"/><circle cx="28.76" cy="18.08" r="5.82" fill="#E53935"/><circle cx="28.76" cy="27.61" r="5.82" fill="#F9A825"/><circle cx="28.76" cy="36.27" r="5.82" fill="#34A853"/></g></svg></span>
     <div><h1>Treffik</h1><p>Návrh redesignu aplikace: analýza současného stavu, cesta uživatele, proklikávací prototyp a nápady k rozhodnutí.</p></div>
   </header>
 
@@ -717,7 +719,7 @@ body.noarr .cvar{visibility:hidden}
     </div>
     <div class="secwrap po">
       <div class="labrow"><span class="lab">Sekce a obrazovky</span><span class="kbh" id="kbh"></span>
-        <span class="tgls"><button type="button" class="bpt" id="arrgl" aria-pressed="true" data-tip="Šipky ukazují, kam vede klepnutí z jedné obrazovky na další"><span class="sw"></span>Šipky</button>
+        <span class="tgls"><button type="button" class="bpt" id="arrgl" aria-pressed="false" data-tip="Šipky ukazují, kam vede klepnutí z jedné obrazovky na další"><span class="sw"></span>Šipky</button>
         <button type="button" class="bpt" id="bptgl" aria-pressed="false" data-tip="Zvýrazní místa, na která jde klepnout. Po najetí myší popíše, kam vedou"><span class="sw"></span>Klikací místa</button></span></div>
       <div class="secbox">
         <div class="sxw" id="sxw"><div class="sx" id="sx"><div class="seg" id="sect" role="group" aria-label="Sekce aplikace"><span class="thumb"></span></div></div>
@@ -871,7 +873,7 @@ const ROUTES=[
 const FLOWS={start:["splash","login","register"],feed:["feed","detail"],routes:["routes","events","detail"],report:["rtype","rconfirm","rdone"]};
 const NAMES={splash:"Načítání",login:"Přihlášení",register:"Registrace",feed:"Doprava",detail:"Detail události",routes:"Moje cesty",events:"Události na trase",rtype:"Co se děje",rconfirm:"Kontrola",rdone:"Hotovo"};
 
-const st={links:true,anTab:"sum",icat:"vse",ist:"vse",av:0,avc:0,view:"proto",look:"wf",mode:matchMedia("(max-width: 699px)").matches?"one":"all",full:false,flow:"feed",screen:"feed",feedEv:"e2",route:1,rIdx:0,
+const st={links:false,anTab:"sum",icat:"vse",ist:"vse",av:0,avc:0,view:"proto",look:"wf",mode:matchMedia("(max-width: 699px)").matches?"one":"all",full:false,flow:"feed",screen:"feed",feedEv:"e2",route:1,rIdx:0,
   area:"okoli",filter:"vse",q:"",searchOpen:false,loading:false,splash:false,votes:{},media:{},agree:false,
   rType:"kolona",rPresets:[],rNote:"",rPhoto:false,lastReport:null,prevFlow:"feed"};
 let nCount=0,subAnim=true,lastView=null,poAnims=[];
@@ -1533,7 +1535,6 @@ $p.addEventListener("click",ev=>{
   if(el=c("[data-cvz]")){const v=document.getElementById("cv");zoomAt(+el.dataset.cvz>0?1.25:.8,v.clientWidth/2,v.clientHeight/2,true);return}
   if(c("[data-cvfit]")){fitCv(true);return}
   if(el=c("[data-cvstep]")){cvStep(+el.dataset.cvstep);return}
-  if(c("[data-cvopen]")){openCv();return}
   if(c("[data-exitfull]")){st.full=false;render({fade:true});return}
   if(st.loading)return;
   if(el=c("[data-todo]")){const ph=el.closest(".phone");ph.querySelectorAll(".toast").forEach(t=>t.remove());ph.insertAdjacentHTML("beforeend",`<div class="toast" role="status">${el.dataset.todo}</div>`);return}
@@ -1594,6 +1595,7 @@ document.getElementById("reload").addEventListener("click",reload);
 {const mac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);document.getElementById("kbh").innerHTML=`<kbd>←</kbd><kbd>→</kbd><span>obrazovky</span><kbd>${mac?"⌘":"Ctrl"} Z</kbd><span>zpět</span>`}
 document.getElementById("bptgl").addEventListener("click",e=>{st.bp=!st.bp;e.currentTarget.setAttribute("aria-pressed",st.bp);document.body.classList.toggle("bp",st.bp);hoverHot=null;linksSoon();
   ptoast(st.bp?"Klikací místa zapnutá: přerušované rámečky jdou proklikat, po najetí myší uvidíte, kam vedou":"Klikací místa vypnutá")});
+document.body.classList.add("noarr");
 document.getElementById("arrgl").addEventListener("click",e=>{st.links=!st.links;e.currentTarget.setAttribute("aria-pressed",st.links);document.body.classList.toggle("noarr",!st.links);if(st.links)linkAnim=true;scheduleLinks()});
 addEventListener("keydown",ev=>{
   const lb=document.getElementById("lb");
@@ -1606,7 +1608,6 @@ addEventListener("keydown",ev=>{
   if(cvm&&ev.key==="Escape"){fitCv(true);return}
   if(cvm&&(ev.key==="+"||ev.key==="=")){const v=document.getElementById("cv");zoomAt(1.25,v.clientWidth/2,v.clientHeight/2,true);return}
   if(cvm&&ev.key==="-"){const v=document.getElementById("cv");zoomAt(.8,v.clientWidth/2,v.clientHeight/2,true);return}
-  if(cvm&&ev.key==="Enter"&&cv.focus>=0){openCv();return}
   if(ev.key==="ArrowRight"||ev.key==="ArrowLeft"){ev.preventDefault();const d=ev.key==="ArrowRight"?1:-1;if(cvm)cvStep(d);else stepKey(d)}});
 document.getElementById("fullbtn").addEventListener("click",()=>{st.full=true;render({anim:{screen:st.screen,dir:"tab"}})});
 addEventListener("keydown",ev=>{if(ev.key==="Escape"&&st.full){st.full=false;render()}});
@@ -1626,14 +1627,14 @@ const CVL=()=>ORDER.flatMap(f=>FLOWS[f].map(s=>[f,s]));
 function renderCanvas(){
   const keep=st.flow;let i=0;
   const rows=ORDER.map(f=>{st.flow=f;
-    const cells=FLOWS[f].map((s,j)=>`${j?'<span class="cvar" aria-hidden="true"></span>':""}<div class="cvc" data-ci="${i++}"><span class="cvn"><i>${j+1}</i>${NAMES[s]}</span>${phoneHTML(s)}</div>`).join("");
+    const cells=FLOWS[f].map((s,j)=>`${j?`<span class="cvar" data-cvto="${i}" data-tip="Další obrazovka: ${NAMES[s]}"></span>`:""}<div class="cvc" data-ci="${i++}"><span class="cvn"><i>${j+1}</i><span>${NAMES[s]}</span></span>${phoneHTML(s)}</div>`).join("");
     return `<section class="cvrow"><h3 class="cvh">${SECNAME[f]}<small>${FLOWS[f].length} obrazovky</small></h3><div class="cvcells">${cells}</div></section>`}).join("");
   st.flow=keep;
   $p.className="phones po canvas";
   $p.innerHTML=`<div class="cv" id="cv"><div class="cvw ${$p.clientWidth>=760?"c2":""}" id="cvw">${rows}</div>
     <div class="cvz" role="group" aria-label="Zoom"><button type="button" data-cvz="-1" aria-label="Oddálit">${ic("minus")}</button><span id="cvp"></span><button type="button" data-cvz="1" aria-label="Přiblížit">${ic("plus")}</button><button type="button" class="cvall" data-cvfit>Vše</button></div>
     <div class="cvfoc" id="cvfoc"></div></div>`;
-  $p.querySelectorAll(".phone").forEach(ph=>{const sc=ph.querySelector(".scr");sc.scrollTop=0});cvSize();
+  $p.querySelectorAll(".phone").forEach(ph=>{const sc=ph.querySelector(".scr");sc.scrollTop=0});cvPtr.clear();cvDrag=null;cvSize();
   if(!cv.init){cv.init=true;requestAnimationFrame(()=>fitCv(false))}
   if(cvNav){cvNav=false;const k=CVL().findIndex(([f,s])=>f===st.flow&&s===st.screen);if(k>=0)requestAnimationFrame(()=>focusCv(k))}
   applyCv(false);updateFoc();
@@ -1641,7 +1642,7 @@ function renderCanvas(){
 function cvSize(){const v=document.getElementById("cv");if(!v)return;if(!matchMedia("(pointer: fine)").matches||innerWidth<700){v.style.height="";return}
   v.style.height=Math.max(460,innerHeight-(v.getBoundingClientRect().top+scrollY)-16)+"px"}
 function applyCv(anim){const w=document.getElementById("cvw");if(!w)return;w.classList.toggle("anim",!!anim&&!reduce);
-  w.style.transform=`translate(${cv.x}px,${cv.y}px) scale(${cv.z})`;const p=document.getElementById("cvp");if(p)p.textContent=Math.round(cv.z*100)+" %";
+  w.style.transform=`translate(${cv.x}px,${cv.y}px) scale(${cv.z})`;w.style.setProperty("--ls",Math.max(1,.56/cv.z));w.style.setProperty("--hs",Math.max(1,.42/cv.z));const p=document.getElementById("cvp");if(p)p.textContent=Math.round(cv.z*100)+" %";
   document.querySelectorAll(".cvc").forEach(c=>c.classList.toggle("on",+c.dataset.ci===cv.focus))}
 function zoomAt(f,px,py,anim){const nz=Math.max(.12,Math.min(2.4,cv.z*f));cv.x=px-(px-cv.x)*nz/cv.z;cv.y=py-(py-cv.y)*nz/cv.z;cv.z=nz;applyCv(anim)}
 function fitCv(anim){const v=document.getElementById("cv"),w=document.getElementById("cvw");if(!v||!w)return;
@@ -1655,17 +1656,16 @@ function focusCv(i,anim=true){const c=document.querySelector(`.cvc[data-ci="${i}
   applyCv(anim);updateFoc()}
 function cvStep(d){const n=CVL().length;focusCv(cv.focus<0?(d>0?0:n-1):(cv.focus+d+n)%n)}
 function updateFoc(){const b=document.getElementById("cvfoc");if(!b)return;requestAnimationFrame(cvBar);
-  if(cv.focus<0){b.className="cvfoc hint";b.innerHTML=`<span>${matchMedia("(hover: none)").matches?"Posun prstem, zoom dvěma prsty, klepnutím obrazovku přiblížíte":"Táhněte pro posun · ⌘ / Ctrl + kolečko nebo gesto pro zoom · kliknutím obrazovku přiblížíte"}</span>`;return}
+  if(cv.focus<0){b.className="cvfoc hint";b.innerHTML=`<span>${matchMedia("(hover: none)").matches?"Posun prstem, zoom dvěma prsty, klepnutím obrazovku přiblížíte":"Táhněte pro posun · kolečko myši nebo gesto pro zoom · kliknutím obrazovku přiblížíte, šipkou → přejdete na další"}</span>`;return}
   const L=CVL(),[f,s]=L[cv.focus];b.className="cvfoc";
   b.innerHTML=`<button type="button" class="cvb" data-cvstep="-1" aria-label="Předchozí obrazovka">${ic("left")}</button>
     <span class="cvt"><b>${NAMES[s]}</b><small>${SECNAME[f]} · ${cv.focus+1} / ${L.length}</small></span>
     <button type="button" class="cvb" data-cvstep="1" aria-label="Další obrazovka">${ic("right")}</button>
-    <button type="button" class="cvo" data-cvopen>${ic("pointer")}<span>Proklikat</span></button>
     <button type="button" class="cvb" data-cvfit aria-label="Zpět na celé plátno">${ic("x")}</button>`}
 function cvBar(){const v=document.getElementById("cv"),b=document.getElementById("cvfoc");if(!v||!b)return;const r=v.getBoundingClientRect(),fx=innerWidth>=700&&r.bottom>innerHeight+2&&r.top<innerHeight-160;b.classList.toggle("fx",fx);b.style.left=fx?(r.left+r.width/2)+"px":""}
 addEventListener("scroll",cvBar,{passive:true});addEventListener("resize",cvBar);
 function cvPos(e){const r=document.getElementById("cv").getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
-$p.addEventListener("pointerdown",e=>{const v=e.target.closest("#cv");if(!v||e.target.closest(".cvz,.cvfoc"))return;
+$p.addEventListener("pointerdown",e=>{const v=e.target.closest("#cv");if(!v||e.target.closest(".cvz,.cvfoc"))return;if(!cvDrag)cvPtr.clear();
   cvPtr.set(e.pointerId,[e.clientX,e.clientY]);v.setPointerCapture(e.pointerId);
   if(cvPtr.size===1)cvDrag={x:e.clientX,y:e.clientY,ox:cv.x,oy:cv.y,moved:false,t:e.target};
   else{const [a,b]=[...cvPtr.values()];cvDrag={pinch:Math.hypot(a[0]-b[0],a[1]-b[1]),z:cv.z,moved:true}}});
@@ -1675,11 +1675,12 @@ $p.addEventListener("pointermove",e=>{if(!cvDrag||!cvPtr.has(e.pointerId))return
   const dx=e.clientX-cvDrag.x,dy=e.clientY-cvDrag.y;if(!cvDrag.moved&&Math.hypot(dx,dy)<5)return;
   cvDrag.moved=true;document.getElementById("cv").classList.add("grab");cv.x=cvDrag.ox+dx;cv.y=cvDrag.oy+dy;applyCv(false)});
 function cvUp(e){if(!cvPtr.has(e.pointerId))return;cvPtr.delete(e.pointerId);const v=document.getElementById("cv");if(v)v.classList.remove("grab");
-  if(cvDrag&&!cvDrag.moved&&cvPtr.size===0){const c=cvDrag.t.closest(".cvc");if(c){const i=+c.dataset.ci;if(i===cv.focus)openCv();else focusCv(i)}}
+  if(cvDrag&&!cvDrag.moved&&cvPtr.size===0){const c=cvDrag.t.closest(".cvc");const ar=cvDrag.t.closest(".cvar");if(ar){focusCv(+ar.dataset.cvto)}else if(c){const i=+c.dataset.ci;if(i!==cv.focus)focusCv(i)}}
   if(cvPtr.size===0)cvDrag=null}
-$p.addEventListener("pointerup",cvUp);$p.addEventListener("pointercancel",cvUp);
+$p.addEventListener("pointerup",cvUp);$p.addEventListener("lostpointercapture",e=>{if(cvPtr.has(e.pointerId))cvUp(e)});$p.addEventListener("pointercancel",cvUp);
 $p.addEventListener("wheel",e=>{if(!e.target.closest("#cv"))return;e.preventDefault();
-  if(e.ctrlKey||e.metaKey){const [x,y]=cvPos(e);zoomAt(Math.exp(-e.deltaY*.01),x,y,false)}else{cv.x-=e.deltaX;cv.y-=e.deltaY;applyCv(false)}},{passive:false});
+  const mouse=!e.ctrlKey&&!e.metaKey&&e.deltaX===0&&(e.deltaMode===1||(Math.abs(e.deltaY)>=50&&Number.isInteger(e.deltaY)));
+  if(e.ctrlKey||e.metaKey||mouse){const [x,y]=cvPos(e);zoomAt(Math.exp(-Math.max(-60,Math.min(60,e.deltaMode===1?e.deltaY*20:e.deltaY))*(mouse?.004:.01)),x,y,false)}else{cv.x-=e.deltaX;cv.y-=e.deltaY;applyCv(false)}},{passive:false});
 function openCv(){const [f,s]=CVL()[cv.focus<0?0:cv.focus];st.mode="one";if(st.flow!==f)subAnim=true;st.flow=f;go(s,{dir:"tab",stg:true,reset:true})}
 if(thumbRO)document.querySelectorAll(".bar .seg,.bar .fseg").forEach(e=>thumbRO.observe(e));
 reload();
