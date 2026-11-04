@@ -632,7 +632,7 @@ body.bp .phone [data-hot="todo"]{outline-color:rgba(110,120,115,.5)}
 body.bp .phone [data-hot]:hover{outline-style:solid;outline-width:2px}
 body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(46,158,74,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(46,158,74,.08) 1px,transparent 1px);background-size:24px 24px}
 .labrow{display:flex;align-items:center;gap:6px 12px;min-height:26px;flex-wrap:wrap}
-.labrow .lab{margin-right:auto}
+.labrow .lab{margin-right:auto}.tgls{display:flex;align-items:center;gap:4px 10px}@media (max-width:699px){.labrow .lab{flex-basis:100%}.tgls{margin-left:-8px}}
 .kbh{display:none;align-items:center;gap:5px;font:600 11.5px/1 var(--sans);color:var(--mute)}
 .kbh kbd{font:700 10.5px/1 var(--sans);min-width:20px;padding:4px 5px;border-radius:6px;background:var(--soft);border:1px solid var(--line);border-bottom-width:2px;text-align:center;color:var(--fg)}
 .kbh kbd+span{margin-right:6px}
@@ -656,7 +656,7 @@ body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(46,158,
 @media (max-width:699px){.lb{padding-bottom:84px}}
 /* plátno */
 .phones.canvas{display:block;padding:0}
-.cv{position:relative;height:min(calc(100dvh - 32px),840px);min-height:520px;border-radius:22px;overflow:hidden;border:1px solid var(--line);cursor:grab;touch-action:none;
+.cv{position:relative;height:min(calc(100dvh - 150px),720px);min-height:460px;border-radius:22px;overflow:hidden;border:1px solid var(--line);cursor:grab;touch-action:none;
   background:radial-gradient(#CDD5D0 1px,transparent 1.3px) 0 0/22px 22px,#F4F6F5}
 .cv.grab{cursor:grabbing}
 .cvw{position:absolute;left:0;top:0;transform-origin:0 0;display:grid;grid-template-columns:max-content;gap:130px 220px;align-items:start;padding:24px 40px 40px;will-change:transform}
@@ -692,6 +692,8 @@ body.noarr .cvar{visibility:hidden}
 .cvo{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:11px;border:0;background:var(--brand);color:#fff;font:700 12.5px/1 var(--sans);cursor:pointer;flex:none}
 .cvo .ic{width:15px;height:15px}
 @media (max-width:699px){.cv{height:72dvh;min-height:460px}.cvo span{display:none}.cvo{width:36px;padding:0;justify-content:center}}
+@media (max-width:699px){.labrow{gap:8px 16px}.labrow .lab{flex-basis:100%}.labrow .kbh{display:none}.labrow .bpt{padding-left:4px}}
+.cvfoc.fx{position:fixed;bottom:16px}
 </style>
 
 <div class="wrap">
@@ -715,8 +717,8 @@ body.noarr .cvar{visibility:hidden}
     </div>
     <div class="secwrap po">
       <div class="labrow"><span class="lab">Sekce a obrazovky</span><span class="kbh" id="kbh"></span>
-        <button type="button" class="bpt" id="arrgl" aria-pressed="true" data-tip="Šipky ukazují, kam vede klepnutí z jedné obrazovky na další"><span class="sw"></span>Šipky</button>
-        <button type="button" class="bpt" id="bptgl" aria-pressed="false" data-tip="Zvýrazní místa, na která jde klepnout. Po najetí myší popíše, kam vedou"><span class="sw"></span>Klikací místa</button></div>
+        <span class="tgls"><button type="button" class="bpt" id="arrgl" aria-pressed="true" data-tip="Šipky ukazují, kam vede klepnutí z jedné obrazovky na další"><span class="sw"></span>Šipky</button>
+        <button type="button" class="bpt" id="bptgl" aria-pressed="false" data-tip="Zvýrazní místa, na která jde klepnout. Po najetí myší popíše, kam vedou"><span class="sw"></span>Klikací místa</button></span></div>
       <div class="secbox">
         <div class="sxw" id="sxw"><div class="sx" id="sx"><div class="seg" id="sect" role="group" aria-label="Sekce aplikace"><span class="thumb"></span></div></div>
           <button type="button" class="sxbtn l" id="sxbtnl" aria-label="Posunout sekce doleva"></button><button type="button" class="sxbtn" id="sxbtn" aria-label="Posunout sekce doprava"></button></div>
@@ -875,17 +877,21 @@ const st={links:true,anTab:"sum",icat:"vse",ist:"vse",av:0,avc:0,view:"proto",lo
 let nCount=0,subAnim=true,lastView=null,poAnims=[];
 const EZ="cubic-bezier(.2,.8,.2,1)";
 function poEls(){return {segs:[...document.querySelectorAll(".row1 .seg.po")],sec:document.querySelector(".secwrap")}}
-function vKeys(el,mt){const cs=getComputedStyle(el);return [{height:"0px",opacity:0,marginTop:mt,paddingTop:"0px",borderTopWidth:"0px",overflow:"hidden"},{height:el.offsetHeight+"px",opacity:1,marginTop:cs.marginTop,paddingTop:cs.paddingTop,borderTopWidth:cs.borderTopWidth,overflow:"hidden"}]}
-function protoIn(){if(reduce)return;poAnims.forEach(a=>a.cancel());poAnims=[];const {segs,sec}=poEls(),stack=innerWidth<700;
-  segs.forEach((g,i)=>{if(stack)poAnims.push(g.animate(vKeys(g,"-10px"),{duration:380,easing:EZ,delay:i*50,fill:"backwards"}));
-    poAnims.push(g.animate([{opacity:0,transform:"translateX(-18px)"},{opacity:1,transform:"none"}],{duration:420,easing:EZ,delay:i*60+(stack?60:0),fill:"backwards"}))});
-  poAnims.push(sec.animate(vKeys(sec,"-10px"),{duration:460,easing:EZ,delay:stack?80:60,fill:"backwards"}));
+function vKeys(el,mt,pad=true){const cs=getComputedStyle(el),a={height:"0px",opacity:0,marginTop:mt,overflow:"hidden"},b={height:el.offsetHeight+"px",opacity:1,marginTop:cs.marginTop,overflow:"hidden"};if(pad){a.paddingTop="0px";a.borderTopWidth="0px";b.paddingTop=cs.paddingTop;b.borderTopWidth=cs.borderTopWidth}return [a,b]}
+function protoIn(){setTimeout(placeThumbs,620);if(reduce)return;poAnims.forEach(a=>a.cancel());poAnims=[];const {segs,sec}=poEls(),stack=innerWidth<700;
+  segs.forEach((g,i)=>{if(stack)poAnims.push(g.animate(vKeys(g,"-10px",false),{duration:420,easing:EZ,fill:"backwards"}));
+    else poAnims.push(g.animate([{opacity:0,transform:"translateX(-18px)"},{opacity:1,transform:"none"}],{duration:420,easing:EZ,delay:i*60,fill:"backwards"}))});
+  poAnims.push(sec.animate(vKeys(sec,"-10px"),{duration:460,easing:EZ,delay:stack?0:60,fill:"backwards"}));poAnims.forEach(a=>a.finished.then(placeThumbs,()=>{}));
   const ph=document.getElementById("phones");poAnims.push(ph.animate([{opacity:0,transform:"translateY(10px)"},{opacity:1,transform:"none"}],{duration:420,easing:EZ,delay:160,fill:"backwards"}))}
 function protoOut(done){if(reduce){done();return}poAnims.forEach(a=>a.cancel());const {segs,sec}=poEls(),stack=innerWidth<700,o={duration:240,easing:"cubic-bezier(.4,0,.6,1)",fill:"forwards"};
   const list=[sec.animate(vKeys(sec,"-10px").reverse(),o),document.getElementById("phones").animate([{opacity:1},{opacity:0}],{duration:180,fill:"forwards"})];
-  segs.forEach(g=>{list.push(g.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateX(-18px)"}],o));if(stack)list.push(g.animate(vKeys(g,"-10px").reverse(),o))});
-  setTimeout(()=>{done();list.forEach(a=>a.cancel())},230)}
-function setView(v){if(st.view===v)return;const go2=()=>{st.view=v;scrollTo({top:0});render(v==="proto"?{anim:{screen:st.screen,dir:"tab"}}:{})};
+  segs.forEach(g=>{list.push(stack?g.animate(vKeys(g,"-10px",false).reverse(),o):g.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateX(-18px)"}],o))});
+  outAnims=list;svT=setTimeout(()=>{svT=0;done();list.forEach(a=>a.cancel());outAnims=[]},230)}
+let svT=0,outAnims=[];
+function setView(v){if(svT){clearTimeout(svT);svT=0;outAnims.forEach(a=>a.cancel());outAnims=[]}
+  if(st.view===v){document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===v));placeThumbs();return}document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===v));placeThumbs();const go2=()=>{st.view=v;scrollTo({top:0});render(v==="proto"?{anim:{screen:st.screen,dir:"tab"}}:{});
+    const el=document.getElementById({an:"anview",ideas:"ideasview",notes:"notesview",flow:"flowview"}[v]);
+    if(el&&!reduce)el.animate([{opacity:0,transform:"translateY(8px)"},{opacity:1,transform:"none"}],{duration:300,easing:"cubic-bezier(.2,.8,.2,1)"});requestAnimationFrame(placeThumbs)};
   if(st.view==="proto")protoOut(go2);else go2()}
 const mem={};
 const key=s=>s==="detail"?"detail-"+st.flow:s;
@@ -1417,10 +1423,11 @@ function animScreen(ph,dir){
   sc.animate(F[dir],{duration:dir==="fade"?260:420,easing:"cubic-bezier(.2,.8,.2,1)"});
 }
 function placeThumbs(){document.querySelectorAll(".seg>.thumb,.fseg>.thumb,.gseg>.thumb,.mtabs>.thumb").forEach(t=>{const b=t.parentElement.querySelector(':scope>[aria-pressed="true"]');
-  if(!b){t.style.opacity=0;t.dataset.on="";return}if(!b.offsetWidth)return;
-  const jump=!t.dataset.on;if(jump)t.style.transition="none";
-  t.style.opacity=1;t.style.width=b.offsetWidth+"px";t.style.height=b.offsetHeight+"px";t.style.transform=`translate(${b.offsetLeft}px,${b.offsetTop}px)`;
-  if(jump){t.dataset.on=1;void t.offsetWidth;t.style.transition=""}})}
+  if(!b){t.style.opacity=0;t.dataset.on="";return}if(!b.offsetWidth){t.dataset.on="";return}
+  const jump=!t.dataset.on;if(jump){t.style.transition="none";t.style.opacity=0}
+  t.style.width=b.offsetWidth+"px";t.style.height=b.offsetHeight+"px";t.style.transform=`translate(${b.offsetLeft}px,${b.offsetTop}px)`;
+  if(jump){t.dataset.on=1;void t.offsetWidth;t.style.transition=""}t.style.opacity=1})}
+const thumbRO=typeof ResizeObserver!=="undefined"?new ResizeObserver(()=>{cancelAnimationFrame(thumbRO.r);thumbRO.r=requestAnimationFrame(placeThumbs)}):null;
 function hints(){
   const w=document.getElementById("sxw"),x=document.getElementById("sx");
   const fit=x.scrollWidth<=x.clientWidth+2;
@@ -1603,7 +1610,7 @@ addEventListener("keydown",ev=>{
   if(ev.key==="ArrowRight"||ev.key==="ArrowLeft"){ev.preventDefault();const d=ev.key==="ArrowRight"?1:-1;if(cvm)cvStep(d);else stepKey(d)}});
 document.getElementById("fullbtn").addEventListener("click",()=>{st.full=true;render({anim:{screen:st.screen,dir:"tab"}})});
 addEventListener("keydown",ev=>{if(ev.key==="Escape"&&st.full){st.full=false;render()}});
-addEventListener("resize",()=>{document.body.style.setProperty("--fz",fz());chrome();linksSoon();if(st.mode==="canvas"){if(cv.focus>=0)focusCv(cv.focus,false);else fitCv(false)}});
+addEventListener("resize",()=>{document.body.style.setProperty("--fz",fz());chrome();linksSoon();if(st.mode==="canvas"){cvSize();if(cv.focus>=0)focusCv(cv.focus,false);else fitCv(false)}});
 if(document.fonts)document.fonts.ready.then(()=>{placeThumbs();hints()});
 function ptoast(m){const o=document.getElementById("ptoast");if(o)o.remove();document.body.insertAdjacentHTML("beforeend",`<div id="ptoast" role="status">${m}</div>`)}
 const tipEl=document.createElement("div");tipEl.id="tip";tipEl.setAttribute("aria-hidden","true");document.body.appendChild(tipEl);
@@ -1626,11 +1633,13 @@ function renderCanvas(){
   $p.innerHTML=`<div class="cv" id="cv"><div class="cvw ${$p.clientWidth>=760?"c2":""}" id="cvw">${rows}</div>
     <div class="cvz" role="group" aria-label="Zoom"><button type="button" data-cvz="-1" aria-label="Oddálit">${ic("minus")}</button><span id="cvp"></span><button type="button" data-cvz="1" aria-label="Přiblížit">${ic("plus")}</button><button type="button" class="cvall" data-cvfit>Vše</button></div>
     <div class="cvfoc" id="cvfoc"></div></div>`;
-  $p.querySelectorAll(".phone").forEach(ph=>{const sc=ph.querySelector(".scr");sc.scrollTop=0});
+  $p.querySelectorAll(".phone").forEach(ph=>{const sc=ph.querySelector(".scr");sc.scrollTop=0});cvSize();
   if(!cv.init){cv.init=true;requestAnimationFrame(()=>fitCv(false))}
   if(cvNav){cvNav=false;const k=CVL().findIndex(([f,s])=>f===st.flow&&s===st.screen);if(k>=0)requestAnimationFrame(()=>focusCv(k))}
   applyCv(false);updateFoc();
 }
+function cvSize(){const v=document.getElementById("cv");if(!v)return;if(!matchMedia("(pointer: fine)").matches||innerWidth<700){v.style.height="";return}
+  v.style.height=Math.max(460,innerHeight-(v.getBoundingClientRect().top+scrollY)-16)+"px"}
 function applyCv(anim){const w=document.getElementById("cvw");if(!w)return;w.classList.toggle("anim",!!anim&&!reduce);
   w.style.transform=`translate(${cv.x}px,${cv.y}px) scale(${cv.z})`;const p=document.getElementById("cvp");if(p)p.textContent=Math.round(cv.z*100)+" %";
   document.querySelectorAll(".cvc").forEach(c=>c.classList.toggle("on",+c.dataset.ci===cv.focus))}
@@ -1645,7 +1654,7 @@ function focusCv(i,anim=true){const c=document.querySelector(`.cvc[data-ci="${i}
   const [f,s]=CVL()[i];if(st.flow!==f)subAnim=true;st.flow=f;st.screen=s;chrome();
   applyCv(anim);updateFoc()}
 function cvStep(d){const n=CVL().length;focusCv(cv.focus<0?(d>0?0:n-1):(cv.focus+d+n)%n)}
-function updateFoc(){const b=document.getElementById("cvfoc");if(!b)return;
+function updateFoc(){const b=document.getElementById("cvfoc");if(!b)return;requestAnimationFrame(cvBar);
   if(cv.focus<0){b.className="cvfoc hint";b.innerHTML=`<span>${matchMedia("(hover: none)").matches?"Posun prstem, zoom dvěma prsty, klepnutím obrazovku přiblížíte":"Táhněte pro posun · ⌘ / Ctrl + kolečko nebo gesto pro zoom · kliknutím obrazovku přiblížíte"}</span>`;return}
   const L=CVL(),[f,s]=L[cv.focus];b.className="cvfoc";
   b.innerHTML=`<button type="button" class="cvb" data-cvstep="-1" aria-label="Předchozí obrazovka">${ic("left")}</button>
@@ -1653,6 +1662,8 @@ function updateFoc(){const b=document.getElementById("cvfoc");if(!b)return;
     <button type="button" class="cvb" data-cvstep="1" aria-label="Další obrazovka">${ic("right")}</button>
     <button type="button" class="cvo" data-cvopen>${ic("pointer")}<span>Proklikat</span></button>
     <button type="button" class="cvb" data-cvfit aria-label="Zpět na celé plátno">${ic("x")}</button>`}
+function cvBar(){const v=document.getElementById("cv"),b=document.getElementById("cvfoc");if(!v||!b)return;const r=v.getBoundingClientRect(),fx=innerWidth>=700&&r.bottom>innerHeight+2&&r.top<innerHeight-160;b.classList.toggle("fx",fx);b.style.left=fx?(r.left+r.width/2)+"px":""}
+addEventListener("scroll",cvBar,{passive:true});addEventListener("resize",cvBar);
 function cvPos(e){const r=document.getElementById("cv").getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
 $p.addEventListener("pointerdown",e=>{const v=e.target.closest("#cv");if(!v||e.target.closest(".cvz,.cvfoc"))return;
   cvPtr.set(e.pointerId,[e.clientX,e.clientY]);v.setPointerCapture(e.pointerId);
@@ -1670,5 +1681,6 @@ $p.addEventListener("pointerup",cvUp);$p.addEventListener("pointercancel",cvUp);
 $p.addEventListener("wheel",e=>{if(!e.target.closest("#cv"))return;e.preventDefault();
   if(e.ctrlKey||e.metaKey){const [x,y]=cvPos(e);zoomAt(Math.exp(-e.deltaY*.01),x,y,false)}else{cv.x-=e.deltaX;cv.y-=e.deltaY;applyCv(false)}},{passive:false});
 function openCv(){const [f,s]=CVL()[cv.focus<0?0:cv.focus];st.mode="one";if(st.flow!==f)subAnim=true;st.flow=f;go(s,{dir:"tab",stg:true,reset:true})}
+if(thumbRO)document.querySelectorAll(".bar .seg,.bar .fseg").forEach(e=>thumbRO.observe(e));
 reload();
 </script>
