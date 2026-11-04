@@ -631,7 +631,7 @@ body.bp .phone [data-hot]{outline:1.5px dashed rgba(46,158,74,.85);outline-offse
 body.bp .phone [data-hot="todo"]{outline-color:rgba(110,120,115,.5)}
 body.bp .phone [data-hot]:hover{outline-style:solid;outline-width:2px}
 body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(46,158,74,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(46,158,74,.08) 1px,transparent 1px);background-size:24px 24px}
-.labrow{display:flex;align-items:center;gap:12px;min-height:26px}
+.labrow{display:flex;align-items:center;gap:6px 12px;min-height:26px;flex-wrap:wrap}
 .labrow .lab{margin-right:auto}
 .kbh{display:none;align-items:center;gap:5px;font:600 11.5px/1 var(--sans);color:var(--mute)}
 .kbh kbd{font:700 10.5px/1 var(--sans);min-width:20px;padding:4px 5px;border-radius:6px;background:var(--soft);border:1px solid var(--line);border-bottom-width:2px;text-align:center;color:var(--fg)}
@@ -654,6 +654,44 @@ body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(46,158,
 .lb img{cursor:pointer}
 @media (max-width:699px){.lbc{flex-direction:column;gap:14px}.lbar{top:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:none}}
 @media (max-width:699px){.lb{padding-bottom:84px}}
+/* plátno */
+.phones.canvas{display:block;padding:0}
+.cv{position:relative;height:min(calc(100dvh - 32px),840px);min-height:520px;border-radius:22px;overflow:hidden;border:1px solid var(--line);cursor:grab;touch-action:none;
+  background:radial-gradient(#CDD5D0 1px,transparent 1.3px) 0 0/22px 22px,#F4F6F5}
+.cv.grab{cursor:grabbing}
+.cvw{position:absolute;left:0;top:0;transform-origin:0 0;display:grid;grid-template-columns:max-content;gap:130px 220px;align-items:start;padding:24px 40px 40px;will-change:transform}
+.cvw.c2{grid-template-columns:repeat(2,max-content)}.cvw.anim{transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.cvrow{display:flex;flex-direction:column;gap:26px}
+.cvh{margin:0;display:flex;align-items:baseline;gap:14px;font:800 40px/1 var(--sans);letter-spacing:-.02em;color:var(--fg)}
+.cvh small{font:600 18px/1 var(--sans);color:var(--mute);letter-spacing:0}
+.cvcells{display:flex;align-items:flex-end}
+.cvc{position:relative;display:flex;flex-direction:column;gap:16px;cursor:zoom-in}
+.cvc.on{cursor:pointer}
+.cvn{display:flex;align-items:center;gap:10px;font:700 19px/1 var(--sans);color:var(--mute)}
+.cvn i{font-style:normal;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid var(--line);font-size:14px;color:var(--fg)}
+.cvc.on .cvn{color:var(--fg)}.cvc.on .cvn i{background:var(--brand);border-color:var(--brand);color:#fff}
+.cvc .device{transition:box-shadow .25s}
+.cvc:hover .device{box-shadow:0 0 0 6px rgba(46,158,74,.22),0 24px 50px -24px rgba(20,30,25,.45)}
+.cvc.on .device{box-shadow:0 0 0 6px var(--brand),0 30px 60px -24px rgba(20,30,25,.5)}
+.canvas .phone{pointer-events:none}
+.cvar{position:relative;flex:none;width:96px;height:2px;margin:0 10px 300px;background:var(--conn);border-radius:2px}
+.cvar::after{content:"";position:absolute;right:-1px;top:50%;width:10px;height:10px;border-top:2px solid var(--conn);border-right:2px solid var(--conn);transform:translateY(-50%) rotate(45deg);border-radius:1px}
+body.noarr .cvar{visibility:hidden}
+.cvz{position:absolute;right:12px;top:12px;z-index:3;display:flex;align-items:center;gap:2px;padding:4px;border-radius:14px;background:#fff;box-shadow:0 8px 22px -12px rgba(20,30,25,.35),0 0 0 1px rgba(20,30,25,.05)}
+.cvz button{height:32px;min-width:32px;padding:0 8px;border:0;background:none;border-radius:10px;display:grid;place-items:center;font:600 12.5px/1 var(--sans);color:var(--fg);cursor:pointer}
+.cvz button:hover{background:var(--soft)}
+.cvz .ic{width:16px;height:16px}
+#cvp{min-width:46px;text-align:center;font:600 12px/1 var(--sans);color:var(--mute)}
+.cvall{border-left:1px solid var(--line)!important;border-radius:0 10px 10px 0!important;margin-left:2px}
+.cvfoc{position:absolute;left:50%;bottom:12px;z-index:3;transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:5px;border-radius:16px;background:#fff;box-shadow:0 10px 26px -12px rgba(20,30,25,.4),0 0 0 1px rgba(20,30,25,.05);max-width:calc(100% - 24px);white-space:nowrap}
+.cvfoc.hint{padding:9px 14px;font:600 12px/1.3 var(--sans);color:var(--mute);white-space:normal;text-align:center;width:max-content}
+.cvb{width:36px;height:36px;border-radius:11px;border:0;background:var(--soft);color:var(--fg);display:grid;place-items:center;cursor:pointer;flex:none}
+.cvb:hover{background:#E6EBE8}.cvb .ic{width:17px;height:17px}
+.cvt{display:flex;flex-direction:column;gap:3px;padding:0 10px;min-width:0}
+.cvt b{font:700 13.5px/1.1 var(--sans);overflow:hidden;text-overflow:ellipsis}.cvt small{font:600 11px/1 var(--sans);color:var(--mute)}
+.cvo{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:11px;border:0;background:var(--brand);color:#fff;font:700 12.5px/1 var(--sans);cursor:pointer;flex:none}
+.cvo .ic{width:15px;height:15px}
+@media (max-width:699px){.cv{height:72dvh;min-height:460px}.cvo span{display:none}.cvo{width:36px;padding:0;justify-content:center}}
 </style>
 
 <div class="wrap">
@@ -670,14 +708,15 @@ body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(46,158,
         <div class="seg po" role="group" aria-label="Podoba"><span class="thumb"></span>
           <button type="button" data-look="wf" aria-pressed="true"></button><button type="button" data-look="ui" aria-pressed="false"></button></div>
         <div class="seg po" role="group" aria-label="Zobrazení"><span class="thumb"></span>
-          <button type="button" data-mode="all" aria-pressed="true"></button><button type="button" data-mode="one" aria-pressed="false"></button></div>
+          <button type="button" data-mode="all" aria-pressed="true"></button><button type="button" data-mode="one" aria-pressed="false"></button><button type="button" data-mode="canvas" aria-pressed="false"></button></div>
       </div>
       <div class="fseg navx" role="group" aria-label="Podklady"><span class="thumb"></span>
         <button type="button" class="fchip" data-view="an" aria-pressed="false"></button><button type="button" class="fchip" data-view="ideas" aria-pressed="false"></button><button type="button" class="fchip" data-view="notes" aria-pressed="false"></button></div>
     </div>
     <div class="secwrap po">
       <div class="labrow"><span class="lab">Sekce a obrazovky</span><span class="kbh" id="kbh"></span>
-        <button type="button" class="bpt" id="bptgl" aria-pressed="false" data-tip="Ukáže, kde se dá klepnout a kam to vede"><span class="sw"></span>Blueprint</button></div>
+        <button type="button" class="bpt" id="arrgl" aria-pressed="true" data-tip="Šipky ukazují, kam vede klepnutí z jedné obrazovky na další"><span class="sw"></span>Šipky</button>
+        <button type="button" class="bpt" id="bptgl" aria-pressed="false" data-tip="Zvýrazní místa, na která jde klepnout. Po najetí myší popíše, kam vedou"><span class="sw"></span>Klikací místa</button></div>
       <div class="secbox">
         <div class="sxw" id="sxw"><div class="sx" id="sx"><div class="seg" id="sect" role="group" aria-label="Sekce aplikace"><span class="thumb"></span></div></div>
           <button type="button" class="sxbtn l" id="sxbtnl" aria-label="Posunout sekce doleva"></button><button type="button" class="sxbtn" id="sxbtn" aria-label="Posunout sekce doprava"></button></div>
@@ -715,7 +754,7 @@ body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(46,158,
 
 <script>
 /* Ikony podle Lucide (lucide.dev) */
-const I={
+const I={minus:'<path d="M5 12h14"/>',
  left:'<path d="m15 18-6-6 6-6"/>',right:'<path d="m9 18 6-6-6-6"/>',
  search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
  pin:'<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
@@ -771,7 +810,7 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const setBtn=(sel,icon,txt)=>{document.querySelector(sel).innerHTML=ic(icon)+txt};
 setBtn('[data-view="an"]',"search","Analýza");setBtn('[data-view="flow"]',"flow","User flow");setBtn('[data-view="proto"]',"pointer","Prototyp");setBtn('[data-view="ideas"]',"bulb","Nápady");setBtn('[data-view="notes"]',"file","Poznámky");
 setBtn('[data-look="wf"]',"dashed","Wireframe");setBtn('[data-look="ui"]',"palette","UI");
-setBtn('[data-mode="all"]',"cols","Vedle sebe");setBtn('[data-mode="one"]',"phone","Proklik");
+setBtn('[data-mode="all"]',"cols","Vedle sebe");setBtn('[data-mode="one"]',"phone","Proklik");setBtn('[data-mode="canvas"]',"map","Plátno");
 setBtn("#reload","refresh","Znovu načíst");setBtn("#fullbtn","max","Celá obrazovka");document.querySelector(".flogo").innerHTML=logo(22);
 document.getElementById("sxbtn").innerHTML=`<span class="cb">${ic("right")}</span>`;document.getElementById("sxbtnl").innerHTML=`<span class="cb">${ic("left")}</span>`;
 const SECTIONS=[["start","Přihlášení"],["feed","Doprava"],["routes","Moje cesty"],["report","Nahlásit událost"],["s1","Upozornění","brzy","Upozornění zatím nejsou navržená"],["s2","Profil","","Profil zatím není navržený"],["s3","AI asistent","","AI asistent zatím není navržený"],["s4","Ceny PHM","","Ceny PHM zatím nejsou navržené"]];
@@ -830,7 +869,7 @@ const ROUTES=[
 const FLOWS={start:["splash","login","register"],feed:["feed","detail"],routes:["routes","events","detail"],report:["rtype","rconfirm","rdone"]};
 const NAMES={splash:"Načítání",login:"Přihlášení",register:"Registrace",feed:"Doprava",detail:"Detail události",routes:"Moje cesty",events:"Události na trase",rtype:"Co se děje",rconfirm:"Kontrola",rdone:"Hotovo"};
 
-const st={anTab:"sum",icat:"vse",ist:"vse",av:0,avc:0,view:"proto",look:"wf",mode:matchMedia("(max-width: 699px)").matches?"one":"all",full:false,flow:"feed",screen:"feed",feedEv:"e2",route:1,rIdx:0,
+const st={links:true,anTab:"sum",icat:"vse",ist:"vse",av:0,avc:0,view:"proto",look:"wf",mode:matchMedia("(max-width: 699px)").matches?"one":"all",full:false,flow:"feed",screen:"feed",feedEv:"e2",route:1,rIdx:0,
   area:"okoli",filter:"vse",q:"",searchOpen:false,loading:false,splash:false,votes:{},media:{},agree:false,
   rType:"kolona",rPresets:[],rNote:"",rPhoto:false,lastReport:null,prevFlow:"feed"};
 let nCount=0,subAnim=true,lastView=null,poAnims=[];
@@ -1110,33 +1149,33 @@ const ICAT={scenar:["Hlavní scénář","route"],detail:["Detail události","fil
 const ISTAT={rozh:"K rozhodnutí",doplnit:"Doplnit do návrhu",vproto:"V prototypu",pozdeji:"Později"};
 const IORD={rozh:0,doplnit:1,vproto:2,pozdeji:3};
 const IDEAS=[
- {v:"dnes",c:"jizda",s:"rozh",t:"Dnešek na silnicích: jaký je den",p:"Řidič vidí jednotlivé události, ale nedozví se, jaký je den jako celek. Jestli je dnes horší než obvykle, musí si poskládat sám.",n:"Nahoře na Dopravě krátká karta Dnešek: srovnání s běžným dnem (třeba o 30 % hustší provoz než obvykle ve středu), počasí a co může ovlivnit (ráno náledí, mlha na D1) a na co si dát pozor (zápas, svátek, plná nákupní centra). AI to shrne do jedné věty, po klepnutí rozpis.",w:"Potřebuje historická data pro srovnání s běžným dnem a zdroj vytíženosti obchodů. Na začátek stačí počasí a počet událostí proti průměru.",src:[["Vojta","nápad 4. 11."]],go:"feed:feed"},
- {v:"kam",c:"scenar",s:"rozh",t:"Kam jedete? Kontrola cesty na jedno použití",p:"Prototyp začíná až uloženou cestou. Hledání Prahy ukáže události ve městě, ne na cestě do Prahy.",n:"Na Dopravě nahoře pole „Kam jedete?“ s výchozím místem Moje poloha a zkratkami uložených cest. Po zadání cíle trasa Brno → Praha přes D1, mapa a události v pořadí, jak je řidič potká. Uložení cesty je volitelné.",w:"Nová funkce, ne redesign. Programátor by potřeboval výpočet skutečné trasy, ne jen seznam měst.",src:[["Vojta","review prototypu 4. 11."]]},
+ {v:"dnes",c:"jizda",s:"rozh",t:"Dnešek na silnicích: jaký je den",p:"Řidič vidí jednotlivé události, ale nedozví se, jaký je den jako celek. Jestli je dnes horší než obvykle, musí si poskládat sám.",n:"Nahoře na Dopravě krátká karta Dnešek: srovnání s běžným dnem (třeba o 30 % hustší provoz než obvykle ve středu), počasí a co může ovlivnit (ráno náledí, mlha na D1) a na co si dát pozor (zápas, svátek, plná nákupní centra). AI to shrne do jedné věty, po klepnutí rozpis.",w:"Potřebuje historická data pro srovnání s běžným dnem a zdroj vytíženosti obchodů. Na začátek stačí počasí a počet událostí proti průměru.",src:[["Vojta","nápad, listopad"]],go:"feed:feed"},
+ {v:"kam",c:"scenar",s:"rozh",t:"Kam jedete? Kontrola cesty na jedno použití",p:"Prototyp začíná až uloženou cestou. Hledání Prahy ukáže události ve městě, ne na cestě do Prahy.",n:"Na Dopravě nahoře pole „Kam jedete?“ s výchozím místem Moje poloha a zkratkami uložených cest. Po zadání cíle trasa Brno → Praha přes D1, mapa a události v pořadí, jak je řidič potká. Uložení cesty je volitelné.",w:"Nová funkce, ne redesign. Programátor by potřeboval výpočet skutečné trasy, ne jen seznam měst.",src:[["Vojta","review prototypu, listopad"]]},
  {v:"nova",c:"scenar",s:"doplnit",t:"Přidání nové cesty",p:"Moje cesty ukazují uložené trasy, ale přidání nové cesty zatím není navržené.",n:"Jedna obrazovka jako dnes: název, odkud, kam a města po cestě. Po uložení rovnou ukázat stav cesty.",src:[["PDF","bod 16, Moje cesta"]],go:"routes:routes"},
  {v:"razeni",c:"scenar",s:"doplnit",t:"Řazení podle času i vzdálenosti",p:"Dnes jde zprávy řadit podle času (nejvýš 24 hodin zpět) nebo podle km. Prototyp řadí jen podle vzdálenosti.",n:"Malý přepínač Nejbližší / Nejnovější vedle počtu událostí na Dopravě.",src:[["PDF","bod 2, řazení zpráv"]],go:"feed:feed"},
  {v:"sos",c:"scenar",s:"doplnit",t:"SOS, pomoc od řidičů v okolí",p:"SOS je dnes samostatné tlačítko, pro které se nenašlo místo. V prototypu chybí.",n:"Červená volba „Potřebuji pomoc“ jako první položka v Nahlásit událost, se stejně krátkým postupem.",src:[["PDF","bod 15"],["Analýza","menu tlačítka +"]],go:"report:rtype"},
- {v:"vote",c:"detail",s:"rozh",t:"Platí / Neplatí velké a výrazné",p:"David chce tlačítka velká a jasná. Budou nejčastější akcí a jsou na ně navázané body. V prototypu jsou teď malá a připnutá vpravo.",n:"Zvážit širší lištu dole v detailu s Platí / Neplatí přes celou šířku a stejná dvě tlačítka i přímo na kartě v Dopravě.",src:[["David","11. 7. a 1. 11."]],go:"feed:detail"},
- {v:"text",c:"detail",s:"rozh",t:"Text nad obrázkem",p:"S Davidem jsme se shodli, že má být nejdřív text a pod ním obrázek. V detailu je teď náhled hned pod záhlavím.",n:"Rozhodnout pořadí: Co se stalo a pod tím náhled, nebo nechat náhled nahoře pro rychlou orientaci a krátké shrnutí nechat v záhlaví.",src:[["David","9. 10."],["Vojta","review 4. 11."]],go:"feed:detail"},
- {v:"ai",c:"detail",s:"vproto",t:"AI piktogram místo prázdné fotky",p:"Fotka z mapy často nic neříká. David chystá AI simulační náhled nehody podle zprávy ŘSD.",n:"Přepínač Mapa / Street View / AI, výchozí AI, označení „AI piktogram“. Alternativa: jednotné ilustrace podle typu události, zdarma a hned načtené.",w:"V prototypu je zatím Foto / Mapa / AI náhled. Doplnit Street View a přejmenovat na AI piktogram.",src:[["David","28. a 29. 10."],["Vojta","28. 10."]],go:"feed:detail"},
+ {v:"vote",c:"detail",s:"rozh",t:"Platí / Neplatí velké a výrazné",p:"David chce tlačítka velká a jasná. Budou nejčastější akcí a jsou na ně navázané body. V prototypu jsou teď malá a připnutá vpravo.",n:"Zvážit širší lištu dole v detailu s Platí / Neplatí přes celou šířku a stejná dvě tlačítka i přímo na kartě v Dopravě.",src:[["David","červenec a listopad"]],go:"feed:detail"},
+ {v:"text",c:"detail",s:"rozh",t:"Text nad obrázkem",p:"S Davidem jsme se shodli, že má být nejdřív text a pod ním obrázek. V detailu je teď náhled hned pod záhlavím.",n:"Rozhodnout pořadí: Co se stalo a pod tím náhled, nebo nechat náhled nahoře pro rychlou orientaci a krátké shrnutí nechat v záhlaví.",src:[["David","říjen"],["Vojta","review, listopad"]],go:"feed:detail"},
+ {v:"ai",c:"detail",s:"vproto",t:"AI piktogram místo prázdné fotky",p:"Fotka z mapy často nic neříká. David chystá AI simulační náhled nehody podle zprávy ŘSD.",n:"Přepínač Mapa / Street View / AI, výchozí AI, označení „AI piktogram“. Alternativa: jednotné ilustrace podle typu události, zdarma a hned načtené.",w:"V prototypu je zatím Foto / Mapa / AI náhled. Doplnit Street View a přejmenovat na AI piktogram.",src:[["David","říjen"],["Vojta","říjen"]],go:"feed:detail"},
  {v:"delay",c:"detail",s:"doplnit",t:"Zdržení barevně podle délky",p:"V aplikaci má zdržení barevný rámeček: zelený do 15 minut, oranžový do 30, červený nad 30. Prototyp ho ukazuje neutrálně.",n:"Barevná tečka jen u čísla zdržení, aby se nepletla se stavem události.",src:[["PDF","bod 9"]],go:"feed:feed"},
  {v:"pocasi",c:"detail",s:"doplnit",t:"Počasí v místě události",p:"Počasí s legendou je dnes u každé zprávy. V prototypu zatím chybí.",n:"Čtvrtá dlaždice vedle Zdržení, Od vás a Nahlášeno. Klepnutí ukáže krátkou legendu.",src:[["PDF","bod 13"]],go:"feed:detail"},
  {v:"share",c:"detail",s:"rozh",t:"Oblíbené, sdílení a odpovědi",p:"Dnes jde zprávu dát do oblíbených, přesdílet sledujícím a odpovědět na ni. V prototypu je jen tlačítko sdílení.",n:"Srdíčko a sdílení do záhlaví detailu, odpověď jako komentář. Rozhodnout, jestli zůstanou sledující.",src:[["PDF","bod 12"]]},
- {v:"body",c:"komunita",s:"rozh",t:"Body za hlasování a slevy",p:"Za hlasování Platí / Neplatí dostane řidič body a vymění je za slevy, je domluvený Slevomat.",n:"Po hlasu krátká animace „+2 body“, stav bodů v profilu a jednoduchý přehled odměn.",src:[["David","11. 7."]]},
- {v:"notif",c:"komunita",s:"rozh",t:"Upozornění a důvod se vracet",p:"Investor bude sledovat počet lidí a retenci. Aplikace potřebuje důvod, proč ji otevřít každý den.",n:"Ranní upozornění na uložené cesty („Do práce je volno“, „Na D1 kolona +12 min“), týdenní souhrn a pozvání přátel.",src:[["Vojta","21. 7."],["David","22. 7., investor"]]},
- {v:"hra",c:"komunita",s:"pozdeji",t:"Hra Jeď bezpečně",p:"Body za dodržování rychlosti, které otevřou slevy. Mohlo by zaujmout i ŘSD.",n:"Volitelný režim před jízdou se souhrnem po dojetí. Až po spuštění základní aplikace.",src:[["David","22. 7. a 22. 9."]]},
- {v:"hlas",c:"jizda",s:"rozh",t:"Hlasové předčítání za jízdy",p:"Za volantem nikdo nebude číst zprávy. David chce play tlačítko u zprávy, které přečte hlavní zprávu i komentáře.",n:"Ikona přehrát na kartě a v detailu. Později režim Za jízdy, který sám čte události na trase.",src:[["David","31. 10."]]},
- {v:"asist",c:"jizda",s:"pozdeji",t:"AI asistent na dotazy o dopravě",p:"Tlačítko, kde se řidič zeptá na cokoliv z dopravy.",n:"Položka v liště nebo „Zeptat se“ v detailu s kontextem události. Zatím v sekci Připravujeme.",src:[["David","22. 9. a 30. 9."]]},
- {v:"spz",c:"data",s:"pozdeji",t:"SPZ a údaje o voze (Cebia)",p:"Řidič zadá jen SPZ a technické údaje se doplní samy. Data pak poslouží reklamě autodílů a pojišťoven.",n:"Nepovinné pole v profilu, ne v registraci, aby registrace zůstala krátká.",src:[["David","23. 7."]]},
- {v:"park",c:"data",s:"pozdeji",t:"Volná parkovací místa",p:"Když řidič odjíždí, aplikace to pozná a pošle místo řidičům v okolí. Velký problém hlavně v Praze 1.",n:"Samostatná vrstva na mapě s navigací. Technicky i právně náročné, až po startu.",src:[["David","22. 9."]]},
- {v:"kamery",c:"data",s:"pozdeji",t:"Dálniční kamery a odstavná parkoviště",p:"Živý přenos z dálničních kamer a parkování pro kamiony z databanky ŘSD.",n:"Kamera jako další přepínač u náhledu v detailu, parkoviště jako filtr.",src:[["David","25. 6."]]},
- {v:"nabidky",c:"data",s:"pozdeji",t:"Lokální nabídky partnerů",p:"Monetizace přes B2B: třeba cukrárna v okolí nabídne slevu, aplikace naviguje a kód ukáže až na místě. První reklama zdarma.",n:"Nenápadná karta partnera mezi událostmi, jasně označená, nejvýš jedna na obrazovce.",src:[["David","22. 9."]]},
+ {v:"body",c:"komunita",s:"rozh",t:"Body za hlasování a slevy",p:"Za hlasování Platí / Neplatí dostane řidič body a vymění je za slevy, je domluvený Slevomat.",n:"Po hlasu krátká animace „+2 body“, stav bodů v profilu a jednoduchý přehled odměn.",src:[["David","červenec"]]},
+ {v:"notif",c:"komunita",s:"rozh",t:"Upozornění a důvod se vracet",p:"Investor bude sledovat počet lidí a retenci. Aplikace potřebuje důvod, proč ji otevřít každý den.",n:"Ranní upozornění na uložené cesty („Do práce je volno“, „Na D1 kolona +12 min“), týdenní souhrn a pozvání přátel.",src:[["Vojta","červenec"],["David","červenec, investor"]]},
+ {v:"hra",c:"komunita",s:"pozdeji",t:"Hra Jeď bezpečně",p:"Body za dodržování rychlosti, které otevřou slevy. Mohlo by zaujmout i ŘSD.",n:"Volitelný režim před jízdou se souhrnem po dojetí. Až po spuštění základní aplikace.",src:[["David","červenec a září"]]},
+ {v:"hlas",c:"jizda",s:"rozh",t:"Hlasové předčítání za jízdy",p:"Za volantem nikdo nebude číst zprávy. David chce play tlačítko u zprávy, které přečte hlavní zprávu i komentáře.",n:"Ikona přehrát na kartě a v detailu. Později režim Za jízdy, který sám čte události na trase.",src:[["David","říjen"]]},
+ {v:"asist",c:"jizda",s:"pozdeji",t:"AI asistent na dotazy o dopravě",p:"Tlačítko, kde se řidič zeptá na cokoliv z dopravy.",n:"Položka v liště nebo „Zeptat se“ v detailu s kontextem události. Zatím v sekci Připravujeme.",src:[["David","září"]]},
+ {v:"spz",c:"data",s:"pozdeji",t:"SPZ a údaje o voze (Cebia)",p:"Řidič zadá jen SPZ a technické údaje se doplní samy. Data pak poslouží reklamě autodílů a pojišťoven.",n:"Nepovinné pole v profilu, ne v registraci, aby registrace zůstala krátká.",src:[["David","červenec"]]},
+ {v:"park",c:"data",s:"pozdeji",t:"Volná parkovací místa",p:"Když řidič odjíždí, aplikace to pozná a pošle místo řidičům v okolí. Velký problém hlavně v Praze 1.",n:"Samostatná vrstva na mapě s navigací. Technicky i právně náročné, až po startu.",src:[["David","září"]]},
+ {v:"kamery",c:"data",s:"pozdeji",t:"Dálniční kamery a odstavná parkoviště",p:"Živý přenos z dálničních kamer a parkování pro kamiony z databanky ŘSD.",n:"Kamera jako další přepínač u náhledu v detailu, parkoviště jako filtr.",src:[["David","červen"]]},
+ {v:"nabidky",c:"data",s:"pozdeji",t:"Lokální nabídky partnerů",p:"Monetizace přes B2B: třeba cukrárna v okolí nabídne slevu, aplikace naviguje a kód ukáže až na místě. První reklama zdarma.",n:"Nenápadná karta partnera mezi událostmi, jasně označená, nejvýš jedna na obrazovce.",src:[["David","září"]]},
  {v:"phm",c:"data",s:"pozdeji",t:"Ceny PHM",p:"Dnes je to tlačítko u hledání: tabulka nejlevnějších pump po výběru města.",n:"Zatím v sekci Připravujeme. Možná jako filtr Pumpy na Dopravě.",src:[["PDF","hledání a Ceny PHM"]]}
 ];
 const IDOT={rozh:"#F29A0B",doplnit:"#2F6FD6",vproto:"#2EAA4E",pozdeji:"#A3ABA6"};
 /* ---------- vizuály k nápadům ---------- */
 const ivsh=(t,k)=>`<span class="ivsh ${k}">${t}</span>`;
 const IVIS={
- dnes:()=>`<div class="mk w"><div class="r"><b>Dnešek na silnicích</b><span class="mut">st 4. 11.</span></div>
+ dnes:()=>`<div class="mk w"><div class="r"><b>Dnešek na silnicích</b><span class="mut">dnes, středa</span></div>
    <div class="gauge"><i style="left:70%"></i></div><div class="r mut sm"><span>klid</span><b class="o">o 30 % hustší než obvykle</b><span>hustá</span></div>
    <div class="tags"><span>${ic("snow")}Ráno náledí</span><span>${ic("users")}Zápas v 18:00</span><span>${ic("car")}Plná nákupní centra</span></div></div>`,
  kam:()=>`<div class="mk w"><div class="fld">${ic("search")}<b>Kam jedete?</b><span class="mut">Praha</span></div>
@@ -1193,7 +1232,7 @@ function ideaGrid(list){return `<div class="igrid" data-stagger>${list.length?li
      <div class="ifoot">${i.src.map(([a,b])=>`<span class="src2"><b>${a}</b>${b}</span>`).join("")}${i.go?`<button type="button" class="igo" data-goto="${i.go}">Otevřít v prototypu${ic("right")}</button>`:""}</div>
    </article>`).join(""):`<div class="iempty">V téhle kombinaci zatím žádný nápad není.</div>`}</div>`}
 
-/* ---------- analýza současné aplikace (build z 3. 10., testováno 13.–16. 10.) ---------- */
+/* ---------- analýza současné aplikace (testováno v říjnu) ---------- */
 const SHOTS=[
  ["Vstup","spuštění",[["login","Přihlášení","Spuštění","„Ještě nemáte účet?“ je mezi zapomenutým heslem a tlačítkem. Bílý text na tlačítku má nízký kontrast."]]],
  ["Hlavní výpis","feed",[["feed","Hlavní výpis","Spuštění","Seznam karet Treffik Live. Na každé kartě je 14 prvků."],["feed-mapa","Foto / mapa","Karta → ikona mapy","Přepnutí fotky ulice na mapu."],["rsd","Poskytovatel dat","Karta → ikona dálnice","Okno s jedinou větou o ŘSD, podmínka pro odběr dat."],["pocasi","Legenda počasí","Karta → teplota","Vysvětlení ikon počasí."],["dr-d8","Dopravní řešení","Karta → Dopravní řešení","AI rada v okně. Placená, s denním limitem, nekonzistentní výstup."],["detail","Detail a komentáře","Karta → počet komentářů","Text zůstává zkrácený i v detailu."],["komentar","Nový komentář","Karta → Odpovědět","Fotka, text a Zveřejnit."]]],
@@ -1221,7 +1260,7 @@ function renderAn(){
   let body="";
   if(st.anTab==="sum")body=`
    <div class="card2"><h3>Jak návrh vznikal</h3><div class="process">
-     ${[["červen–červenec","Seznámení s aplikací","Proklikání na telefonu, popis aplikace v PDF od Davida (12. 7.)"],["13.–16. 10.","Testování","Build z 3. 10. v simulátoru, 40 obrazovek a stavů"],["říjen–listopad","Analýza","9 problémů seřazených podle priority"],["říjen–listopad","Mapa a user flow","Dnešní a navržená struktura, počty kroků"],["4. 11.","Wireframy a UI","Obsah, navigace a první vizuální směr"],["4. 11.","Prototyp a nápady","Proklikávací prototyp a 20 podnětů k rozhodnutí"]].map(([d,b,t],i)=>`<div class="pstep"><span class="n">${i+1}</span><div><span class="pd">${d}</span><b>${b}</b><small>${t}</small></div></div>`).join("")}</div></div>
+     ${[["červen–červenec","Seznámení s aplikací","Proklikání na telefonu a popis aplikace v PDF od Davida"],["říjen","Testování","Aktuální build v simulátoru, 40 obrazovek a stavů"],["říjen–listopad","Analýza","9 problémů seřazených podle priority"],["říjen–listopad","Mapa a user flow","Dnešní a navržená struktura, počty kroků"],["říjen–listopad","Wireframy a UI","Obsah, navigace a první vizuální směr"],["říjen–listopad","Prototyp a nápady","Proklikávací prototyp a 21 podnětů k rozhodnutí"]].map(([d,b,t],i)=>`<div class="pstep"><span class="n">${i+1}</span><div><span class="pd">${d}</span><b>${b}</b><small>${t}</small></div></div>`).join("")}</div></div>
    <div class="card2"><h3>Co funguje a stojí za to zachovat</h3><div class="okg">
      <div><b>Data z ŘSD v lidské řeči</b><p>AI přepis z hesel do vět je hlavní hodnota. Řidič rozumí bez dekódování zkratek.</p></div>
      <div><b>Semafor jako časová osa</b><p>Červená, oranžová, zelená podle postupu řešení. Dnes ale splývá se zelenou značkou.</p></div>
@@ -1244,11 +1283,11 @@ function renderAn(){
      <div class="ibody"><div><span class="sev"><i style="background:${SEV[x.sev][1]}"></i>Priorita: ${SEV[x.sev][0]}</span><h3>${x.t}</h3></div>
        <p class="itx">${x.d}</p><div class="inav"><span class="ilb">Návrh</span><p class="itx">${x.fix}</p></div>
        <div class="thumbs">${x.s.map(id=>shotBtn(id,"shot")).join("")}</div></div></article>`).join("");
-  else body=`<p class="itx" style="color:var(--mute)">${Object.keys(SHOT).length} obrazovek a stavů nafocených 13.–16. 10. z buildu z 3. 10. Klikněte na obrázek pro zvětšení.</p>`+SHOTS.map(([g,sub,a])=>`<div class="ggroup"><h3>${g}<small>${sub} · ${a.length}</small></h3><div class="gal">${a.map(([id])=>shotBtn(id,"gcard")).join("")}</div></div>`).join("");
+  else body=`<p class="itx" style="color:var(--mute)">${Object.keys(SHOT).length} obrazovek a stavů nafocených v říjnu z aktuálního buildu. Klikněte na obrázek pro zvětšení.</p>`+SHOTS.map(([g,sub,a])=>`<div class="ggroup"><h3>${g}<small>${sub} · ${a.length}</small></h3><div class="gal">${a.map(([id])=>shotBtn(id,"gcard")).join("")}</div></div>`).join("");
   const av=document.getElementById("anview");
   if(av.querySelector("#anseg")){av.querySelectorAll("[data-antab]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.antab===st.anTab));av.querySelector(".anv").innerHTML=body;placeThumbs();stagger(av);return}
   av.innerHTML=`<div class="vhead"><h2>Analýza současné aplikace</h2>
-     <p>Užitečná data, ale obsluha jako palubní deska letadla. Aplikaci jsem prošel obrazovku po obrazovce v buildu z 3. 10. a sepsal, co funguje, co brzdí a jak to vyřešit.</p></div>
+     <p>Užitečná data, ale obsluha jako palubní deska letadla. Aplikaci jsem prošel obrazovku po obrazovce v aktuálním buildu a sepsal, co funguje, co brzdí a jak to vyřešit.</p></div>
    <div class="ifil" style="padding:6px"><div class="seg" id="anseg" role="group" aria-label="Část analýzy" style="flex-wrap:wrap"><span class="thumb"></span>${tabs.map(([k,l,icn])=>`<button type="button" data-antab="${k}" aria-pressed="${st.anTab===k}">${ic(icn)}${l}</button>`).join("")}</div></div>
    <div class="anv" data-stagger>${body}</div>`;
   placeThumbs();stagger(av);
@@ -1308,7 +1347,7 @@ function drawLinks(anim){
     <marker id="ahg" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="8" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse"><path d="M2,1.5 L8,5 L2,8.5" fill="none" stroke="#A3ADA7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
     <marker id="ahb" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="userSpaceOnUse"><path d="M2,1.5 L8,5 L2,8.5" fill="none" stroke="#2E9E4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><g></g></svg>`);svg=$p.querySelector("svg.links")}
   const box=$p.getBoundingClientRect(),phs=[...$p.querySelectorAll(".phone")],L=[];
-  phs.forEach((ph,i)=>{const nx=phs[i+1];if(!nx)return;const src=pickSrc(ph,nx.dataset.screen);if(src)L.push([src,nx,"p"])});
+  if(st.links)phs.forEach((ph,i)=>{const nx=phs[i+1];if(!nx)return;const src=pickSrc(ph,nx.dataset.screen);if(src)L.push([src,nx,"p"])});
   if(hoverHot&&document.body.classList.contains("bp")&&$p.contains(hoverHot)){const t=hoverHot.dataset.hot,own=hoverHot.closest(".phone"),tp=phs.find(p=>p!==own&&p.dataset.screen===t);
     if(tp){const ex=L.find(l=>l[0]===hoverHot);if(ex)ex[2]="h";else L.push([hoverHot,tp,"h"])}}
   const G=L.map(([el,tp,k])=>{const g=linkGeo(el,tp,box);return g&&{...g,k}}).filter(Boolean);
@@ -1413,16 +1452,18 @@ function navFor(s){
   if(s==="routes"||s==="events"||(s==="detail"&&st.flow==="routes"))return nav("routes");
   return nav("feed");
 }
+function phoneHTML(s){const n=navFor(s),fl=s==="detail"&&!st.loading,pf=s==="rconfirm";
+    return `<div class="col"><div class="device"><div class="phone ${st.look} ${s==="splash"?"":""}" data-screen="${s}" data-key="${key(s)}">${SB}<div class="scr"><div class="screen ${n?"":"nonav"} ${fl?"float":""} ${pf?"float2":""} ${s==="splash"?"bare":""}">${SCREENS[s]()}</div></div>${fl?voteFloat():""}${pf?pfix():""}${n}${st.splash?`<div class="splash">${logo(70)}<b>Treffik</b></div>`:""}</div></div></div>`}
 function render(o={}){
   if(st.view==="flow"){renderFlow();chrome();return}
   if(st.view==="ideas"){renderIdeas();chrome();return}
   if(st.view==="an"){renderAn();chrome();return}
   if(st.view==="notes"){chrome();return}
   save(); if(o.reset)mem[o.reset]=0; if(o.zero)Object.keys(mem).forEach(k=>mem[k]=0);
+  if(!st.full&&st.mode==="canvas"){renderCanvas();chrome();tagHot();trackHist();scheduleLinks();return}
   const one=st.full||st.mode==="one",list=one?[st.screen]:FLOWS[st.flow];
   $p.className="phones po"+(one?" single":"");
-  $p.innerHTML=list.map(s=>{const n=navFor(s),fl=s==="detail"&&!st.loading,pf=s==="rconfirm";
-    return `<div class="col"><div class="device"><div class="phone ${st.look} ${s==="splash"?"":""}" data-screen="${s}" data-key="${key(s)}">${SB}<div class="scr"><div class="screen ${n?"":"nonav"} ${fl?"float":""} ${pf?"float2":""} ${s==="splash"?"bare":""}">${SCREENS[s]()}</div></div>${fl?voteFloat():""}${pf?pfix():""}${n}${st.splash?`<div class="splash">${logo(70)}<b>Treffik</b></div>`:""}</div></div></div>`}).join("")
+  $p.innerHTML=list.map(phoneHTML).join("")
     +(st.full?`<button type="button" class="exitfull" data-exitfull aria-label="Ukončit celou obrazovku">${ic("min")}<span>Zpět do prototypu</span></button>`:"");
   $p.querySelectorAll(".phone").forEach(ph=>{
     const sc=ph.querySelector(".scr");sc.scrollTop=mem[ph.dataset.key]||0;ph.classList.toggle("scrolled",sc.scrollTop>6);
@@ -1435,7 +1476,7 @@ function render(o={}){
 }
 let splashT;
 function go(screen,{dir="fwd",reset=false,stg=false,pscroll=true}={}){
-  st.screen=screen;linkAnim=true;
+  st.screen=screen;linkAnim=true;cvNav=true;
   render({reset:reset?key(screen):null,anim:{screen,dir},stagger:stg?screen:null});
   clearTimeout(splashT);
   if(screen==="splash"&&(st.mode==="one"||st.full))splashT=setTimeout(()=>{if(st.screen==="splash"&&st.view==="proto")go("login",{stg:true})},1800);
@@ -1482,6 +1523,10 @@ let sxT;
 
 $p.addEventListener("click",ev=>{
   const c=s=>ev.target.closest(s);let el;
+  if(el=c("[data-cvz]")){const v=document.getElementById("cv");zoomAt(+el.dataset.cvz>0?1.25:.8,v.clientWidth/2,v.clientHeight/2,true);return}
+  if(c("[data-cvfit]")){fitCv(true);return}
+  if(el=c("[data-cvstep]")){cvStep(+el.dataset.cvstep);return}
+  if(c("[data-cvopen]")){openCv();return}
   if(c("[data-exitfull]")){st.full=false;render({fade:true});return}
   if(st.loading)return;
   if(el=c("[data-todo]")){const ph=el.closest(".phone");ph.querySelectorAll(".toast").forEach(t=>t.remove());ph.insertAdjacentHTML("beforeend",`<div class="toast" role="status">${el.dataset.todo}</div>`);return}
@@ -1537,11 +1582,12 @@ document.getElementById("sect").addEventListener("click",ev=>{const b=ev.target.
 ["sxbtn","sxbtnl"].forEach((id,k)=>document.getElementById(id).addEventListener("click",()=>{document.getElementById("sx").scrollBy({left:k?-180:180,behavior:reduce?"auto":"smooth"})}));
 document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
 document.querySelectorAll("[data-look]").forEach(b=>b.addEventListener("click",()=>{if(st.look===b.dataset.look)return;st.look=b.dataset.look;render({fade:true})}));
-document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{if(st.mode===b.dataset.mode)return;st.mode=b.dataset.mode;render({anim:{screen:st.screen,dir:"tab"}})}));
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{if(st.mode===b.dataset.mode)return;st.mode=b.dataset.mode;if(st.mode==="canvas")cv.init=false;render({anim:{screen:st.screen,dir:"tab"}})}));
 document.getElementById("reload").addEventListener("click",reload);
 {const mac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);document.getElementById("kbh").innerHTML=`<kbd>←</kbd><kbd>→</kbd><span>obrazovky</span><kbd>${mac?"⌘":"Ctrl"} Z</kbd><span>zpět</span>`}
 document.getElementById("bptgl").addEventListener("click",e=>{st.bp=!st.bp;e.currentTarget.setAttribute("aria-pressed",st.bp);document.body.classList.toggle("bp",st.bp);hoverHot=null;linksSoon();
-  ptoast(st.bp?"Blueprint zapnutý: přerušované rámečky jdou proklikat, najetím zjistíte, kam vedou":"Blueprint vypnutý")});
+  ptoast(st.bp?"Klikací místa zapnutá: přerušované rámečky jdou proklikat, po najetí myší uvidíte, kam vedou":"Klikací místa vypnutá")});
+document.getElementById("arrgl").addEventListener("click",e=>{st.links=!st.links;e.currentTarget.setAttribute("aria-pressed",st.links);document.body.classList.toggle("noarr",!st.links);if(st.links)linkAnim=true;scheduleLinks()});
 addEventListener("keydown",ev=>{
   const lb=document.getElementById("lb");
   if(lb){if(ev.key==="ArrowRight"||ev.key==="ArrowLeft"){ev.preventDefault();shotNav(ev.key==="ArrowRight"?1:-1)}else if(ev.key==="Escape")lb.remove();return}
@@ -1549,10 +1595,15 @@ addEventListener("keydown",ev=>{
   if(st.view!=="proto"||st.loading)return;
   if((ev.metaKey||ev.ctrlKey)&&!ev.shiftKey&&!ev.altKey&&ev.key.toLowerCase()==="z"){ev.preventDefault();undo();return}
   if(ev.metaKey||ev.ctrlKey||ev.altKey)return;
-  if(ev.key==="ArrowRight"||ev.key==="ArrowLeft"){ev.preventDefault();stepKey(ev.key==="ArrowRight"?1:-1)}});
+  const cvm=st.mode==="canvas"&&!st.full;
+  if(cvm&&ev.key==="Escape"){fitCv(true);return}
+  if(cvm&&(ev.key==="+"||ev.key==="=")){const v=document.getElementById("cv");zoomAt(1.25,v.clientWidth/2,v.clientHeight/2,true);return}
+  if(cvm&&ev.key==="-"){const v=document.getElementById("cv");zoomAt(.8,v.clientWidth/2,v.clientHeight/2,true);return}
+  if(cvm&&ev.key==="Enter"&&cv.focus>=0){openCv();return}
+  if(ev.key==="ArrowRight"||ev.key==="ArrowLeft"){ev.preventDefault();const d=ev.key==="ArrowRight"?1:-1;if(cvm)cvStep(d);else stepKey(d)}});
 document.getElementById("fullbtn").addEventListener("click",()=>{st.full=true;render({anim:{screen:st.screen,dir:"tab"}})});
 addEventListener("keydown",ev=>{if(ev.key==="Escape"&&st.full){st.full=false;render()}});
-addEventListener("resize",()=>{document.body.style.setProperty("--fz",fz());chrome();linksSoon()});
+addEventListener("resize",()=>{document.body.style.setProperty("--fz",fz());chrome();linksSoon();if(st.mode==="canvas"){if(cv.focus>=0)focusCv(cv.focus,false);else fitCv(false)}});
 if(document.fonts)document.fonts.ready.then(()=>{placeThumbs();hints()});
 function ptoast(m){const o=document.getElementById("ptoast");if(o)o.remove();document.body.insertAdjacentHTML("beforeend",`<div id="ptoast" role="status">${m}</div>`)}
 const tipEl=document.createElement("div");tipEl.id="tip";tipEl.setAttribute("aria-hidden","true");document.body.appendChild(tipEl);
@@ -1562,5 +1613,62 @@ document.addEventListener("mouseover",e=>{
   const r=t.getBoundingClientRect();tipEl.textContent=(st.bp&&t.dataset.hinfo)||t.dataset.tip||t.dataset.todo;tipEl.style.left=(r.left+r.width/2)+"px";tipEl.style.top=(r.top-8)+"px";tipEl.classList.add("on")});
 document.addEventListener("pointerdown",()=>tipEl.classList.remove("on"));
 addEventListener("scroll",()=>tipEl.classList.remove("on"),true);
+/* ---------- plátno (všechny obrazovky, posun a zoom) ---------- */
+const cv={x:0,y:0,z:.5,focus:-1,init:false};let cvNav=false,cvPtr=new Map(),cvDrag=null;
+const CVL=()=>ORDER.flatMap(f=>FLOWS[f].map(s=>[f,s]));
+function renderCanvas(){
+  const keep=st.flow;let i=0;
+  const rows=ORDER.map(f=>{st.flow=f;
+    const cells=FLOWS[f].map((s,j)=>`${j?'<span class="cvar" aria-hidden="true"></span>':""}<div class="cvc" data-ci="${i++}"><span class="cvn"><i>${j+1}</i>${NAMES[s]}</span>${phoneHTML(s)}</div>`).join("");
+    return `<section class="cvrow"><h3 class="cvh">${SECNAME[f]}<small>${FLOWS[f].length} obrazovky</small></h3><div class="cvcells">${cells}</div></section>`}).join("");
+  st.flow=keep;
+  $p.className="phones po canvas";
+  $p.innerHTML=`<div class="cv" id="cv"><div class="cvw ${$p.clientWidth>=760?"c2":""}" id="cvw">${rows}</div>
+    <div class="cvz" role="group" aria-label="Zoom"><button type="button" data-cvz="-1" aria-label="Oddálit">${ic("minus")}</button><span id="cvp"></span><button type="button" data-cvz="1" aria-label="Přiblížit">${ic("plus")}</button><button type="button" class="cvall" data-cvfit>Vše</button></div>
+    <div class="cvfoc" id="cvfoc"></div></div>`;
+  $p.querySelectorAll(".phone").forEach(ph=>{const sc=ph.querySelector(".scr");sc.scrollTop=0});
+  if(!cv.init){cv.init=true;requestAnimationFrame(()=>fitCv(false))}
+  if(cvNav){cvNav=false;const k=CVL().findIndex(([f,s])=>f===st.flow&&s===st.screen);if(k>=0)requestAnimationFrame(()=>focusCv(k))}
+  applyCv(false);updateFoc();
+}
+function applyCv(anim){const w=document.getElementById("cvw");if(!w)return;w.classList.toggle("anim",!!anim&&!reduce);
+  w.style.transform=`translate(${cv.x}px,${cv.y}px) scale(${cv.z})`;const p=document.getElementById("cvp");if(p)p.textContent=Math.round(cv.z*100)+" %";
+  document.querySelectorAll(".cvc").forEach(c=>c.classList.toggle("on",+c.dataset.ci===cv.focus))}
+function zoomAt(f,px,py,anim){const nz=Math.max(.12,Math.min(2.4,cv.z*f));cv.x=px-(px-cv.x)*nz/cv.z;cv.y=py-(py-cv.y)*nz/cv.z;cv.z=nz;applyCv(anim)}
+function fitCv(anim){const v=document.getElementById("cv"),w=document.getElementById("cvw");if(!v||!w)return;
+  const W=w.offsetWidth,H=w.offsetHeight,vw=v.clientWidth,vh=v.clientHeight;cv.z=Math.min(1,(vw-32)/W,(vh-80)/H);
+  cv.x=(vw-W*cv.z)/2;cv.y=Math.max(12,(vh-64-H*cv.z)/2);cv.focus=-1;applyCv(anim);updateFoc()}
+function focusCv(i,anim=true){const c=document.querySelector(`.cvc[data-ci="${i}"]`),v=document.getElementById("cv");if(!c||!v)return;
+  const d=c.querySelector(".device");let x=0,y=0,el=d;while(el&&el.id!=="cvw"){x+=el.offsetLeft;y+=el.offsetTop;el=el.offsetParent}
+  const vw=v.clientWidth,vh=v.clientHeight,dw=d.offsetWidth,dh=d.offsetHeight;
+  cv.z=Math.min(1,(vh-110)/dh,(vw-40)/dw);cv.x=vw/2-(x+dw/2)*cv.z;cv.y=(vh-60)/2-(y+dh/2)*cv.z;cv.focus=i;
+  const [f,s]=CVL()[i];if(st.flow!==f)subAnim=true;st.flow=f;st.screen=s;chrome();
+  applyCv(anim);updateFoc()}
+function cvStep(d){const n=CVL().length;focusCv(cv.focus<0?(d>0?0:n-1):(cv.focus+d+n)%n)}
+function updateFoc(){const b=document.getElementById("cvfoc");if(!b)return;
+  if(cv.focus<0){b.className="cvfoc hint";b.innerHTML=`<span>${matchMedia("(hover: none)").matches?"Posun prstem, zoom dvěma prsty, klepnutím obrazovku přiblížíte":"Táhněte pro posun · ⌘ / Ctrl + kolečko nebo gesto pro zoom · kliknutím obrazovku přiblížíte"}</span>`;return}
+  const L=CVL(),[f,s]=L[cv.focus];b.className="cvfoc";
+  b.innerHTML=`<button type="button" class="cvb" data-cvstep="-1" aria-label="Předchozí obrazovka">${ic("left")}</button>
+    <span class="cvt"><b>${NAMES[s]}</b><small>${SECNAME[f]} · ${cv.focus+1} / ${L.length}</small></span>
+    <button type="button" class="cvb" data-cvstep="1" aria-label="Další obrazovka">${ic("right")}</button>
+    <button type="button" class="cvo" data-cvopen>${ic("pointer")}<span>Proklikat</span></button>
+    <button type="button" class="cvb" data-cvfit aria-label="Zpět na celé plátno">${ic("x")}</button>`}
+function cvPos(e){const r=document.getElementById("cv").getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
+$p.addEventListener("pointerdown",e=>{const v=e.target.closest("#cv");if(!v||e.target.closest(".cvz,.cvfoc"))return;
+  cvPtr.set(e.pointerId,[e.clientX,e.clientY]);v.setPointerCapture(e.pointerId);
+  if(cvPtr.size===1)cvDrag={x:e.clientX,y:e.clientY,ox:cv.x,oy:cv.y,moved:false,t:e.target};
+  else{const [a,b]=[...cvPtr.values()];cvDrag={pinch:Math.hypot(a[0]-b[0],a[1]-b[1]),z:cv.z,moved:true}}});
+$p.addEventListener("pointermove",e=>{if(!cvDrag||!cvPtr.has(e.pointerId))return;cvPtr.set(e.pointerId,[e.clientX,e.clientY]);
+  if(cvPtr.size>=2&&cvDrag.pinch){const [a,b]=[...cvPtr.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]),r=document.getElementById("cv").getBoundingClientRect();
+    zoomAt(cvDrag.z*d/cvDrag.pinch/cv.z,(a[0]+b[0])/2-r.left,(a[1]+b[1])/2-r.top,false);return}
+  const dx=e.clientX-cvDrag.x,dy=e.clientY-cvDrag.y;if(!cvDrag.moved&&Math.hypot(dx,dy)<5)return;
+  cvDrag.moved=true;document.getElementById("cv").classList.add("grab");cv.x=cvDrag.ox+dx;cv.y=cvDrag.oy+dy;applyCv(false)});
+function cvUp(e){if(!cvPtr.has(e.pointerId))return;cvPtr.delete(e.pointerId);const v=document.getElementById("cv");if(v)v.classList.remove("grab");
+  if(cvDrag&&!cvDrag.moved&&cvPtr.size===0){const c=cvDrag.t.closest(".cvc");if(c){const i=+c.dataset.ci;if(i===cv.focus)openCv();else focusCv(i)}}
+  if(cvPtr.size===0)cvDrag=null}
+$p.addEventListener("pointerup",cvUp);$p.addEventListener("pointercancel",cvUp);
+$p.addEventListener("wheel",e=>{if(!e.target.closest("#cv"))return;e.preventDefault();
+  if(e.ctrlKey||e.metaKey){const [x,y]=cvPos(e);zoomAt(Math.exp(-e.deltaY*.01),x,y,false)}else{cv.x-=e.deltaX;cv.y-=e.deltaY;applyCv(false)}},{passive:false});
+function openCv(){const [f,s]=CVL()[cv.focus<0?0:cv.focus];st.mode="one";if(st.flow!==f)subAnim=true;st.flow=f;go(s,{dir:"tab",stg:true,reset:true})}
 reload();
 </script>
