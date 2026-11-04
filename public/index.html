@@ -409,9 +409,9 @@ textarea::placeholder{color:var(--mute)}
 .nv.on{color:var(--tint-ink);font-weight:800}
 .nv.on .nvi{background:var(--tint);width:50px}
 .wf .nv.on{color:#171717}.wf .nv.on .nvi{background:#171717;color:#fff}
-.fab{justify-self:center;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--tint);color:var(--tint-ink);border:0;cursor:pointer}
+.fab{justify-self:center;width:52px;height:52px;margin-top:-26px;border-radius:50%;display:grid;place-items:center;background:var(--tint);color:var(--tint-ink);border:4px solid var(--surf);cursor:pointer;box-shadow:0 10px 18px -8px rgba(0,0,0,.45),0 2px 4px rgba(0,0,0,.12);transition:transform .15s}.fab:active{transform:scale(.94)}
 .wf .fab{background:#171717;color:#fff}
-.fab .ic{width:22px;height:22px;stroke-width:2.6}
+.fab .ic{width:22px;height:22px;stroke-width:2.6}.ui .fab{background:linear-gradient(135deg,#46C867,#2C9E4B);color:#fff}
 
 /* načítání a pohyb */
 .sk{display:block;background:linear-gradient(90deg,var(--sk1) 0%,var(--sk2) 50%,var(--sk1) 100%);background-size:200% 100%;animation:shim 1.15s linear infinite;border-radius:8px}
@@ -627,10 +627,10 @@ svg.links .sd{fill:#fff;stroke:var(--conn);stroke-width:1.6;transition:stroke .5
 svg.links .sd.fresh,svg.links .sd.hv{stroke:var(--brand);fill:var(--brand)}
 svg.links .pulse{fill:none;stroke:var(--brand);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:lpulse 1s cubic-bezier(.2,.8,.2,1) .15s both}
 @keyframes lpulse{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(5)}}
-body.bp .phone [data-hot]{outline:1.5px dashed rgba(46,158,74,.85);outline-offset:1px}
+body.bp .phone [data-hot]{outline:1.5px dashed rgba(139,79,214,.9);outline-offset:1px}
 body.bp .phone [data-hot="todo"]{outline-color:rgba(110,120,115,.5)}
 body.bp .phone [data-hot]:hover{outline-style:solid;outline-width:2px}
-body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(46,158,74,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(46,158,74,.08) 1px,transparent 1px);background-size:24px 24px}
+body.bp #phones{border-radius:22px;background-image:linear-gradient(rgba(139,79,214,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(139,79,214,.07) 1px,transparent 1px);background-size:24px 24px}
 .labrow{display:flex;align-items:center;gap:6px 12px;min-height:26px;flex-wrap:wrap}
 .labrow .lab{margin-right:auto}.tgls{display:flex;align-items:center;gap:4px 10px}@media (max-width:699px){.labrow .lab{flex-basis:100%}.tgls{margin-left:-8px}}
 .kbh{display:none;align-items:center;gap:5px;font:600 11.5px/1 var(--sans);color:var(--mute)}
@@ -697,9 +697,9 @@ body.noarr .cvar{visibility:hidden}
 .cvb[data-cvstep="1"]{background:var(--brand);color:#fff}.cvb[data-cvstep="1"]:hover{background:#278A40}
 .cvn{overflow:hidden}.cvn i{flex:none}.cvn span{overflow:hidden;text-overflow:ellipsis}
 /* komentáře */
-body.cm #phones .phone{cursor:crosshair}
-body.cm #phones .phone .cmh{outline:2px solid #2F6FD6!important;outline-offset:1px;background-color:rgba(47,111,214,.06)}
-body.cm #phones .phone .cmsel{outline:2px solid #2F6FD6!important;outline-offset:1px;box-shadow:0 0 0 5px rgba(47,111,214,.18)}
+body.cmon #phones .phone{cursor:crosshair}
+body.cmon #phones .phone .cmh{outline:2px solid #2F6FD6!important;outline-offset:1px;background-color:rgba(47,111,214,.06)}
+body.cmon #phones .phone .cmsel{outline:2px solid #2F6FD6!important;outline-offset:1px;box-shadow:0 0 0 5px rgba(47,111,214,.18)}
 .cmpin{position:absolute;z-index:30;width:28px;height:28px;margin:-28px 0 0 -2px;border-radius:14px 14px 14px 3px;border:2px solid #fff;background:#2F6FD6;color:#fff;font:800 12px/1 var(--sans);display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 14px -6px rgba(20,40,90,.6);animation:cmin .3s cubic-bezier(.2,.8,.2,1)}
 .cmpin:hover{transform:scale(1.08)}
 @keyframes cmin{from{transform:scale(.4);opacity:0}}
@@ -722,6 +722,38 @@ body.cm #phones .phone .cmsel{outline:2px solid #2F6FD6!important;outline-offset
 #cmgl i:empty{display:none}
 #cmgl[aria-pressed="true"] .sw{background:#2F6FD6}
 .bpt{white-space:nowrap}@media (max-width:699px){.labrow{gap:8px 12px}.bpt{gap:6px;padding-right:0}}
+
+/* fialová klikací místa, poznámky, analýza */
+#bptgl[aria-pressed="true"] .sw{background:#8B4FD6}
+#tip{max-width:calc(100vw - 16px);white-space:normal;text-align:center;width:max-content}
+#tip.below{transform:translate(-50%,0)}
+#ptoast{max-width:calc(100vw - 32px);white-space:normal;text-align:center;width:max-content}
+.cmpop.sheet{left:12px!important;right:12px;top:auto!important;bottom:calc(12px + env(safe-area-inset-bottom,0px));width:auto;max-width:none;max-height:70dvh;overflow:auto}
+.ngrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.note{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px;box-shadow:0 8px 22px -18px rgba(20,30,25,.3)}
+.note h3{margin:2px 0 4px;font-size:15px;font-weight:800}
+.note p{margin:0;font-size:13.5px;line-height:1.55;color:#2B332E}
+.noi,.oki{width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;background:#E8F5EC;color:var(--brand)}
+.noi .ic,.oki .ic{width:19px;height:19px}
+.oki{margin-bottom:10px;background:#fff}
+.pstep .n{width:34px;height:34px;border-radius:11px;background:#fff;color:var(--brand)}
+.pstep .n .ic{width:17px;height:17px}
+.alist{list-style:none;padding:0}
+.alist li{display:flex;gap:10px;align-items:flex-start}
+.alist li .ic{width:16px;height:16px;flex:none;margin-top:3px;color:var(--brand)}
+.alist li+li{margin-top:8px}
+.anhero{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.anhero figure{margin:0;display:flex;flex-direction:column;gap:10px}
+.anhero .ivis{margin:0;height:172px}
+.anhero figcaption b{display:flex;align-items:center;gap:7px;font-size:14px}
+.anhero figcaption span{display:block;margin-top:3px;font-size:12.5px;line-height:1.45;color:var(--mute)}
+.dotx{width:8px;height:8px;border-radius:50%;display:block}.dotx.r{background:#E2553D}.dotx.g{background:#2EAA4E}
+.ivis .old{gap:6px}
+.ivis .old .ohd{display:flex;justify-content:space-between;align-items:center;margin:-10px -12px 0;padding:7px 10px;border-radius:12px 12px 0 0;background:#4CC36A;color:#fff;font-weight:700;font-size:10px}
+.ivis .old .odots{display:flex;gap:6px}.ivis .old .odots .ic{width:11px;height:11px}
+.ivis .old .obt{display:flex;gap:6px}.ivis .old .obt span{flex:1;text-align:center;padding:5px 4px;border-radius:999px;background:#4CC36A;color:#fff;font-size:9.5px;font-weight:700}
+.ivis .old .obt .oo{background:#fff;border:1.5px solid #E2553D;color:#E2553D}
+.pstep{flex-direction:column;gap:9px}
 </style>
 
 <div class="wrap">
@@ -767,17 +799,17 @@ body.cm #phones .phone .cmsel{outline:2px solid #2F6FD6!important;outline-offset
 
   <section class="notes" id="notesview" aria-label="Poznámky">
     <div class="vhead"><h2>Předpoklady a poznámky pro tým</h2><p>Rozhodnutí a předpoklady, na kterých prototyp stojí. Hodí se pro Davida i programátora.</p></div>
-    <div class="card2"><ul>
-      <li>Stav události (Řeší se → Zlepšuje se → Vyřešeno) mění jen potvrzení od ŘSD nebo hlasování Platí / Neplatí. Odhad konce je samostatná informace. Když uplyne, aplikace to napíše, ale stav nechá. To jde proti původnímu nápadu, kdy semafor postupoval podle třetin odhadované doby.</li>
-      <li>Lajky: tlačítko „Děkuji“ nahrazuje Platí / Neplatí. V detailu je plovoucí vpravo dole, protože hlas zároveň potvrzuje stav události. Žádné další lajky ani srdíčka nejsou, aby se hodnocení nedublovalo.</li>
-      <li>Komentáře: v detailu je náhled posledních příspěvků. Psaní je zatím ztlumené. Otevřená otázka: komentovat i hlášení od řidičů, nebo jen události od ŘSD, a kdo bude komentáře moderovat.</li>
-      <li>Oblast má dvě volby: V okolí (40 km od polohy telefonu) a celý kraj. Hledání prohledává celou ČR a oblast při něm neplatí. Aplikace se aktualizuje sama, proto čas aktualizace není vidět.</li>
-      <li>Nahlášení má tři kroky: typ, kontrola, hotovo. Místo se bere z polohy telefonu. Řidič nevybírá, komu se událost zobrazí ani na kolik dní: vidí ji řidiči v okolí a zmizí, až ji ostatní označí jako neplatnou nebo ji uzavře ŘSD.</li>
-      <li>Přihlášení a registrace se vejdou na jednu obrazovku bez posouvání. Apple a Google jsou nahoře, e-mail pod nimi. Při registraci si řidič vybere ikonku a barvu, která ho pak bude reprezentovat u hlášení. Doba zobrazení zpráv v registraci není (klient ji ruší) a SPZ se zatím nevyplňuje.</li>
-      <li>AI vizualizace je orientační ilustrace situace. Jak ji bude generovat, je otázka na programátora.</li>
-      <li>Podklady určují barvu jen pro dálnice a silnice I. třídy. Silnice II. a III. třídy mají bílý štítek s tmavým rámečkem.</li>
-      <li>Upozornění, Profil (s kartou řidiče, oblíbenými, sledujícími, pozvánkami a zvuky), AI asistent a Ceny PHM teprve přijdou na řadu. Všechna data jsou ukázková.</li>
-    </ul></div>
+    <div class="ngrid" id="ngrid">
+      <article class="note"><span class="noi" data-ic="timer"></span><div><h3>Stav události a odhad konce</h3><p>Stav (Řeší se → Zlepšuje se → Vyřešeno) mění jen potvrzení od ŘSD nebo hlasování Platí / Neplatí. Odhad konce je samostatná informace. Když uplyne, aplikace to napíše, ale stav nechá. To jde proti původnímu nápadu, kdy semafor postupoval podle třetin odhadované doby.</p></div></article>
+      <article class="note"><span class="noi" data-ic="check"></span><div><h3>Platí / Neplatí místo lajků</h3><p>Tlačítko „Děkuji“ nahrazuje Platí / Neplatí. V detailu je plovoucí vpravo dole, protože hlas zároveň potvrzuje stav události. Žádné další lajky ani srdíčka nejsou, aby se hodnocení nedublovalo.</p></div></article>
+      <article class="note"><span class="noi" data-ic="msg"></span><div><h3>Komentáře</h3><p>V detailu je náhled posledních příspěvků. Psaní je zatím ztlumené. Otevřená otázka: komentovat i hlášení od řidičů, nebo jen události od ŘSD, a kdo bude komentáře moderovat.</p></div></article>
+      <article class="note"><span class="noi" data-ic="map"></span><div><h3>Oblast a hledání</h3><p>Dvě volby: V okolí (40 km od polohy telefonu) a celý kraj. Hledání prohledává celou ČR a oblast při něm neplatí. Aplikace se aktualizuje sama, proto čas aktualizace není vidět.</p></div></article>
+      <article class="note"><span class="noi" data-ic="plus"></span><div><h3>Nahlášení události</h3><p>Tři kroky: typ, kontrola, hotovo. Místo se bere z polohy telefonu. Řidič nevybírá, komu se událost zobrazí ani na kolik dní: vidí ji řidiči v okolí a zmizí, až ji ostatní označí jako neplatnou nebo ji uzavře ŘSD.</p></div></article>
+      <article class="note"><span class="noi" data-ic="user"></span><div><h3>Přihlášení a registrace</h3><p>Vejdou se na jednu obrazovku bez posouvání. Apple a Google jsou nahoře, e-mail pod nimi. Při registraci si řidič vybere ikonku a barvu, která ho pak reprezentuje u hlášení. Doba zobrazení zpráv v registraci není (klient ji ruší) a SPZ se zatím nevyplňuje.</p></div></article>
+      <article class="note"><span class="noi" data-ic="sparkles"></span><div><h3>AI vizualizace</h3><p>Orientační ilustrace situace. Jak ji bude generovat, je otázka na programátora.</p></div></article>
+      <article class="note"><span class="noi" data-ic="route"></span><div><h3>Barvy silnic</h3><p>Podklady určují barvu jen pro dálnice a silnice I. třídy. Silnice II. a III. třídy mají bílý štítek s tmavým rámečkem.</p></div></article>
+      <article class="note"><span class="noi" data-ic="bell"></span><div><h3>Co přijde později</h3><p>Upozornění, Profil (s kartou řidiče, oblíbenými, sledujícími, pozvánkami a zvuky), AI asistent a Ceny PHM teprve přijdou na řadu. Všechna data jsou ukázková.</p></div></article>
+    </div>
   </section>
 
   <footer class="foot"><span class="flogo"></span><span>Návrh redesignu aplikace Treffik · listopad 2026</span><span>Design a UX: <a href="https://vojtechsvoboda.cz" target="_blank" rel="noopener">Vojtěch Svoboda · vojtechsvoboda.cz</a></span></footer>
@@ -842,7 +874,7 @@ const setBtn=(sel,icon,txt)=>{document.querySelector(sel).innerHTML=ic(icon)+txt
 setBtn('[data-view="an"]',"search","Analýza");setBtn('[data-view="flow"]',"flow","User flow");setBtn('[data-view="proto"]',"pointer","Prototyp");setBtn('[data-view="ideas"]',"bulb","Nápady");setBtn('[data-view="notes"]',"file","Poznámky");
 setBtn('[data-look="wf"]',"dashed","Wireframe");setBtn('[data-look="ui"]',"palette","UI");
 setBtn('[data-mode="all"]',"cols","Vedle sebe");setBtn('[data-mode="one"]',"phone","Proklik");setBtn('[data-mode="canvas"]',"map","Plátno");
-setBtn("#reload","refresh","Znovu načíst");setBtn("#fullbtn","max","Celá obrazovka");document.querySelector(".flogo").innerHTML=logo(22);
+setBtn("#reload","refresh","Znovu načíst");setBtn("#fullbtn","max","Celá obrazovka");document.querySelector(".flogo").innerHTML=logo(22);document.querySelectorAll(".noi[data-ic]").forEach(x=>x.innerHTML=ic(x.dataset.ic));
 document.getElementById("sxbtn").innerHTML=`<span class="cb">${ic("right")}</span>`;document.getElementById("sxbtnl").innerHTML=`<span class="cb">${ic("left")}</span>`;
 const SECTIONS=[["start","Přihlášení"],["feed","Doprava"],["routes","Moje cesty"],["report","Nahlásit událost"],["s1","Upozornění","brzy","Upozornění zatím nejsou navržená"],["s2","Profil","","Profil zatím není navržený"],["s3","AI asistent","","AI asistent zatím není navržený"],["s4","Ceny PHM","","Ceny PHM zatím nejsou navržené"]];
 document.getElementById("sect").insertAdjacentHTML("beforeend",SECTIONS.map(([k,l,tag,tip])=>tip?`<button type="button" class="soonb" data-sect="${k}" aria-disabled="true" data-tip="${tip}">${l}${tag?` <small>${tag}</small>`:""}</button>`:`<button type="button" data-sect="${k}" aria-pressed="false">${l}</button>`).join(""));
@@ -1294,20 +1326,28 @@ function renderAn(){
   const tabs=[["sum","Shrnutí","file"],["iss","Problémy · "+ISSUES.length,"alert"],["gal","Screenshoty · "+Object.keys(SHOT).length,"phone"]];
   let body="";
   if(st.anTab==="sum")body=`
+   <div class="card2"><h3>Jedna karta události dnes a v návrhu</h3><div class="anhero">
+     <figure><div class="ivis" aria-hidden="true"><div class="mk w old"><div class="ohd"><span>Treffik Live</span><span class="odots">${["share","msg","bell","pin","x"].map(n=>ic(n)).join("")}</span></div>
+       <span class="ln"></span><span class="ln"></span><span class="ln s"></span><div class="obt"><span>Dopravní řešení</span><span class="oo">39:19 s</span></div>
+       <div class="r sm mut"><span>👍 0 · Děkuji</span><span>0 sdílení</span><span>0 komentářů</span></div></div></div>
+       <figcaption><b><i class="dotx r"></i>Dnes · 14 prvků</b><span>Ikony, odkazy, odpočet a tlačítka bojují o pozornost. Co se stalo, je schované v odstavci.</span></figcaption></figure>
+     <figure><div class="ivis" aria-hidden="true"><div class="mk w"><div class="r"><span class="r" style="gap:6px">${ivsh("D1","d")}<span class="sm mut">km 184 · Brno-západ</span></span><b class="sm">8 km</b></div>
+       <b class="big2">Kolona po poruše kamionu</b><div class="r"><span class="tags"><span>● Řeší se</span></span><b class="sm">+12 min</b></div></div></div>
+       <figcaption><b><i class="dotx g"></i>Návrh · 5 prvků</b><span>Silnice, místo, co se děje, stav a zdržení. Zbytek je až v detailu.</span></figcaption></figure></div></div>
    <div class="card2"><h3>Jak návrh vznikal</h3><div class="process">
-     ${[["červen–červenec","Seznámení s aplikací","Proklikání na telefonu a popis aplikace v PDF od Davida"],["říjen","Testování","Aktuální build v simulátoru, 40 obrazovek a stavů"],["říjen–listopad","Analýza","9 problémů seřazených podle priority"],["říjen–listopad","Mapa a user flow","Dnešní a navržená struktura, počty kroků"],["říjen–listopad","Wireframy a UI","Obsah, navigace a první vizuální směr"],["říjen–listopad","Prototyp a nápady","Proklikávací prototyp a 21 podnětů k rozhodnutí"]].map(([d,b,t],i)=>`<div class="pstep"><span class="n">${i+1}</span><div><span class="pd">${d}</span><b>${b}</b><small>${t}</small></div></div>`).join("")}</div></div>
+     ${[["červen–červenec","Seznámení s aplikací","Proklikání na telefonu a popis aplikace v PDF od Davida"],["říjen","Testování","Aktuální build v simulátoru, 40 obrazovek a stavů"],["říjen–listopad","Analýza","9 problémů seřazených podle priority"],["říjen–listopad","Mapa a user flow","Dnešní a navržená struktura, počty kroků"],["říjen–listopad","Wireframy a UI","Obsah, navigace a první vizuální směr"],["říjen–listopad","Prototyp a nápady","Proklikávací prototyp a 21 podnětů k rozhodnutí"]].map(([d,b,t],i)=>`<div class="pstep"><span class="n">${ic(["phone","search","alert","flow","palette","pointer"][i])}</span><div><span class="pd">${i+1} · ${d}</span><b>${b}</b><small>${t}</small></div></div>`).join("")}</div></div>
    <div class="card2"><h3>Co funguje a stojí za to zachovat</h3><div class="okg">
-     <div><b>Data z ŘSD v lidské řeči</b><p>AI přepis z hesel do vět je hlavní hodnota. Řidič rozumí bez dekódování zkratek.</p></div>
-     <div><b>Semafor jako časová osa</b><p>Červená, oranžová, zelená podle postupu řešení. Dnes ale splývá se zelenou značkou.</p></div>
-     <div><b>Kontext k události</b><p>Vzdálenost, zdržení, počasí a foto / mapa odpovídají na otázku „týká se mě to?“.</p></div>
-     <div><b>Moje cesta</b><p>Nejsilnější důvod aplikaci otevírat denně. Dnes je schovaná ve dvou různých místech.</p></div></div></div>
+     <div><span class="oki">${ic("db")}</span><b>Data z ŘSD v lidské řeči</b><p>AI přepis z hesel do vět je hlavní hodnota. Řidič rozumí bez dekódování zkratek.</p></div>
+     <div><span class="oki">${ic("timer")}</span><b>Semafor jako časová osa</b><p>Červená, oranžová, zelená podle postupu řešení. Dnes ale splývá se zelenou značkou.</p></div>
+     <div><span class="oki">${ic("info")}</span><b>Kontext k události</b><p>Vzdálenost, zdržení, počasí a foto / mapa odpovídají na otázku „týká se mě to?“.</p></div>
+     <div><span class="oki">${ic("route")}</span><b>Moje cesta</b><p>Nejsilnější důvod aplikaci otevírat denně. Dnes je schovaná ve dvou různých místech.</p></div></div></div>
    <div class="two">
      <div class="card2"><h3>Co se podle klienta mění</h3><ul class="alist">
-       <li>Treffik Premium se ruší, aplikace bude zdarma.</li><li>Doba zobrazení zprávy se ruší v nastavení, registraci i nové zprávě.</li>
-       <li>„Děkuji“ nahradí Platí / Neplatí s body za hodnocení.</li><li>Text nad obrázkem.</li><li>Logo semaforu je schválené, i jako ikona aplikace.</li><li>Všechny funkce zůstávají, rozložení je na návrhu.</li></ul></div>
+       <li>${ic("x")}<span>Treffik Premium se ruší, aplikace bude zdarma.</span></li><li>${ic("clock")}<span>Doba zobrazení zprávy se ruší v nastavení, registraci i nové zprávě.</span></li>
+       <li>${ic("check")}<span>„Děkuji“ nahradí Platí / Neplatí s body za hodnocení.</span></li><li>${ic("image")}<span>Text nad obrázkem.</span></li><li>${ic("sparkles")}<span>Logo semaforu je schválené, i jako ikona aplikace.</span></li><li>${ic("flow")}<span>Všechny funkce zůstávají, rozložení je na návrhu.</span></li></ul></div>
      <div class="card2"><h3>Co zatím není nafocené</h3><ul class="alist">
-       <li>Registrace a zapomenuté heslo (aplikace musí být odhlášená).</li><li>Nová zpráva, krok 2 a 3 (v simulátoru nejde vložit text), popis je z PDF.</li>
-       <li>Potvrzení odhlášení a smazání účtu.</li><li>Push notifikace (fungují jen na fyzickém telefonu).</li></ul></div>
+       <li>${ic("user")}<span>Registrace a zapomenuté heslo (aplikace musí být odhlášená).</span></li><li>${ic("plus")}<span>Nová zpráva, krok 2 a 3 (v simulátoru nejde vložit text), popis je z PDF.</span></li>
+       <li>${ic("alert")}<span>Potvrzení odhlášení a smazání účtu.</span></li><li>${ic("bell")}<span>Push notifikace (fungují jen na fyzickém telefonu).</span></li></ul></div>
    </div>`;
   else if(st.anTab==="iss")body=`<div class="stats">
      <div class="stat"><b>14</b><span>prvků na jedné kartě události v hlavním výpisu (problém 02)</span></div>
@@ -1389,7 +1429,7 @@ function drawLinks(anim){
   const g=svg.querySelector("g"),cur=g.querySelectorAll("path.ln");
   if(!anim&&cur.length===G.length){G.forEach((o,i)=>{const p=cur[i],d=g.querySelectorAll("circle.sd")[i];p.setAttribute("d",o.d);p.classList.toggle("off",o.off);p.classList.toggle("hv",o.k==="h");p.setAttribute("marker-end",`url(#${o.k==="h"||p.classList.contains("fresh")?"ahb":"ahg"})`);d.setAttribute("cx",o.x);d.setAttribute("cy",o.y);d.classList.toggle("hv",o.k==="h")});return}
   g.innerHTML=G.map(o=>`<path class="ln ${o.off?"off":""} ${o.k==="h"?"hv":""} ${anim?"fresh":""}" d="${o.d}" marker-end="url(#${anim||o.k==="h"?"ahb":"ahg"})"/><circle class="sd ${o.k==="h"?"hv":""} ${anim?"fresh":""}" cx="${o.x}" cy="${o.y}" r="3.5"/>${anim?`<circle class="pulse" cx="${o.x}" cy="${o.y}" r="4"/>`:""}`).join("");
-  if(anim&&!reduce){g.querySelectorAll("path.ln").forEach(p=>{const l=p.getTotalLength();p.animate([{strokeDasharray:`${l} ${l}`,strokeDashoffset:l},{strokeDasharray:`${l} ${l}`,strokeDashoffset:0}],{duration:560,easing:"cubic-bezier(.4,0,.2,1)"})});
+  if(anim&&!reduce){g.querySelectorAll("path.ln").forEach(p=>{const l=p.getTotalLength(),mk=p.getAttribute("marker-end");p.removeAttribute("marker-end");p.animate([{strokeDasharray:`${l} ${l}`,strokeDashoffset:l},{strokeDasharray:`${l} ${l}`,strokeDashoffset:0}],{duration:560,easing:"cubic-bezier(.4,0,.2,1)"}).onfinish=()=>{if(!p.getAttribute("marker-end"))p.setAttribute("marker-end",mk)}});
     linkTs.push(setTimeout(()=>g.querySelectorAll(".fresh").forEach(x=>{x.classList.remove("fresh");if(x.tagName==="path"&&!x.classList.contains("hv"))x.setAttribute("marker-end","url(#ahg)")}),1500))}
 }
 function scheduleLinks(){linkTs.forEach(clearTimeout);linkTs=[];const a=linkAnim;linkAnim=false;
@@ -1423,6 +1463,8 @@ function mph(s){
   const lk="ui";const cls=s==="splash"?"full":["detail","events","register","rtype","rconfirm","rdone","login"].includes(s)?"tall":"";
   return `<span class="mph ${lk} ${cls}"><i></i>${cls==="full"?"":"<u></u><u></u><u></u>"}</span>`;
 }
+function fitBoard(){const w=document.getElementById("board"),b=w&&w.querySelector(".board");if(!b)return;b.style.zoom=1;if(innerWidth<700)return;b.style.zoom=Math.min(1,(w.clientWidth-2)/b.scrollWidth)}
+addEventListener("resize",()=>{if(st.view==="flow")fitBoard()});
 function renderFlow(){
   document.getElementById("flowview").innerHTML=`<div class="boardwrap" id="board"><div class="board">${LANES.map(L=>`
     <div class="lane ${L.later?"sep":""}"><span class="lanel">${L.lab}<small>${L.sub}</small></span><div class="lrow">${L.nodes.map(([s,t,d],i)=>{
@@ -1491,7 +1533,7 @@ function navFor(s){
 function phoneHTML(s){const n=navFor(s),fl=s==="detail"&&!st.loading,pf=s==="rconfirm";
     return `<div class="col"><div class="device"><div class="phone ${st.look} ${s==="splash"?"":""}" data-screen="${s}" data-key="${key(s)}">${SB}<div class="scr"><div class="screen ${n?"":"nonav"} ${fl?"float":""} ${pf?"float2":""} ${s==="splash"?"bare":""}">${SCREENS[s]()}</div></div>${fl?voteFloat():""}${pf?pfix():""}${n}${st.splash?`<div class="splash">${logo(70)}<b>Treffik</b></div>`:""}</div></div></div>`}
 function render(o={}){
-  if(st.view==="flow"){renderFlow();chrome();return}
+  if(st.view==="flow"){renderFlow();chrome();fitBoard();return}
   if(st.view==="ideas"){renderIdeas();chrome();return}
   if(st.view==="an"){renderAn();chrome();return}
   if(st.view==="notes"){chrome();return}
@@ -1645,7 +1687,7 @@ const tipEl=document.createElement("div");tipEl.id="tip";tipEl.setAttribute("ari
 document.addEventListener("mouseover",e=>{
   if(st.bp){const h=e.target.closest(".phone [data-hot]");if(h!==hoverHot){hoverHot=h;linksSoon()}}
   const t=(st.bp&&e.target.closest(".phone [data-hinfo]"))||e.target.closest("[data-tip],[data-todo]");if(!t||matchMedia("(hover: none)").matches){tipEl.classList.remove("on");return}
-  const r=t.getBoundingClientRect();tipEl.textContent=(st.bp&&t.dataset.hinfo)||t.dataset.tip||t.dataset.todo;tipEl.style.left=(r.left+r.width/2)+"px";tipEl.style.top=(r.top-8)+"px";tipEl.classList.add("on")});
+  const r=t.getBoundingClientRect();tipEl.textContent=(st.bp&&t.dataset.hinfo)||t.dataset.tip||t.dataset.todo;const tw=Math.min(tipEl.offsetWidth,innerWidth-16);tipEl.style.left=Math.max(8+tw/2,Math.min(innerWidth-8-tw/2,r.left+r.width/2))+"px";const below=r.top<tipEl.offsetHeight+16;tipEl.classList.toggle("below",below);tipEl.style.top=(below?r.bottom+8:r.top-8)+"px";tipEl.classList.add("on")});
 document.addEventListener("pointerdown",()=>tipEl.classList.remove("on"));
 addEventListener("scroll",()=>tipEl.classList.remove("on"),true);
 /* ---------- plátno (všechny obrazovky, posun a zoom) ---------- */
@@ -1727,7 +1769,7 @@ function cmPins(){$p.querySelectorAll(".cmpin").forEach(x=>x.remove());if(!st.cm
       const x=r.left+c.rx*r.width,y=r.top+c.ry*r.height,inScr=el.closest(".scr");if(inScr&&(y<scr.top+4||y>scr.bottom-4))return;
       ph.insertAdjacentHTML("beforeend",`<button type="button" class="cmpin" data-cmid="${c.id}" style="left:${(x-pr.left)/sc}px;top:${(y-pr.top)/sc}px" aria-label="Komentář ${i+1}">${cmInit(c.author)}</button>`)})})}
 function cmClose(){const p=document.getElementById("cmpop");if(p)p.remove();$p.querySelectorAll(".cmsel").forEach(x=>x.classList.remove("cmsel"))}
-function cmPlace(pop,r){const w=pop.offsetWidth,h=pop.offsetHeight;let l=Math.min(innerWidth-w-12,Math.max(12,r.left)),t=r.bottom+10;if(t+h>innerHeight-12)t=Math.max(12,r.top-h-10);pop.style.left=l+"px";pop.style.top=t+"px"}
+function cmPlace(pop,r){if(innerWidth<600){pop.classList.add("sheet");return}const w=pop.offsetWidth,h=pop.offsetHeight;let l=Math.min(innerWidth-w-12,Math.max(12,r.left)),t=r.bottom+10;if(t+h>innerHeight-12)t=Math.max(12,r.top-h-10);pop.style.left=l+"px";pop.style.top=t+"px"}
 function cmCompose(ph,el,ev){cmClose();el.classList.add("cmsel");const r=el.getBoundingClientRect();
   const c={key:ph.dataset.key,screen:ph.dataset.screen,path:cmPath(el,ph),rx:Math.min(1,Math.max(0,(ev.clientX-r.left)/(r.width||1))),ry:Math.min(1,Math.max(0,(ev.clientY-r.top)/(r.height||1)))};
   document.body.insertAdjacentHTML("beforeend",`<div class="cmpop" id="cmpop" role="dialog" aria-label="Nový komentář">
@@ -1760,7 +1802,7 @@ document.addEventListener("click",e=>{
 document.addEventListener("mouseover",e=>{if(!st.cm||st.mode==="canvas")return;const ph=e.target.closest("#phones .phone");const el=ph&&!e.target.closest(".cmpin")?cmPick(e.target,ph):null;
   if(el!==cmHover){if(cmHover)cmHover.classList.remove("cmh");cmHover=el;if(el)el.classList.add("cmh")}});
 addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("cmpop")){cmClose();e.stopImmediatePropagation()}},true);
-document.getElementById("cmgl").addEventListener("click",e=>{st.cm=!st.cm;e.currentTarget.setAttribute("aria-pressed",st.cm);document.body.classList.toggle("cm",st.cm);if(!st.cm){cmClose();if(cmHover){cmHover.classList.remove("cmh");cmHover=null}}
+document.getElementById("cmgl").addEventListener("click",e=>{st.cm=!st.cm;e.currentTarget.setAttribute("aria-pressed",st.cm);document.body.classList.toggle("cmon",st.cm);if(!st.cm){cmClose();if(cmHover){cmHover.classList.remove("cmh");cmHover=null}}
   cmPins();ptoast(st.cm?(st.mode==="canvas"?"Komentáře: přepněte na Vedle sebe nebo Proklik a klikněte na místo, ke kterému chcete napsat poznámku":"Komentáře zapnuté: klikněte na místo v obrazovce a napište poznámku"):"Komentáře vypnuté")});
 cmCount();
 reload();
