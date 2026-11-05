@@ -855,6 +855,38 @@ body.cmon .cmsel{outline:2px solid #2F6FD6!important;outline-offset:1px;box-shad
 .row1 .seg .ic,.navx .fchip .ic{width:15px;height:15px}
 .row1{gap:8px}.row1>.bl{gap:8px}
 .thr.flash .thrb{animation:thrfl 1s ease 2}@keyframes thrfl{50%{box-shadow:0 0 0 6px rgba(47,111,214,.25)}}
+/* diskuze k nápadům */
+.idisc{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.idisc .thrb{align-self:flex-start}.idisc .thrb .ic:last-child{width:13px;height:13px;color:inherit;margin-left:2px}
+.idlast{margin:0;font-size:12.5px;line-height:1.45;color:var(--mute);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.idlast b{color:var(--fg)}
+.idprev{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto;padding-right:4px}
+.idet{display:flex;flex-direction:column;gap:14px}
+.idet-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.idnav{display:inline-flex;align-items:center;gap:8px;font:600 12px var(--sans);color:var(--mute)}
+.idet-g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media (max-width:899px){.idet-g{grid-template-columns:1fr}}
+.chat{position:sticky;top:12px;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 22px -18px rgba(20,30,25,.3);height:min(calc(100dvh - 40px),760px);min-height:420px;overflow:hidden}
+.chat-hd{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.chat-hd b{font-size:15px}.chat-hd small{color:var(--mute);font-size:12px;margin-right:auto}
+.chat-ms{flex:1;overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px;background:#FAFBFA}
+.chat-empty{margin:auto;text-align:center;color:var(--mute);max-width:280px}.chat-empty .ic{width:28px;height:28px;color:#2F6FD6}.chat-empty p{margin:8px 0 0;font-size:13.5px;line-height:1.5}
+.msg{display:flex;gap:9px;align-items:flex-start;max-width:88%}
+.msg .mb{background:#fff;border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:8px 11px;min-width:0}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}.msg.me .mb{background:#EAF1FB;border-color:#D6E3F6;border-radius:14px 14px 4px 14px}
+.mh{display:flex;align-items:center;gap:7px}.mh b{font-size:12.5px}.mh small{font-size:11px;color:var(--mute)}
+.mb p{margin:3px 0 0;font-size:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.mimg{display:block;margin-top:6px}.mimg img{display:block;max-width:min(100%,320px);max-height:240px;border-radius:10px;border:1px solid var(--line)}
+.mdel{margin-left:auto;width:22px;height:22px;border-radius:7px;border:0;background:none;color:var(--mute);display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .15s}
+.mdel .ic{width:13px;height:13px}.msg:hover .mdel,.mdel:focus-visible{opacity:1}.mdel:hover{background:var(--soft);color:var(--fg)}
+@media (hover:none){.mdel{opacity:.6}}
+.chat-cp{border-top:1px solid var(--line);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.chat-cp .cmtx{min-height:52px}
+.chat-ft{display:flex;align-items:center;gap:8px}.chat-ft .cmnm{flex:none;width:160px;height:34px;margin-right:auto}
+.attach{cursor:pointer}
+.chat-att{position:relative;align-self:flex-start}.chat-att img{display:block;max-height:90px;border-radius:10px;border:1px solid var(--line)}
+.chat-att .mdel{position:absolute;top:4px;right:4px;opacity:1;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+@media (max-width:599px){.chat{position:static;height:auto;min-height:0}.chat-ms{max-height:60dvh}.chat-ft .cmnm{width:110px}.attach span{display:none}}
+.cmre img,.cmc img.cmimg{display:block;max-width:220px;max-height:160px;border-radius:10px;border:1px solid var(--line);margin-top:6px}
 </style>
 
 <div class="wrap">
@@ -869,7 +901,7 @@ body.cmon .cmsel{outline:2px solid #2F6FD6!important;outline-offset:1px;box-shad
         <div class="seg" id="topnav" role="group" aria-label="Pohled"><span class="thumb"></span>
           <button type="button" data-view="flow" aria-pressed="false"></button><button type="button" data-view="proto" aria-pressed="true"></button></div>
         <div class="seg po" role="group" aria-label="Podoba"><span class="thumb"></span>
-          <button type="button" data-look="wf" aria-pressed="true"></button><button type="button" data-look="ui" aria-pressed="false"></button></div>
+          <button type="button" data-look="ui" aria-pressed="true"></button><button type="button" data-look="wf" aria-pressed="false"></button></div>
         <div class="seg po" role="group" aria-label="Zobrazení"><span class="thumb"></span>
           <button type="button" data-mode="all" aria-pressed="true"></button><button type="button" data-mode="one" aria-pressed="false"></button><button type="button" data-mode="canvas" aria-pressed="false"></button></div>
       </div>
@@ -1034,7 +1066,7 @@ const ROUTES=[
 const FLOWS={start:["splash","login","register"],feed:["feed","detail"],routes:["routes","events","detail"],report:["rtype","rconfirm","rdone"]};
 const NAMES={splash:"Načítání",login:"Přihlášení",register:"Registrace",feed:"Doprava",detail:"Detail události",routes:"Moje cesty",events:"Události na trase",rtype:"Co se děje",rconfirm:"Kontrola",rdone:"Hotovo"};
 
-const st={links:false,anTab:"sum",icat:"vse",ist:"vse",av:0,avc:0,view:"proto",look:"wf",mode:matchMedia("(max-width: 699px)").matches?"one":"all",full:false,flow:"feed",screen:"feed",feedEv:"e2",route:1,rIdx:0,
+const st={idea:null,ithr:false,links:false,anTab:"sum",icat:"vse",ist:"vse",av:0,avc:0,view:"proto",look:"ui",mode:matchMedia("(max-width: 699px)").matches?"one":"all",full:false,flow:"feed",screen:"feed",feedEv:"e2",route:1,rIdx:0,
   area:"okoli",filter:"vse",q:"",searchOpen:false,loading:false,splash:false,votes:{},media:{},agree:false,
   rType:"kolona",rPresets:[],rNote:"",rPhoto:false,lastReport:null,prevFlow:"feed"};
 let nCount=0,subAnim=true,lastView=null,poAnims=[];
@@ -1052,6 +1084,7 @@ function protoOut(done){if(reduce){done();return}poAnims.forEach(a=>a.cancel());
   outAnims=list;svT=setTimeout(()=>{svT=0;done();list.forEach(a=>a.cancel());outAnims=[]},230)}
 let svT=0,outAnims=[];
 function setView(v){if(svT){clearTimeout(svT);svT=0;outAnims.forEach(a=>a.cancel());outAnims=[]}
+  if(v==="ideas"&&st.view==="ideas"&&st.idea!=null){st.idea=null;renderIdeas();scrollTo({top:0});return}
   if(st.view===v){document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===v));placeThumbs();return}document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===v));placeThumbs();const go2=()=>{st.view=v;scrollTo({top:0});render(v==="proto"?{anim:{screen:st.screen,dir:"tab"}}:{});
     const el=document.getElementById({an:"anview",ideas:"ideasview",notes:"notesview",cmts:"cmtview",flow:"flowview"}[v]);
     if(el&&!reduce)el.animate([{opacity:0,transform:"translateY(8px)"},{opacity:1,transform:"none"}],{duration:300,easing:"cubic-bezier(.2,.8,.2,1)"});requestAnimationFrame(placeThumbs)};
@@ -1402,7 +1435,7 @@ const IVIS={
 function renderIdeas(){
   const list=IDEAS.filter(i=>(st.icat==="vse"||i.c===st.icat)&&(st.ist==="vse"||i.s===st.ist)).sort((a,b)=>IORD[a.s]-IORD[b.s]);
   const cnt=(c,s2)=>IDEAS.filter(i=>(c==="vse"||i.c===c)&&(s2==="vse"||i.s===s2)).length,gridHTML=ideaGrid(list);
-  const iv=document.getElementById("ideasview"),fresh=!iv.querySelector(".ifil");
+  const iv=document.getElementById("ideasview");if(st.idea!=null){iv.innerHTML=ideaDetail(st.idea);stagger(iv);return}const fresh=!iv.querySelector(".ifil");
   if(!fresh){
     iv.querySelectorAll("[data-icat]").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.icat===st.icat);b.querySelector("small").textContent=cnt(b.dataset.icat,st.ist)});
     iv.querySelectorAll("[data-ist]").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.ist===st.ist);b.querySelector("small").textContent=cnt(st.icat,b.dataset.ist)});
@@ -1416,19 +1449,12 @@ function renderIdeas(){
      <div class="ifrow"><span class="lab">Stav</span><div class="fseg" role="group" aria-label="Stav"><span class="thumb"></span>
        <button type="button" class="fchip" data-ist="vse" aria-pressed="${st.ist==="vse"}">Vše<small>${cnt(st.icat,"vse")}</small></button>
        ${Object.entries(ISTAT).map(([k,l])=>`<button type="button" class="fchip" data-ist="${k}" aria-pressed="${st.ist===k}"><i style="background:${IDOT[k]}"></i>${l}<small>${cnt(st.icat,k)}</small></button>`).join("")}</div></div>
+     <div class="ifrow"><span class="lab">Diskuze</span><button type="button" class="bpt" id="ithrgl" aria-pressed="${!!st.ithr}"><span class="sw"></span>Rozbalit komentáře u všech nápadů</button></div>
    </div>
    ${gridHTML}`;
   placeThumbs();stagger(iv);
 }
-function ideaGrid(list){return `<div class="igrid" data-stagger>${list.length?list.map(i=>`<article class="idea">${i.v&&IVIS[i.v]?`<div class="ivis" aria-hidden="true">${IVIS[i.v]()}</div>`:""}
-     <div class="ihd"><span class="icat">${ic(ICAT[i.c][1])}${ICAT[i.c][0]}</span><span class="ist"><i style="background:${IDOT[i.s]}"></i>${ISTAT[i.s]}</span></div>
-     <h3>${i.t}</h3>
-     <div><span class="ilb">Problém</span><p class="itx">${i.p}</p></div>
-     <div class="inav"><span class="ilb">Návrh</span><p class="itx">${i.n}</p></div>
-     ${i.w?`<p class="iwarn">${ic("info")}<span>${i.w}</span></p>`:""}
-     <div class="ifoot">${i.src.map(([a,b])=>`<span class="src2"><b>${a}</b>${b}</span>`).join("")}${i.go?`<button type="button" class="igo" data-goto="${i.go}">Otevřít v prototypu${ic("right")}</button>`:""}</div>
-     ${thrHTML("idea:"+IDEAS.indexOf(i))}
-   </article>`).join(""):`<div class="iempty">V téhle kombinaci zatím žádný nápad není.</div>`}</div>`}
+function ideaGrid(list){return `<div class="igrid" data-stagger>${list.length?list.map(i=>`<article class="idea">${ideaBody(i)}${ideaDiscHTML(i)}</article>`).join(""):`<div class="iempty">V téhle kombinaci zatím žádný nápad není.</div>`}</div>`}
 
 /* ---------- analýza současné aplikace (testováno v říjnu) ---------- */
 const SHOTS=[
@@ -1987,11 +2013,12 @@ const CMAPI="/api/comments";let cmRemote=false,cmSig="",cmDirty=false;
 function cmFlowOf(c){if(c.flow)return c.flow;if(c.key&&c.key.startsWith("detail-"))return c.key.slice(7);return ORDER.find(f=>FLOWS[f].includes(c.screen))||""}
 function cmTag(c){if(c.thread)return (c.thread.startsWith("iss")?"Analýza · ":"Nápady · ")+thrTitle(c.thread);if(c.key==="flow")return "User flow"+(c.label?" · "+c.label:"");if(c.key==="notes")return "Poznámky"+(c.label?" · "+c.label:"");if(!c.screen)return "Obecné";const f=cmFlowOf(c),n=NAMES[c.screen]||c.screen;return (SECNAME[f]&&SECNAME[f]!==n?SECNAME[f]+" · ":"")+n}
 async function cmLoad(){try{const r=await fetch(CMAPI,{cache:"no-store"});if(!r.ok||!(r.headers.get("content-type")||"").includes("json"))throw 0;const j=await r.json();
-    const sig=JSON.stringify(j.comments||[]);cmRemote=true;if(sig!==cmSig){cmSig=sig;CMT=j.comments||[];cmSave();cmCount();cmPins();if(st.view==="cmts")renderCmts(true);thrRefresh()}}
+    let list=(j.comments||[]).filter(c=>!cmGone.has(c.id));cmPend.forEach((c,id)=>{list=list.filter(x=>x.id!==id);list.push(c)});
+    const sig=JSON.stringify(list);cmRemote=true;if(sig!==cmSig){cmSig=sig;CMT=list;cmSave();cmChanged()}}
   catch(e){cmRemote=false}cmSync()}
-function cmSync(){const s=document.getElementById("cmsync");if(s)s.innerHTML=cmRemote?`<i class="on"></i>Synchronizováno, vidíte je vy i klient`:`<i></i>Ukázka: komentáře se ukládají jen v tomto prohlížeči`}
-async function cmPut(c){cmSave();cmSig="";if(!cmRemote)return;try{const r=await fetch(CMAPI+"/"+encodeURIComponent(c.id),{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(c)});if(!r.ok)throw 0}catch(e){ptoast("Komentář se nepodařilo uložit na server, zkuste to znovu")}}
-async function cmDel(id){cmSave();cmSig="";if(!cmRemote)return;try{await fetch(CMAPI+"/"+encodeURIComponent(id),{method:"DELETE"})}catch(e){}}
+function cmSync(){const s=document.getElementById("cmsync");if(s)s.innerHTML=cmRemote?`<i class="on"></i>Synchronizováno`:`<i></i>Ukázka: komentáře se ukládají jen v tomto prohlížeči`}
+async function cmPut(c){cmSave();cmSig="";cmChanged();if(!cmRemote)return;const snap=JSON.parse(JSON.stringify(c));cmPend.set(c.id,snap);try{const r=await fetch(CMAPI+"/"+encodeURIComponent(c.id),{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(snap)});if(!r.ok)throw 0}catch(e){ptoast("Komentář se nepodařilo uložit na server, zkuste to znovu")}if(cmPend.get(c.id)===snap)cmPend.delete(c.id)}
+async function cmDel(id){cmSave();cmSig="";cmPend.delete(id);cmGone.add(id);cmChanged();if(!cmRemote)return;try{const r=await fetch(CMAPI+"/"+encodeURIComponent(id),{method:"DELETE"});if(r.ok)cmGone.delete(id)}catch(e){}}
 setInterval(()=>{if(!document.hidden&&cmRemote)cmLoad()},20000);addEventListener("focus",()=>{if(cmRemote)cmLoad()});
 let cmFilter="open";
 function renderCmts(soft){const v=document.getElementById("cmtview");
@@ -2001,8 +2028,8 @@ function renderCmts(soft){const v=document.getElementById("cmtview");
   const items=list.length?list.map(c=>`<article class="cmc ${c.done?"done":""}" data-cid="${c.id}">
       <div class="cmc-hd"><span class="cmav">${cmInit(c.author)}</span><div><b>${esc(c.author||"Host")}</b><small>${cmAgo(c.ts)}</small></div>
         <span class="cmtag">${ic(c.screen?"phone":c.thread?(c.thread.startsWith("iss")?"alert":"bulb"):c.key==="flow"?"flow":c.key==="notes"?"file":"msg")}${esc(cmTag(c))}${c.look?` · ${c.look==="ui"?"UI":"Wireframe"}`:""}</span>${c.done?`<span class="cmst">${ic("check")}Vyřešeno</span>`:""}</div>
-      <p class="cmc-tx">${esc(c.text)}</p>
-      ${(c.re||[]).map(m=>`<div class="cmre"><span class="cmav sm">${cmInit(m.author)}</span><div><b>${esc(m.author||"Host")}</b><small>${cmAgo(m.ts)}</small><p>${esc(m.text)}</p></div></div>`).join("")}
+      <p class="cmc-tx">${esc(c.text)}</p>${c.img?`<img class="cmimg" src="${imgSrc(c)}" alt="Příloha" loading="lazy">`:""}
+      ${(c.re||[]).map(m=>`<div class="cmre"><span class="cmav sm">${cmInit(m.author)}</span><div><b>${esc(m.author||"Host")}</b><small>${cmAgo(m.ts)}</small><p>${esc(m.text)}</p>${m.img?`<img src="${imgSrc(m)}" alt="Příloha" loading="lazy">`:""}</div></div>`).join("")}
       <div class="cmc-rp">${cmName?"":`<input class="cmnm" placeholder="Vaše jméno" autocomplete="name">`}<textarea class="cmtx" rows="1" placeholder="Odpovědět…"></textarea><button type="button" class="cmbtn pri" data-cr>Odpovědět</button></div>
       <div class="cmc-ft">${c.screen||c.thread||c.key==="flow"||c.key==="notes"?`<button type="button" class="cmbtn" data-cgo>${ic("pointer")}${c.screen?"Ukázat v prototypu":"Ukázat na místě"}</button>`:""}<button type="button" class="cmbtn" data-cdone>${ic(c.done?"undo":"check")}${c.done?"Znovu otevřít":"Vyřešit"}</button><button type="button" class="cmbtn ghost" data-cdel>Smazat</button></div>
     </article>`).join(""):`<div class="iempty">${cmFilter==="done"?"Zatím nic vyřešeného.":"Žádné otevřené komentáře. Zapněte v prototypu přepínač Komentovat a klikněte na místo, ke kterému chcete něco napsat."}</div>`;
@@ -2022,12 +2049,68 @@ document.getElementById("cmtview").addEventListener("click",e=>{const b=e.target
   if(b.matches("[data-cr]")){const nm=card.querySelector(".cmnm");if(nm&&nm.value.trim()){cmName=nm.value.trim();try{localStorage.setItem("treffik-cm-name2",cmName)}catch(x){}}const t=card.querySelector(".cmtx").value.trim();if(!t){card.querySelector(".cmtx").focus();return}(c.re=c.re||[]).push({text:t,author:cmName||"Host",ts:Date.now()});cmPut(c);renderCmts();return}
   if(b.matches("[data-cdone]")){c.done=!c.done;cmPut(c);renderCmts();cmCount();cmPins();ptoast(c.done?"Komentář vyřešený":"Komentář znovu otevřený");return}
   if(b.matches("[data-cdel]")){CMT=CMT.filter(x=>x!==c);cmDel(c.id);renderCmts();cmCount();return}
+  if(b.matches("[data-cgo]")&&c.thread&&c.thread.startsWith("idea")){st.idea=+c.thread.split(":")[1];document.getElementById("ideasview").innerHTML="";setView("ideas");if(st.view==="ideas")renderIdeas();return}
   if(b.matches("[data-cgo]")&&c.thread){const an=c.thread.startsWith("iss");cmOpen.add(c.thread);if(an)st.anTab="iss";else{st.icat="vse";st.ist="vse";const iv=document.getElementById("ideasview");iv.innerHTML=""}if(an){const av=document.getElementById("anview");av.innerHTML=""}
     setView(an?"an":"ideas");setTimeout(()=>{const t=document.querySelector(`.thr[data-thr="${c.thread}"]`);if(t){t.scrollIntoView({block:"center",behavior:reduce?"auto":"smooth"});t.classList.add("flash")}},450);return}
   if(b.matches("[data-cgo]")&&(c.key==="flow"||c.key==="notes")){if(!st.cm)cmToggle();setView(c.key);setTimeout(()=>{cmPins();const p=document.querySelector(`.cmpin[data-cmid="${c.id}"]`);if(p){p.classList.add("flash");p.scrollIntoView({block:"center",inline:"center",behavior:reduce?"auto":"smooth"})}},600);return}
   if(b.matches("[data-cgo]")){const f=cmFlowOf(c);if(FLOWS[f]){if(st.flow!==f)subAnim=true;st.flow=f}st.screen=c.screen;if(c.look)st.look=c.look;if(st.mode==="canvas")st.mode="one";
     if(!st.cm)cmToggle();setView("proto");setTimeout(()=>{const p=$p.querySelector(`[data-cmid="${c.id}"]`);if(p){p.classList.add("flash");p.scrollIntoView({block:"center",behavior:reduce?"auto":"smooth"})}},700)}});
 document.getElementById("cmtview").addEventListener("input",e=>{if(e.target.matches(".cmc .cmtx")){e.target.style.height="auto";e.target.style.height=e.target.scrollHeight+"px"}});
+/* ---------- diskuze k nápadům: samostatná stránka s chatem ---------- */
+const cmGone=new Set(),cmPend=new Map();let chatImg=null;
+const thrOf=tid=>CMT.find(x=>x.thread===tid);
+const thrMsgs=c=>c?[{...c,_i:-1},...(c.re||[]).map((m,k)=>({...m,_i:k}))]:[];
+const imgSrc=m=>m.img?(m.img.startsWith("data:")?m.img:"/api/files/"+encodeURIComponent(m.img)):"";
+function msgHTML(m,del){const me=cmName&&m.author===cmName;return `<div class="msg ${me?"me":""}"><span class="cmav sm">${cmInit(m.author)}</span><div class="mb"><div class="mh"><b>${esc(m.author||"Host")}</b><small>${cmAgo(m.ts)}</small>${del?`<button type="button" class="mdel" data-mdel="${m._i}" aria-label="Smazat zprávu">${ic("x")}</button>`:""}</div>${m.text?`<p>${esc(m.text)}</p>`:""}${m.img?`<a class="mimg" href="${imgSrc(m)}" target="_blank" rel="noopener"><img src="${imgSrc(m)}" alt="Příloha ke zprávě" loading="lazy"></a>`:""}</div></div>`}
+function ideaBody(i){return `${i.v&&IVIS[i.v]?`<div class="ivis" aria-hidden="true">${IVIS[i.v]()}</div>`:""}
+     <div class="ihd"><span class="icat">${ic(ICAT[i.c][1])}${ICAT[i.c][0]}</span><span class="ist"><i style="background:${IDOT[i.s]}"></i>${ISTAT[i.s]}</span></div>
+     <h3>${i.t}</h3>
+     <div><span class="ilb">Problém</span><p class="itx">${i.p}</p></div>
+     <div class="inav"><span class="ilb">Návrh</span><p class="itx">${i.n}</p></div>
+     ${i.w?`<p class="iwarn">${ic("info")}<span>${i.w}</span></p>`:""}
+     <div class="ifoot">${i.src.map(([a,b])=>`<span class="src2"><b>${a}</b>${b}</span>`).join("")}${i.go?`<button type="button" class="igo" data-goto="${i.go}">Otevřít v prototypu${ic("right")}</button>`:""}</div>`}
+function ideaDiscHTML(i){const k=IDEAS.indexOf(i),c=thrOf("idea:"+k),ms=thrMsgs(c),n=ms.length,last=ms[n-1];
+  return `<div class="idisc" data-k="${k}">${st.ithr&&n?`<div class="idprev">${ms.map(m=>msgHTML(m,false)).join("")}</div>`:last?`<p class="idlast"><b>${esc(last.author||"Host")}:</b> ${esc(last.text||"obrázek")}</p>`:""}
+    <button type="button" class="thrb" data-iopen="${k}">${ic("msg")}<span>${n?`Diskuze · ${n}`:"Vstoupit do diskuze"}</span>${c&&c.done?"<em>vyřešeno</em>":c&&n?"<i></i>":""}${ic("right")}</button></div>`}
+function chatHead(k){const c=thrOf("idea:"+k),n=thrMsgs(c).length;return `<b>Diskuze</b><small>${n?n+" "+plural(n,"zpráva","zprávy","zpráv"):"zatím prázdná"}</small>${c?`<button type="button" class="cmbtn" data-ithdone>${ic(c.done?"undo":"check")}${c.done?"Znovu otevřít":"Označit jako vyřešené"}</button>`:""}`}
+function chatMsgs(k){const ms=thrMsgs(thrOf("idea:"+k));return ms.length?ms.map(m=>msgHTML(m,true)).join(""):`<div class="chat-empty">${ic("msg")}<p>Tady můžeme k nápadu sbírat myšlenky, otázky i screenshoty. Napište první zprávu.</p></div>`}
+function ideaDetail(k){const i=IDEAS[k];return `<div class="idet">
+   <div class="idet-top"><button type="button" class="cmbtn" data-iback>${ic("left")}Všechny nápady</button>
+     <span class="idnav"><button type="button" class="cvb" data-inav="-1" aria-label="Předchozí nápad">${ic("left")}</button><small>${k+1} / ${IDEAS.length}</small><button type="button" class="cvb" data-inav="1" aria-label="Další nápad">${ic("right")}</button></span></div>
+   <div class="idet-g"><article class="idea">${ideaBody(i)}</article>
+   <section class="chat" aria-label="Diskuze k nápadu"><div class="chat-hd" id="chathd">${chatHead(k)}</div>
+     <div class="chat-ms" id="chatms">${chatMsgs(k)}</div>
+     <div class="chat-cp"><div class="chat-att" id="chatatt" hidden></div>
+       <textarea class="cmtx" id="chattx" rows="2" placeholder="Napište myšlenku, otázku nebo odpověď… (Enter odešle, Shift + Enter nový řádek)"></textarea>
+       <div class="chat-ft">${cmNameInput()}<label class="cmbtn attach">${ic("image")}<span>Obrázek</span><input type="file" accept="image/*" id="chatfile" hidden></label><button type="button" class="cmbtn pri" data-isend>Odeslat</button></div></div></section></div></div>`}
+function chatRefresh(){if(st.idea==null)return;const ms=document.getElementById("chatms"),hd=document.getElementById("chathd");if(!ms)return;
+  const near=ms.scrollHeight-ms.scrollTop-ms.clientHeight<60;ms.innerHTML=chatMsgs(st.idea);hd.innerHTML=chatHead(st.idea);if(near)ms.scrollTop=ms.scrollHeight}
+function ideasSoft(){document.querySelectorAll(".idisc[data-k]").forEach(d=>d.outerHTML=ideaDiscHTML(IDEAS[+d.dataset.k]))}
+function openIdea(k){st.idea=k;chatImg=null;renderIdeas();const ms=document.getElementById("chatms");if(ms)ms.scrollTop=ms.scrollHeight;scrollTo({top:0,behavior:reduce?"auto":"smooth"})}
+async function shrinkImg(file){const bm=await createImageBitmap(file),s=Math.min(1,1600/Math.max(bm.width,bm.height)),cv=document.createElement("canvas");cv.width=Math.round(bm.width*s);cv.height=Math.round(bm.height*s);
+  cv.getContext("2d").drawImage(bm,0,0,cv.width,cv.height);const blob=await new Promise(r=>cv.toBlob(r,"image/jpeg",.82));return {blob,data:cv.toDataURL("image/jpeg",.72)}}
+async function chatAttach(file){if(!file||!file.type.startsWith("image/"))return;try{chatImg=await shrinkImg(file)}catch(e){ptoast("Obrázek se nepodařilo načíst");return}
+  const a=document.getElementById("chatatt");if(a){a.hidden=false;a.innerHTML=`<img src="${chatImg.data}" alt="Náhled přílohy"><button type="button" class="mdel" data-attx aria-label="Odebrat obrázek">${ic("x")}</button>`}}
+async function chatSend(){const tx=document.getElementById("chattx"),t=tx.value.trim(),nm=document.querySelector(".chat .cmnm");if(nm)cmSetName(nm.value);if(!t&&!chatImg){tx.focus();return}
+  const b=document.querySelector("[data-isend]");b.disabled=true;let img="";
+  if(chatImg){if(cmRemote){try{const r=await fetch("/api/files",{method:"POST",headers:{"content-type":"image/jpeg"},body:chatImg.blob});if(!r.ok)throw 0;img=(await r.json()).id}catch(e){ptoast("Obrázek se nepodařilo nahrát");b.disabled=false;return}}else img=chatImg.data}
+  const tid="idea:"+st.idea,m={text:t,author:cmName||"Host",ts:Date.now()};if(img)m.img=img;let c=thrOf(tid);
+  if(c)(c.re=c.re||[]).push(m);else{c={id:"c"+Date.now(),thread:tid,...m,re:[]};CMT.push(c)}
+  tx.value="";chatImg=null;const a=document.getElementById("chatatt");if(a){a.hidden=true;a.innerHTML=""}b.disabled=false;cmPut(c);const ms=document.getElementById("chatms");if(ms)ms.scrollTop=ms.scrollHeight;tx.focus()}
+function msgDelete(c,idx){if(idx<0){if(c.re&&c.re.length){const f=c.re.shift();c.text=f.text;c.author=f.author;c.ts=f.ts;if(f.img)c.img=f.img;else delete c.img;cmPut(c)}else{CMT=CMT.filter(x=>x!==c);cmDel(c.id)}}else{c.re.splice(idx,1);cmPut(c)}}
+document.getElementById("ideasview").addEventListener("click",ev=>{const t=ev.target;
+  const o=t.closest("[data-iopen]");if(o){openIdea(+o.dataset.iopen);return}
+  if(t.closest("[data-iback]")){st.idea=null;chatImg=null;renderIdeas();return}
+  const nv=t.closest("[data-inav]");if(nv){openIdea((st.idea+(+nv.dataset.inav)+IDEAS.length)%IDEAS.length);return}
+  if(t.closest("[data-isend]")){chatSend();return}
+  if(t.closest("[data-attx]")){chatImg=null;const a=document.getElementById("chatatt");a.hidden=true;a.innerHTML="";return}
+  const d=t.closest("[data-mdel]");if(d&&st.idea!=null){const c=thrOf("idea:"+st.idea);if(c)msgDelete(c,+d.dataset.mdel);return}
+  if(t.closest("[data-ithdone]")){const c=thrOf("idea:"+st.idea);if(c){c.done=!c.done;cmPut(c)}return}
+  if(t.closest("#ithrgl")){st.ithr=!st.ithr;t.closest("#ithrgl").setAttribute("aria-pressed",st.ithr);ideasSoft();return}});
+document.getElementById("ideasview").addEventListener("change",e=>{if(e.target.id==="chatfile"){chatAttach(e.target.files[0]);e.target.value=""}});
+document.getElementById("ideasview").addEventListener("keydown",e=>{if(e.target.id==="chattx"&&e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();chatSend()}});
+document.getElementById("ideasview").addEventListener("paste",e=>{if(e.target.id!=="chattx")return;const f=[...(e.clipboardData||{}).files||[]].find(x=>x.type.startsWith("image/"));if(f){e.preventDefault();chatAttach(f)}});
+function cmChanged(){cmCount();cmPins();if(st.view==="cmts")renderCmts(true);thrRefresh();if(st.view==="ideas"){if(st.idea!=null)chatRefresh();else ideasSoft()}}
 cmLoad();
 reload();
 </script>
