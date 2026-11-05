@@ -18,9 +18,8 @@ function page(url, error) {
 <meta property="og:image" content="${o}/og.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:url" content="${o}/">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="${o}/og.jpg">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:24px 16px;background:#EDF0EE;color:#141A16;font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:24px 16px;background:#EDF0EE;color:#141A16;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-variant-ligatures:no-common-ligatures}
 .card{width:min(100%,380px);background:#fff;border:1px solid #DFE4E1;border-radius:22px;padding:28px 24px;box-shadow:0 18px 44px -24px rgba(20,30,25,.35);text-align:center}
 .logo{width:56px;height:56px;margin:0 auto 14px;display:block}h1{margin:0;font-size:22px;font-weight:800}p{margin:6px 0 20px;color:#66706A;font-size:14px;line-height:1.5}
 form{display:flex;flex-direction:column;gap:10px;text-align:left}label{font-size:12px;font-weight:700;color:#66706A;letter-spacing:.04em;text-transform:uppercase}
