@@ -5,7 +5,7 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/", "/index.html"]
   },
   // Databáze pro komentáře. Wrangler ji při prvním nasazení sám vytvoří a propojí.
   "d1_databases": [{ "binding": "DB", "database_name": "treffik-comments" }]

@@ -3,6 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Návrh redesignu aplikace Treffik: analýza, user flow, proklikávací prototyp a nápady. Víte, co vás na cestě čeká.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Treffik">
+<meta property="og:title" content="Treffik · návrh redesignu">
+<meta property="og:description" content="Víte, co vás na cestě čeká. Analýza, user flow, proklikávací prototyp a nápady k rozhodnutí.">
+<meta property="og:image" content="/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Treffik – Víte, co vás na cestě čeká.">
+<meta property="og:locale" content="cs_CZ">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Treffik · návrh redesignu">
+<meta name="twitter:description" content="Víte, co vás na cestě čeká.">
+<meta name="twitter:image" content="/og.jpg">
+<meta name="theme-color" content="#2E9E4A">
 <title>Treffik Design</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1074,13 +1089,13 @@ function card(e,{i=0,start=null,click=true}={}){
 
 /* ---------- Spuštění a účet ---------- */
 function sSplash(){
-  return `<div class="splashs" data-next="login">${logo(78)}<b>Treffik</b><small>Doprava kolem vás v lidské řeči</small><span class="loadbar"><i></i></span></div>`;
+  return `<div class="splashs" data-next="login">${logo(78)}<b>Treffik</b><small>Víte, co vás na cestě čeká.</small><span class="loadbar"><i></i></span></div>`;
 }
 const aseg=on=>`<div class="aseg" role="group" aria-label="Přihlášení nebo registrace"><button type="button" data-authtab="login" aria-pressed="${on==="login"}">Přihlásit se</button><button type="button" data-authtab="register" aria-pressed="${on==="register"}">Registrace</button></div>`;
 function sLogin(){
   return `<header class="hd center auth">${logo(48)}
      <h1 class="dt" style="font-size:22px">Vítejte v Treffiku 👋</h1>
-     <p class="hsub" style="margin:0">Doprava kolem vás v lidské řeči.</p></header>
+     <p class="hsub" style="margin:0">Víte, co vás na cestě čeká.</p></header>
    <div class="dbody auth" data-stagger>
      ${aseg("login")}
      <button type="button" class="soc apple" data-login>${APPLE}Pokračovat přes Apple</button>

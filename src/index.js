@@ -12,6 +12,14 @@ async function init(db) {
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    if (url.pathname === "/" || url.pathname === "/index.html") {
+      // náhled pro sociální sítě potřebuje absolutní adresu obrázku
+      const res = await env.ASSETS.fetch(req);
+      const abs = { element(e) { const c = e.getAttribute("content") || ""; if (c.startsWith("/")) e.setAttribute("content", url.origin + c); } };
+      return new HTMLRewriter().on('meta[property="og:image"]', abs).on('meta[name="twitter:image"]', abs)
+        .on("head", { element(e) { e.prepend(`<meta property="og:url" content="${url.origin}/">`, { html: true }); } })
+        .transform(res);
+    }
     if (!url.pathname.startsWith("/api/comments")) return env.ASSETS.fetch(req);
     if (!env.DB) return json({ error: "Databáze není připojená" }, 503);
     await init(env.DB);
