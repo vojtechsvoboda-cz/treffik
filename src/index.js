@@ -1,4 +1,5 @@
 // Treffik: statický návrh + jednoduché API pro komentáře (Cloudflare D1)
+import { gate } from "./gate.js";
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 
@@ -33,6 +34,8 @@ async function init(db) {
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    const locked = await gate(req, env, url);
+    if (locked) return locked;
     if (url.pathname === "/" || url.pathname === "/index.html") {
       // náhled pro sociální sítě potřebuje absolutní adresu obrázku
       const res = await env.ASSETS.fetch(req);
