@@ -795,6 +795,48 @@ body:not(.v-cmts) #cmtview{display:none}
 .mcap{top:8px;bottom:auto}
 .cmfil{flex-direction:row!important}.cmc-rp .cmnm{flex:none;width:140px;height:38px}@media (max-width:699px){.navx .fchip{font-size:12.5px;padding:8px 7px}.cmc-rp .cmnm{width:auto}}
 .cmnew .cmnm{height:38px;flex:none}
+body.cmon #phones .phone,body.cmon #board .board,body.cmon #ngrid{cursor:crosshair}
+body.cmon .cmh{outline:2px solid #2F6FD6!important;outline-offset:1px;background-color:rgba(47,111,214,.06)}
+body.cmon .cmsel{outline:2px solid #2F6FD6!important;outline-offset:1px;box-shadow:0 0 0 5px rgba(47,111,214,.18)}
+#board,#ngrid{position:relative}
+[data-cmtoggle] i{font-style:normal;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#2F6FD6;color:#fff;font:800 10.5px/18px var(--sans);text-align:center}
+[data-cmtoggle] i:empty{display:none}
+[data-cmtoggle][aria-pressed="true"] .sw{background:#2F6FD6}
+.boardbox{position:relative}
+.cmfloat{position:absolute;top:10px;right:10px;z-index:5;background:#fff!important;box-shadow:0 6px 18px -10px rgba(20,30,25,.4),0 0 0 1px var(--line);padding:6px 10px!important}
+.vhflex{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.vhflex .bpt{flex:none;background:#fff;box-shadow:0 0 0 1px var(--line);padding:6px 10px;margin-top:4px}
+.cmhd .cmnm{height:30px}
+.thr{border-top:1px solid var(--line);padding-top:10px}
+.thrb{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 11px;border-radius:10px;border:0;background:var(--soft);color:var(--fg);font:700 12.5px/1 var(--sans);cursor:pointer;transition:background .2s}
+.thrb:hover{background:#E6EBE8}.thrb .ic{width:15px;height:15px;color:#2F6FD6}
+.thrb em{font-style:normal;font-weight:600;color:#227A3A}.thrb i{width:7px;height:7px;border-radius:50%;background:#2F6FD6}
+.thr.open .thrb{background:#EAF1FB;color:#2456A8}
+.thrp{display:flex;flex-direction:column;gap:10px;margin-top:10px;animation:cmin .2s ease}
+.thrf{display:flex;flex-direction:column;gap:8px}.thrf .cmnm{height:34px;width:min(220px,100%)}
+.thr.done .cmre p{color:var(--mute)}
+.issg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr));gap:14px;align-items:start}
+.iss{display:block}
+.isshd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.isshd .inum{font:800 12px/1 var(--sans);color:var(--fg);background:var(--soft);border-radius:8px;padding:6px 8px;font-variant-numeric:tabular-nums}
+.isshd .sev{margin:0}
+/* hover u všeho klikacího */
+.seg button:not([aria-pressed="true"]):not(.soonb):hover,.fchip:not([aria-pressed="true"]):hover{color:var(--fg);background:rgba(20,30,25,.05)}
+.bpt:hover .sw{filter:brightness(.96)}
+.cvb:hover,.cvz button:hover{background:#E6EBE8}
+.cmbtn:hover{filter:brightness(.95)}
+.igo:hover{text-decoration:underline}
+.gcard,.shot{transition:transform .2s}.gcard:hover,.shot:hover{transform:translateY(-2px)}
+.ui .chip:not([aria-pressed="true"]):hover,.wf .chip:not([aria-pressed="true"]):hover{filter:brightness(.97)}
+.circ:hover{filter:brightness(.96)}
+.nv:not(.on):not(.soonnav):hover{color:var(--ink)}
+.step:not(.on):hover{background:var(--soft)}
+.node:hover{box-shadow:0 0 0 2px rgba(46,158,74,.35)}
+/* kompaktnější horní ovládání */
+.row1 .seg button,.navx .fchip{font-size:12.5px;padding:8px 10px;min-height:34px;gap:6px}
+.row1 .seg .ic,.navx .fchip .ic{width:15px;height:15px}
+.row1{gap:8px}.row1>.bl{gap:8px}
+.thr.flash .thrb{animation:thrfl 1s ease 2}@keyframes thrfl{50%{box-shadow:0 0 0 6px rgba(47,111,214,.25)}}
 </style>
 
 <div class="wrap">
@@ -820,7 +862,7 @@ body:not(.v-cmts) #cmtview{display:none}
       <div class="labrow"><span class="lab">Sekce a obrazovky</span><span class="kbh" id="kbh"></span>
         <span class="tgls"><button type="button" class="bpt" id="arrgl" aria-pressed="false" data-tip="Šipky ukazují, kam vede klepnutí z jedné obrazovky na další"><span class="sw"></span>Šipky</button>
         <button type="button" class="bpt" id="bptgl" aria-pressed="false" data-tip="Zvýrazní místa, na která jde klepnout. Po najetí myší popíše, kam vedou"><span class="sw"></span>Klikací místa</button>
-        <button type="button" class="bpt" id="cmgl" aria-pressed="false" data-tip="Klikněte na místo v obrazovce a napište k němu poznámku"><span class="sw"></span>Komentovat<i></i></button></span></div>
+        <button type="button" class="bpt" id="cmgl" data-cmtoggle="proto" aria-pressed="false" data-tip="Klikněte na místo v obrazovce a napište k němu poznámku"><span class="sw"></span>Komentovat<i></i></button></span></div>
       <div class="secbox">
         <div class="sxw" id="sxw"><div class="sx" id="sx"><div class="seg" id="sect" role="group" aria-label="Sekce aplikace"><span class="thumb"></span></div></div>
           <button type="button" class="sxbtn l" id="sxbtnl" aria-label="Posunout sekce doleva"></button><button type="button" class="sxbtn" id="sxbtn" aria-label="Posunout sekce doprava"></button></div>
@@ -840,7 +882,7 @@ body:not(.v-cmts) #cmtview{display:none}
 
   <section id="cmtview" aria-label="Komentáře"></section>
   <section class="notes" id="notesview" aria-label="Poznámky">
-    <div class="vhead"><h2>Předpoklady a poznámky pro tým</h2><p>Rozhodnutí a předpoklady, na kterých prototyp stojí. Hodí se pro Davida i programátora.</p></div>
+    <div class="vhead vhflex"><div><h2>Předpoklady a poznámky pro tým</h2><p>Rozhodnutí a předpoklady, na kterých prototyp stojí. Hodí se pro Davida i programátora.</p></div><button type="button" class="bpt" data-cmtoggle="notes" aria-pressed="false"><span class="sw"></span>Komentovat<i></i></button></div>
     <div class="ngrid" id="ngrid">
       <article class="note"><span class="noi" data-ic="timer"></span><div><h3>Stav události a odhad konce</h3><p>Stav (Řeší se → Zlepšuje se → Vyřešeno) mění jen potvrzení od ŘSD nebo hlasování Platí / Neplatí. Odhad konce je samostatná informace. Když uplyne, aplikace to napíše, ale stav nechá. To jde proti původnímu nápadu, kdy semafor postupoval podle třetin odhadované doby.</p></div></article>
       <article class="note"><span class="noi" data-ic="check"></span><div><h3>Platí / Neplatí místo lajků</h3><p>Tlačítko „Děkuji“ nahrazuje Platí / Neplatí. V detailu je plovoucí vpravo dole, protože hlas zároveň potvrzuje stav události. Žádné další lajky ani srdíčka nejsou, aby se hodnocení nedublovalo.</p></div></article>
@@ -914,7 +956,7 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* ovládací panel */
 const setBtn=(sel,icon,txt)=>{document.querySelector(sel).innerHTML=ic(icon)+txt};
 setBtn('[data-view="an"]',"search","Analýza");setBtn('[data-view="flow"]',"flow","User flow");setBtn('[data-view="proto"]',"pointer","Prototyp");setBtn('[data-view="ideas"]',"bulb","Nápady");setBtn('[data-view="notes"]',"file","Poznámky");setBtn('[data-view="cmts"]',"msg","Komentáře");document.querySelector('[data-view="cmts"]').insertAdjacentHTML("beforeend",'<small id="navcm"></small>');
-setBtn('[data-look="wf"]',"dashed","Wireframe");setBtn('[data-look="ui"]',"palette","UI");
+setBtn('[data-look="wf"]',"dashed","WF");setBtn('[data-look="ui"]',"palette","UI");
 setBtn('[data-mode="all"]',"cols","Vedle sebe");setBtn('[data-mode="one"]',"phone","Proklik");setBtn('[data-mode="canvas"]',"map","Plátno");
 setBtn("#reload","refresh","Znovu načíst");setBtn("#fullbtn","max","Celá obrazovka");document.querySelector(".flogo").innerHTML=logo(22);document.querySelectorAll(".noi[data-ic]").forEach(x=>x.innerHTML=ic(x.dataset.ic));
 document.getElementById("sxbtn").innerHTML=`<span class="cb">${ic("right")}</span>`;document.getElementById("sxbtnl").innerHTML=`<span class="cb">${ic("left")}</span>`;
@@ -1367,6 +1409,7 @@ function ideaGrid(list){return `<div class="igrid" data-stagger>${list.length?li
      <div class="inav"><span class="ilb">Návrh</span><p class="itx">${i.n}</p></div>
      ${i.w?`<p class="iwarn">${ic("info")}<span>${i.w}</span></p>`:""}
      <div class="ifoot">${i.src.map(([a,b])=>`<span class="src2"><b>${a}</b>${b}</span>`).join("")}${i.go?`<button type="button" class="igo" data-goto="${i.go}">Otevřít v prototypu${ic("right")}</button>`:""}</div>
+     ${thrHTML("idea:"+IDEAS.indexOf(i))}
    </article>`).join(""):`<div class="iempty">V téhle kombinaci zatím žádný nápad není.</div>`}</div>`}
 
 /* ---------- analýza současné aplikace (testováno v říjnu) ---------- */
@@ -1424,10 +1467,10 @@ function renderAn(){
      <div class="stat"><b>1,8 : 1</b><span>kontrast bílého textu na světle zelené, třeba na tlačítku Přihlásit se. Pro čitelný text je potřeba aspoň 4,5 : 1 (problém 03)</span></div>
      <div class="stat"><b>4 + 7</b><span>ikony v záhlaví bez popisku a položky v menu nastavení (problém 01)</span></div>
      <div class="stat"><b>3</b><span>prázdné obrazovky bez vysvětlení a výzvy k akci (problém 06)</span></div>
-   </div>`+ISSUES.map((x,i)=>`<article class="card2 iss"><span class="inum">${String(i+1).padStart(2,"0")}</span>
-     <div class="ibody"><div><span class="sev"><i style="background:${SEV[x.sev][1]}"></i>Priorita: ${SEV[x.sev][0]}</span><h3>${x.t}</h3></div>
+   </div><div class="issg">`+ISSUES.map((x,i)=>`<article class="card2 iss">
+     <div class="ibody"><div><div class="isshd"><span class="inum">${String(i+1).padStart(2,"0")}</span><span class="sev"><i style="background:${SEV[x.sev][1]}"></i>Priorita: ${SEV[x.sev][0]}</span></div><h3>${x.t}</h3></div>
        <p class="itx">${x.d}</p><div class="inav"><span class="ilb">Návrh</span><p class="itx">${x.fix}</p></div>
-       <div class="thumbs">${x.s.map(id=>shotBtn(id,"shot")).join("")}</div></div></article>`).join("");
+       <div class="thumbs">${x.s.map(id=>shotBtn(id,"shot")).join("")}</div>${thrHTML("iss:"+i)}</div></article>`).join("")+`</div>`;
   else body=`<p class="itx" style="color:var(--mute)">${Object.keys(SHOT).length} obrazovek a stavů nafocených v říjnu z aktuálního buildu. Klikněte na obrázek pro zvětšení.</p>`+SHOTS.map(([g,sub,a])=>`<div class="ggroup"><h3>${g}<small>${sub} · ${a.length}</small></h3><div class="gal">${a.map(([id])=>shotBtn(id,"gcard")).join("")}</div></div>`).join("");
   const av=document.getElementById("anview");
   if(av.querySelector("#anseg")){av.querySelectorAll("[data-antab]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.antab===st.anTab));av.querySelector(".anv").innerHTML=body;placeThumbs();stagger(av);return}
@@ -1536,14 +1579,14 @@ function mph(s){
 function fitBoard(){const w=document.getElementById("board"),b=w&&w.querySelector(".board");if(!b)return;b.style.zoom=1;if(innerWidth<700)return;b.style.zoom=Math.min(1,(w.clientWidth-2)/b.scrollWidth)}
 addEventListener("resize",()=>{if(st.view==="flow")fitBoard()});
 function renderFlow(){
-  document.getElementById("flowview").innerHTML=`<div class="boardwrap" id="board"><div class="board">${LANES.map(L=>`
+  document.getElementById("flowview").innerHTML=`<div class="boardbox"><button type="button" class="bpt cmfloat" data-cmtoggle="flow" aria-pressed="${!!st.cm}"><span class="sw"></span>Komentovat<i></i></button><div class="boardwrap" id="board"><div class="board">${LANES.map(L=>`
     <div class="lane ${L.later?"sep":""}"><span class="lanel">${L.lab}<small>${L.sub}</small></span><div class="lrow">${L.nodes.map(([s,t,d],i)=>{
       const arrow=i?(L.later?'<span class="gap"></span>':'<span class="arr"></span>'):"";
       if(L.later)return `${arrow}<div class="node later" data-tip="${t} zatím není navržené">${mph("x")}<span><b>${t}</b><small>${d}</small></span></div>`;
       const cur=st.flow===L.flow&&st.screen===s;
       return `${arrow}<button type="button" class="node ${cur?"cur":""}" data-goto="${L.flow}:${s}">${mph(s)}<span><b>${t}</b><small>${d}</small></span></button>`}).join("")}
       ${L.loop?`<span class="arr"></span><button type="button" class="loop" data-goto="feed:${L.loop[0]}">${ic("undo")}${L.loop[1]}</button>`:""}</div></div>`).join("")}
-  </div></div><p class="flowhint">${ic("pointer")}Klikněte na obrazovku a otevře se v prototypu. Plochu můžete posouvat tažením myši.</p>`;
+  </div></div></div><p class="flowhint">${ic("pointer")}Klikněte na obrazovku a otevře se v prototypu. Plochu můžete posouvat tažením myši.</p>`;
 }
 
 /* ---------- vykreslení a pohyb ---------- */
@@ -1593,7 +1636,7 @@ function chrome(){
   ["an","flow","proto","ideas","notes","cmts"].forEach(v=>document.body.classList.toggle("v-"+v,st.view===v));
   if(st.view==="proto"&&lastView&&lastView!=="proto")protoIn();lastView=st.view;
   document.body.style.setProperty("--fz",fz());
-  placeThumbs();hints();
+  placeThumbs();hints();if(st.cm)requestAnimationFrame(cmPins);
 }
 function navFor(s){
   if(["splash","login","register","rtype","rconfirm","rdone"].includes(s))return "";
@@ -1603,7 +1646,7 @@ function navFor(s){
 function phoneHTML(s){const n=navFor(s),fl=s==="detail"&&!st.loading,pf=s==="rconfirm";
     return `<div class="col"><div class="device"><div class="phone ${st.look} ${s==="splash"?"":""}" data-screen="${s}" data-key="${key(s)}">${SB}<div class="scr"><div class="screen ${n?"":"nonav"} ${fl?"float":""} ${pf?"float2":""} ${s==="splash"?"bare":""}">${SCREENS[s]()}</div></div>${fl?voteFloat():""}${pf?pfix():""}${n}${st.splash?`<div class="splash">${logo(70)}<b>Treffik</b></div>`:""}</div></div></div>`}
 function render(o={}){
-  if(st.view==="flow"){renderFlow();chrome();fitBoard();return}
+  if(st.view==="flow"){renderFlow();chrome();fitBoard();cmCount();return}
   if(st.view==="ideas"){renderIdeas();chrome();return}
   if(st.view==="an"){renderAn();chrome();return}
   if(st.view==="notes"){chrome();return}
@@ -1772,7 +1815,7 @@ function renderCanvas(){
     return `<section class="cvrow"><h3 class="cvh">${SECNAME[f]}<small>${FLOWS[f].length} obrazovky</small></h3><div class="cvcells">${cells}</div></section>`}).join("");
   st.flow=keep;
   $p.className="phones po canvas";
-  $p.innerHTML=`<div class="cv" id="cv"><div class="cvw ${$p.clientWidth>=760?"c2":""}" id="cvw">${rows}</div>
+  $p.innerHTML=`<div class="cv" id="cv"><div class="cvw ${document.querySelector(".wrap").clientWidth>=760?"c2":""}" id="cvw">${rows}</div>
     <div class="cvz" role="group" aria-label="Zoom"><button type="button" data-cvz="-1" aria-label="Oddálit">${ic("minus")}</button><span id="cvp"></span><button type="button" data-cvz="1" aria-label="Přiblížit">${ic("plus")}</button><button type="button" class="cvall" data-cvfit>Vše</button></div>
     <div class="cvfoc" id="cvfoc"></div></div>`;
   $p.querySelectorAll(".phone").forEach(ph=>{const sc=ph.querySelector(".scr");sc.scrollTop=0});cvPtr.clear();cvDrag=null;cvSize();
@@ -1824,58 +1867,90 @@ $p.addEventListener("wheel",e=>{if(!e.target.closest("#cv"))return;e.preventDefa
 function openCv(){const [f,s]=CVL()[cv.focus<0?0:cv.focus];st.mode="one";if(st.flow!==f)subAnim=true;st.flow=f;go(s,{dir:"tab",stg:true,reset:true})}
 if(thumbRO)document.querySelectorAll(".bar .seg,.bar .fseg").forEach(e=>thumbRO.observe(e));
 /* ---------- komentáře (ukázka bez databáze, ukládá se jen v prohlížeči) ---------- */
-let CMT=[];try{CMT=JSON.parse(localStorage.getItem("treffik-cm")||"[]")}catch(e){CMT=[]}
-let cmName="";try{cmName=localStorage.getItem("treffik-cm-name")||""}catch(e){}
-const cmSave=()=>{try{localStorage.setItem("treffik-cm",JSON.stringify(CMT))}catch(e){}};
-const CMSEL="button,a,input,textarea,label,h1,h2,h3,p,li,small,b,img,svg,.card,.ec,.tile,.mcard,.chip,.pill,[data-hot],.hd";
-let cmHover=null;
+let CMT=[];try{CMT=JSON.parse(localStorage.getItem("treffik-cm2")||"[]")}catch(e){CMT=[]}
+let cmName="";try{cmName=localStorage.getItem("treffik-cm-name2")||""}catch(e){}
+const cmSave=()=>{try{localStorage.setItem("treffik-cm2",JSON.stringify(CMT))}catch(e){}};
+const CMSEL="button,a,input,textarea,label,h1,h2,h3,p,li,small,b,img,svg,.card,.ec,.tile,.mcard,.chip,.pill,[data-hot],.hd,.node,.note,.lanel,.loop";
+let cmHover=null,cmOpen=new Set();
 function cmPath(el,root){const p=[];while(el&&el!==root){p.unshift([...el.parentElement.children].indexOf(el));el=el.parentElement}return p.join(".")}
 function cmFind(root,path){let el=root;for(const i of path.split(".")){el=el&&el.children[+i];if(!el)return null}return el}
-function cmPick(t,ph){let el=t.closest(CMSEL);if(!el||!ph.contains(el)||el===ph)el=t;if(el.closest("svg")&&el.tagName!=="svg")el=el.closest("svg");return ph.contains(el)&&el!==ph?el:null}
+function cmRootOf(t){const ph=t.closest("#phones .phone");if(ph)return {root:ph,box:ph,key:ph.dataset.key};
+  const bd=t.closest("#board .board");if(bd)return {root:bd,box:document.getElementById("board"),key:"flow"};
+  const ng=t.closest("#ngrid");if(ng)return {root:ng,box:ng,key:"notes"};return null}
+function cmRoots(){const a=[];if(st.view==="proto")$p.querySelectorAll(".phone").forEach(ph=>a.push({root:ph,box:ph,key:ph.dataset.key}));
+  const bd=document.querySelector("#board .board");if(bd&&st.view==="flow")a.push({root:bd,box:document.getElementById("board"),key:"flow"});
+  const ng=document.getElementById("ngrid");if(ng&&st.view==="notes")a.push({root:ng,box:ng,key:"notes"});return a}
+function cmPick(t,R){let el=t.closest(CMSEL);if(!el||!R.root.contains(el)||el===R.root)el=t;if(el.closest("svg")&&el.tagName!=="svg")el=el.closest("svg");return R.root.contains(el)&&el!==R.root?el:null}
 const cmAgo=ts=>{const m=Math.round((Date.now()-ts)/60000);return m<1?"právě teď":m<60?`před ${m} min`:m<1440?`před ${Math.round(m/60)} h`:new Date(ts).toLocaleDateString("cs-CZ")};
 const cmInit=n=>(n||"?").trim().charAt(0).toUpperCase()||"?";
-function cmCount(){const n=CMT.filter(c=>!c.done).length,b=document.getElementById("cmgl");if(b)b.querySelector("i").textContent=n||"";const m=document.getElementById("navcm");if(m)m.textContent=n||""}
-function cmPins(){$p.querySelectorAll(".cmpin").forEach(x=>x.remove());if(!st.cm)return;
-  $p.querySelectorAll(".phone").forEach(ph=>{const pr=ph.getBoundingClientRect(),sc=pr.width/ph.offsetWidth||1,scr=ph.querySelector(".scr").getBoundingClientRect();
-    CMT.forEach((c,i)=>{if(c.done||c.key!==ph.dataset.key)return;const el=cmFind(ph,c.path);if(!el)return;const r=el.getBoundingClientRect();
-      const x=r.left+c.rx*r.width,y=r.top+c.ry*r.height,inScr=el.closest(".scr");if(inScr&&(y<scr.top+4||y>scr.bottom-4))return;
-      ph.insertAdjacentHTML("beforeend",`<button type="button" class="cmpin" data-cmid="${c.id}" style="left:${(x-pr.left)/sc}px;top:${(y-pr.top)/sc}px" aria-label="Komentář ${i+1}">${cmInit(c.author)}</button>`)})})}
-function cmClose(){const p=document.getElementById("cmpop");if(p)p.remove();$p.querySelectorAll(".cmsel").forEach(x=>x.classList.remove("cmsel"))}
+const cmCtx=c=>c.thread?(c.thread.startsWith("iss")?"an":"ideas"):c.key==="flow"?"flow":c.key==="notes"?"notes":c.screen?"proto":"gen";
+function cmCount(){const open=CMT.filter(c=>!c.done);document.querySelectorAll("[data-cmtoggle]").forEach(b=>{const n=open.filter(c=>cmCtx(c)===b.dataset.cmtoggle).length;b.querySelector("i").textContent=n||""});
+  const m=document.getElementById("navcm");if(m)m.textContent=open.length||""}
+function cmSetName(v){v=(v||"").trim();if(!v||v===cmName)return;cmName=v;try{localStorage.setItem("treffik-cm-name2",cmName)}catch(x){}}
+const cmNameInput=()=>`<input class="cmnm" value="${esc(cmName)}" placeholder="Vaše jméno" autocomplete="name" aria-label="Vaše jméno">`;
+function cmPins(){document.querySelectorAll(".cmpin").forEach(x=>x.remove());if(!st.cm)return;
+  cmRoots().forEach(({root,box,key})=>{const br=box.getBoundingClientRect(),sc=br.width/box.offsetWidth||1,scr=box.classList.contains("phone")?box.querySelector(".scr").getBoundingClientRect():null;
+    CMT.forEach((c,i)=>{if(c.done||c.thread||c.key!==key||!c.path)return;const el=cmFind(root,c.path);if(!el)return;const r=el.getBoundingClientRect();
+      const x=r.left+c.rx*r.width,y=r.top+c.ry*r.height;if(scr&&el.closest(".scr")&&(y<scr.top+4||y>scr.bottom-4))return;
+      box.insertAdjacentHTML("beforeend",`<button type="button" class="cmpin" data-cmid="${c.id}" style="left:${(x-br.left)/sc+box.scrollLeft}px;top:${(y-br.top)/sc+box.scrollTop}px" aria-label="Komentář ${i+1}">${cmInit(c.author)}</button>`)})})}
+function cmClose(){const p=document.getElementById("cmpop");if(p)p.remove();document.querySelectorAll(".cmsel").forEach(x=>x.classList.remove("cmsel"))}
 function cmPlace(pop,r){if(innerWidth<600){pop.classList.add("sheet");return}const w=pop.offsetWidth,h=pop.offsetHeight;let l=Math.min(innerWidth-w-12,Math.max(12,r.left)),t=r.bottom+10;if(t+h>innerHeight-12)t=Math.max(12,r.top-h-10);pop.style.left=l+"px";pop.style.top=t+"px"}
-function cmCompose(ph,el,ev){cmClose();el.classList.add("cmsel");const r=el.getBoundingClientRect();
-  const c={key:ph.dataset.key,screen:ph.dataset.screen,look:st.look,flow:ph.dataset.key.startsWith("detail-")?ph.dataset.key.slice(7):(ORDER.find(f=>FLOWS[f].includes(ph.dataset.screen))||""),path:cmPath(el,ph),rx:Math.min(1,Math.max(0,(ev.clientX-r.left)/(r.width||1))),ry:Math.min(1,Math.max(0,(ev.clientY-r.top)/(r.height||1)))};
+function cmLabel(el,key){const n=el.closest(".node,.note,.lane");if(!n)return "";const t=(n.querySelector("b,h3,.lanel")||n).textContent.trim().replace(/\s+/g," ");return t.length>42?t.slice(0,40)+"…":t}
+function cmCompose(R,el,ev){cmClose();el.classList.add("cmsel");const r=el.getBoundingClientRect(),ph=R.root.classList.contains("phone")?R.root:null;
+  const c={key:R.key,path:cmPath(el,R.root),rx:Math.min(1,Math.max(0,(ev.clientX-r.left)/(r.width||1))),ry:Math.min(1,Math.max(0,(ev.clientY-r.top)/(r.height||1)))};
+  if(ph){c.screen=ph.dataset.screen;c.look=st.look;c.flow=R.key.startsWith("detail-")?R.key.slice(7):(ORDER.find(f=>FLOWS[f].includes(c.screen))||"")}else c.label=cmLabel(el,R.key);
   document.body.insertAdjacentHTML("beforeend",`<div class="cmpop" id="cmpop" role="dialog" aria-label="Nový komentář">
-    <div class="cmhd"><span class="cmav">${cmInit(cmName)}</span>${cmName?`<b>${esc(cmName)}</b>`:`<input class="cmnm" placeholder="Vaše jméno" autocomplete="name">`}<small>${NAMES[c.screen]||""}</small></div>
+    <div class="cmhd"><span class="cmav">${cmInit(cmName)}</span>${cmNameInput()}<small>${esc(cmTag(c))}</small></div>
     <textarea class="cmtx" rows="3" placeholder="Napište komentář k tomuto místu…"></textarea>
-    <div class="cmft"><small>Ukázka, zatím se ukládá jen ve vašem prohlížeči</small><button type="button" class="cmbtn" data-cmx>Zrušit</button><button type="button" class="cmbtn pri" data-cmadd>Přidat</button></div></div>`);
+    <div class="cmft"><small>${cmRemote?"Uvidí ho i druhá strana":"Ukázka: ukládá se jen ve vašem prohlížeči"}</small><button type="button" class="cmbtn" data-cmx>Zrušit</button><button type="button" class="cmbtn pri" data-cmadd>Přidat</button></div></div>`);
   const pop=document.getElementById("cmpop");pop._c=c;cmPlace(pop,r);pop.querySelector(cmName?".cmtx":".cmnm").focus()}
 function cmThread(id,anchor){cmClose();const c=CMT.find(x=>x.id===id);if(!c)return;const r=anchor.getBoundingClientRect();
   document.body.insertAdjacentHTML("beforeend",`<div class="cmpop" id="cmpop" role="dialog" aria-label="Komentář">
     ${[c,...(c.re||[])].map(m=>`<div class="cmmsg"><div class="cmhd"><span class="cmav">${cmInit(m.author)}</span><b>${esc(m.author||"Host")}</b><small>${cmAgo(m.ts)}</small></div><p>${esc(m.text)}</p></div>`).join("")}
-    <textarea class="cmtx" rows="2" placeholder="Odpovědět…"></textarea>
+    <div class="cmhd">${cmNameInput()}</div><textarea class="cmtx" rows="2" placeholder="Odpovědět…"></textarea>
     <div class="cmft"><button type="button" class="cmbtn" data-cmdel>Smazat</button><button type="button" class="cmbtn" data-cmdone>${ic("check")}Vyřešit</button><button type="button" class="cmbtn pri" data-cmre>Odpovědět</button></div></div>`);
   const pop=document.getElementById("cmpop");pop._id=id;cmPlace(pop,r)}
 document.addEventListener("click",e=>{
   const pop=document.getElementById("cmpop");
-  if(pop&&pop.contains(e.target)){const b=e.target.closest("button");if(!b)return;
+  if(pop&&pop.contains(e.target)){const b=e.target.closest("button");if(!b)return;const nm=pop.querySelector(".cmnm");if(nm)cmSetName(nm.value);
     if(b.matches("[data-cmx]"))return cmClose();
-    if(b.matches("[data-cmadd]")){const t=pop.querySelector(".cmtx").value.trim(),nm=pop.querySelector(".cmnm");if(nm&&nm.value.trim()){cmName=nm.value.trim();try{localStorage.setItem("treffik-cm-name",cmName)}catch(x){}}
-      if(!t){pop.querySelector(".cmtx").focus();return}const nc={...pop._c,id:"c"+Date.now(),text:t,author:cmName||"Host",ts:Date.now(),re:[]};CMT.push(nc);cmPut(nc);cmClose();cmPins();cmCount();ptoast("Komentář přidaný");return}
+    if(b.matches("[data-cmadd]")){const t=pop.querySelector(".cmtx").value.trim();if(!t){pop.querySelector(".cmtx").focus();return}
+      const nc={...pop._c,id:"c"+Date.now(),text:t,author:cmName||"Host",ts:Date.now(),re:[]};CMT.push(nc);cmPut(nc);cmClose();cmPins();cmCount();ptoast("Komentář přidaný");return}
     const c=CMT.find(x=>x.id===pop._id);if(!c)return;
-    if(b.matches("[data-cmre]")){const t=pop.querySelector(".cmtx").value.trim();if(!t)return;(c.re=c.re||[]).push({text:t,author:cmName||"Host",ts:Date.now()});cmPut(c);const a=$p.querySelector(`[data-cmid="${c.id}"]`);if(a)cmThread(c.id,a);else cmClose();return}
+    if(b.matches("[data-cmre]")){const t=pop.querySelector(".cmtx").value.trim();if(!t)return;(c.re=c.re||[]).push({text:t,author:cmName||"Host",ts:Date.now()});cmPut(c);const a=document.querySelector(`.cmpin[data-cmid="${c.id}"]`);if(a)cmThread(c.id,a);else cmClose();return}
     if(b.matches("[data-cmdone]")){c.done=true;cmPut(c);cmClose();cmPins();cmCount();ptoast("Komentář vyřešený");return}
     if(b.matches("[data-cmdel]")){CMT=CMT.filter(x=>x!==c);cmDel(c.id);cmClose();cmPins();cmCount();return}
     return}
   if(!st.cm){if(pop)cmClose();return}
+  if(e.target.closest("[data-cmtoggle]"))return;
   const pin=e.target.closest(".cmpin");if(pin){e.preventDefault();e.stopPropagation();cmThread(pin.dataset.cmid,pin);return}
-  const ph=e.target.closest("#phones .phone");if(pop&&!ph)cmClose();
-  if(!ph)return;
-  const el=cmPick(e.target,ph);if(!el)return;e.preventDefault();e.stopPropagation();cmCompose(ph,el,e)},true);
-document.addEventListener("mouseover",e=>{if(!st.cm||cvDrag&&cvDrag.moved)return;const ph=e.target.closest("#phones .phone");const el=ph&&!e.target.closest(".cmpin")?cmPick(e.target,ph):null;
+  const R=cmRootOf(e.target);if(pop&&!R)cmClose();
+  if(!R)return;
+  const el=cmPick(e.target,R);if(!el)return;e.preventDefault();e.stopPropagation();cmCompose(R,el,e)},true);
+document.addEventListener("mouseover",e=>{if(!st.cm||cvDrag&&cvDrag.moved)return;const R=e.target.closest(".cmpin")?null:cmRootOf(e.target);const el=R?cmPick(e.target,R):null;
   if(el!==cmHover){if(cmHover)cmHover.classList.remove("cmh");cmHover=el;if(el)el.classList.add("cmh")}});
 addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("cmpop")){cmClose();e.stopImmediatePropagation()}},true);
-document.getElementById("cmgl").addEventListener("click",e=>{st.cm=!st.cm;e.currentTarget.setAttribute("aria-pressed",st.cm);document.body.classList.toggle("cmon",st.cm);cvInt();if(!st.cm){cmClose();if(cmHover){cmHover.classList.remove("cmh");cmHover=null}}
-  cmPins();ptoast(st.cm?"Komentáře zapnuté: klikněte na místo v obrazovce a napište poznámku":"Komentáře vypnuté")});
+function cmToggle(){st.cm=!st.cm;document.querySelectorAll("[data-cmtoggle]").forEach(b=>b.setAttribute("aria-pressed",st.cm));document.body.classList.toggle("cmon",st.cm);cvInt();
+  if(!st.cm){cmClose();if(cmHover){cmHover.classList.remove("cmh");cmHover=null}}cmPins();
+  ptoast(st.cm?"Komentování zapnuté: klikněte na místo, ke kterému chcete něco napsat":"Komentování vypnuté")}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-cmtoggle]");if(b){e.preventDefault();cmToggle()}});
+addEventListener("resize",()=>{if(st.cm)cmPins()});
+document.getElementById("board")||0;
+/* diskuze pod problémy a nápady */
+function thrTitle(tid){const [k,i]=tid.split(":");return k==="iss"?`${String(+i+1).padStart(2,"0")} ${ISSUES[+i]?ISSUES[+i].t:""}`:(IDEAS[+i]?IDEAS[+i].t:"")}
+function thrHTML(tid){const c=CMT.find(x=>x.thread===tid),n=c?1+(c.re||[]).length:0,open=cmOpen.has(tid);
+  return `<div class="thr ${open?"open":""} ${c&&c.done?"done":""}" data-thr="${tid}"><button type="button" class="thrb" data-thrt aria-expanded="${open}">${ic("msg")}<span>${n?`Diskuze · ${n}`:"Přidat komentář"}</span>${c&&c.done?`<em>vyřešeno</em>`:""}${c&&!c.done&&n?`<i></i>`:""}</button>
+    ${open?`<div class="thrp">${c?[c,...(c.re||[])].map(m=>`<div class="cmre"><span class="cmav sm">${cmInit(m.author)}</span><div><b>${esc(m.author||"Host")}</b><small>${cmAgo(m.ts)}</small><p>${esc(m.text)}</p></div></div>`).join(""):""}
+      <div class="thrf">${cmNameInput()}<textarea class="cmtx" rows="2" placeholder="${c?"Odpovědět…":"Napište, co k tomu máte…"}"></textarea>
+      <div class="cmft">${c?`<button type="button" class="cmbtn" data-thrdone>${ic(c.done?"undo":"check")}${c.done?"Znovu otevřít":"Vyřešit"}</button>`:"<span></span>"}<button type="button" class="cmbtn pri" data-thrsend>Odeslat</button></div></div></div>`:""}</div>`}
+function thrRefresh(force){document.querySelectorAll(".thr").forEach(t=>{const a=t.querySelector(".cmtx");if(!force&&a&&a.value)return;t.outerHTML=thrHTML(t.dataset.thr)})}
+document.addEventListener("click",e=>{const t=e.target.closest(".thr");if(!t||!e.target.closest("button"))return;const tid=t.dataset.thr,b=e.target.closest("button");
+  if(b.matches("[data-thrt]")){cmOpen.has(tid)?cmOpen.delete(tid):cmOpen.add(tid);t.outerHTML=thrHTML(tid);if(cmOpen.has(tid)){const n=document.querySelector(`.thr[data-thr="${tid}"] .cmtx`);if(n)n.focus()}return}
+  const nm=t.querySelector(".cmnm");if(nm)cmSetName(nm.value);let c=CMT.find(x=>x.thread===tid);
+  if(b.matches("[data-thrsend]")){const tx=t.querySelector(".cmtx").value.trim();if(!tx){t.querySelector(".cmtx").focus();return}
+    if(c)(c.re=c.re||[]).push({text:tx,author:cmName||"Host",ts:Date.now()});else{c={id:"c"+Date.now(),thread:tid,text:tx,author:cmName||"Host",ts:Date.now(),re:[]};CMT.push(c)}
+    cmPut(c);t.outerHTML=thrHTML(tid);cmCount();return}
+  if(b.matches("[data-thrdone]")&&c){c.done=!c.done;cmPut(c);t.outerHTML=thrHTML(tid);cmCount()}});
 cmCount();
 
 /* šipka z klikacího místa na cílovou obrazovku v plátně */
@@ -1892,9 +1967,9 @@ function cvHover(h){cvHov=h;document.querySelectorAll(".cvc.tgt").forEach(c=>c.c
 /* ---------- komentáře: server (Cloudflare D1) nebo jen prohlížeč ---------- */
 const CMAPI="/api/comments";let cmRemote=false,cmSig="",cmDirty=false;
 function cmFlowOf(c){if(c.flow)return c.flow;if(c.key&&c.key.startsWith("detail-"))return c.key.slice(7);return ORDER.find(f=>FLOWS[f].includes(c.screen))||""}
-function cmTag(c){if(!c.screen)return "Obecné";const f=cmFlowOf(c),n=NAMES[c.screen]||c.screen;return (SECNAME[f]&&SECNAME[f]!==n?SECNAME[f]+" · ":"")+n}
+function cmTag(c){if(c.thread)return (c.thread.startsWith("iss")?"Analýza · ":"Nápady · ")+thrTitle(c.thread);if(c.key==="flow")return "User flow"+(c.label?" · "+c.label:"");if(c.key==="notes")return "Poznámky"+(c.label?" · "+c.label:"");if(!c.screen)return "Obecné";const f=cmFlowOf(c),n=NAMES[c.screen]||c.screen;return (SECNAME[f]&&SECNAME[f]!==n?SECNAME[f]+" · ":"")+n}
 async function cmLoad(){try{const r=await fetch(CMAPI,{cache:"no-store"});if(!r.ok||!(r.headers.get("content-type")||"").includes("json"))throw 0;const j=await r.json();
-    const sig=JSON.stringify(j.comments||[]);cmRemote=true;if(sig!==cmSig){cmSig=sig;CMT=j.comments||[];cmSave();cmCount();cmPins();if(st.view==="cmts")renderCmts(true)}}
+    const sig=JSON.stringify(j.comments||[]);cmRemote=true;if(sig!==cmSig){cmSig=sig;CMT=j.comments||[];cmSave();cmCount();cmPins();if(st.view==="cmts")renderCmts(true);thrRefresh()}}
   catch(e){cmRemote=false}cmSync()}
 function cmSync(){const s=document.getElementById("cmsync");if(s)s.innerHTML=cmRemote?`<i class="on"></i>Synchronizováno, vidíte je vy i klient`:`<i></i>Ukázka: komentáře se ukládají jen v tomto prohlížeči`}
 async function cmPut(c){cmSave();cmSig="";if(!cmRemote)return;try{const r=await fetch(CMAPI+"/"+encodeURIComponent(c.id),{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(c)});if(!r.ok)throw 0}catch(e){ptoast("Komentář se nepodařilo uložit na server, zkuste to znovu")}}
@@ -1907,11 +1982,11 @@ function renderCmts(soft){const v=document.getElementById("cmtview");
   const fresh=!v.querySelector(".cmfil");
   const items=list.length?list.map(c=>`<article class="cmc ${c.done?"done":""}" data-cid="${c.id}">
       <div class="cmc-hd"><span class="cmav">${cmInit(c.author)}</span><div><b>${esc(c.author||"Host")}</b><small>${cmAgo(c.ts)}</small></div>
-        <span class="cmtag">${ic(c.screen?"phone":"msg")}${esc(cmTag(c))}${c.look?` · ${c.look==="ui"?"UI":"Wireframe"}`:""}</span>${c.done?`<span class="cmst">${ic("check")}Vyřešeno</span>`:""}</div>
+        <span class="cmtag">${ic(c.screen?"phone":c.thread?(c.thread.startsWith("iss")?"alert":"bulb"):c.key==="flow"?"flow":c.key==="notes"?"file":"msg")}${esc(cmTag(c))}${c.look?` · ${c.look==="ui"?"UI":"Wireframe"}`:""}</span>${c.done?`<span class="cmst">${ic("check")}Vyřešeno</span>`:""}</div>
       <p class="cmc-tx">${esc(c.text)}</p>
       ${(c.re||[]).map(m=>`<div class="cmre"><span class="cmav sm">${cmInit(m.author)}</span><div><b>${esc(m.author||"Host")}</b><small>${cmAgo(m.ts)}</small><p>${esc(m.text)}</p></div></div>`).join("")}
       <div class="cmc-rp">${cmName?"":`<input class="cmnm" placeholder="Vaše jméno" autocomplete="name">`}<textarea class="cmtx" rows="1" placeholder="Odpovědět…"></textarea><button type="button" class="cmbtn pri" data-cr>Odpovědět</button></div>
-      <div class="cmc-ft">${c.screen?`<button type="button" class="cmbtn" data-cgo>${ic("pointer")}Ukázat v prototypu</button>`:""}<button type="button" class="cmbtn" data-cdone>${ic(c.done?"undo":"check")}${c.done?"Znovu otevřít":"Vyřešit"}</button><button type="button" class="cmbtn ghost" data-cdel>Smazat</button></div>
+      <div class="cmc-ft">${c.screen||c.thread||c.key==="flow"||c.key==="notes"?`<button type="button" class="cmbtn" data-cgo>${ic("pointer")}${c.screen?"Ukázat v prototypu":"Ukázat na místě"}</button>`:""}<button type="button" class="cmbtn" data-cdone>${ic(c.done?"undo":"check")}${c.done?"Znovu otevřít":"Vyřešit"}</button><button type="button" class="cmbtn ghost" data-cdel>Smazat</button></div>
     </article>`).join(""):`<div class="iempty">${cmFilter==="done"?"Zatím nic vyřešeného.":"Žádné otevřené komentáře. Zapněte v prototypu přepínač Komentovat a klikněte na místo, ke kterému chcete něco napsat."}</div>`;
   if(fresh){v.innerHTML=`<div class="vhead"><h2>Komentáře</h2><p>Poznámky ke konkrétním místům v prototypu i obecné. Každý komentář má štítek, ke které obrazovce patří, a jde na něj odpovědět nebo ho označit jako vyřešený.</p></div>
     <div class="ifil cmfil"><div class="fseg" role="group" aria-label="Stav komentářů"><span class="thumb"></span>
@@ -1923,14 +1998,17 @@ function renderCmts(soft){const v=document.getElementById("cmtview");
   v.querySelector(".cmlist").innerHTML=items;cmSync();placeThumbs();if(!soft)stagger(v);cmDirty=false}
 document.getElementById("cmtview").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const v=e.currentTarget;
   if(b.dataset.cf){cmFilter=b.dataset.cf;renderCmts();return}
-  if(b.matches("[data-cnew]")){const box=b.closest(".cmnew"),t=box.querySelector(".cmtx").value.trim(),nm=box.querySelector(".cmnm");if(nm&&nm.value.trim()){cmName=nm.value.trim();try{localStorage.setItem("treffik-cm-name",cmName)}catch(x){}}
+  if(b.matches("[data-cnew]")){const box=b.closest(".cmnew"),t=box.querySelector(".cmtx").value.trim(),nm=box.querySelector(".cmnm");if(nm&&nm.value.trim()){cmName=nm.value.trim();try{localStorage.setItem("treffik-cm-name2",cmName)}catch(x){}}
     if(!t){box.querySelector(".cmtx").focus();return}const c={id:"c"+Date.now(),text:t,author:cmName||"Host",ts:Date.now(),re:[]};CMT.push(c);cmPut(c);box.querySelector(".cmtx").value="";cmFilter="open";v.innerHTML="";renderCmts();cmCount();return}
   const card=b.closest(".cmc");if(!card)return;const c=CMT.find(x=>x.id===card.dataset.cid);if(!c)return;
-  if(b.matches("[data-cr]")){const nm=card.querySelector(".cmnm");if(nm&&nm.value.trim()){cmName=nm.value.trim();try{localStorage.setItem("treffik-cm-name",cmName)}catch(x){}}const t=card.querySelector(".cmtx").value.trim();if(!t){card.querySelector(".cmtx").focus();return}(c.re=c.re||[]).push({text:t,author:cmName||"Host",ts:Date.now()});cmPut(c);renderCmts();return}
+  if(b.matches("[data-cr]")){const nm=card.querySelector(".cmnm");if(nm&&nm.value.trim()){cmName=nm.value.trim();try{localStorage.setItem("treffik-cm-name2",cmName)}catch(x){}}const t=card.querySelector(".cmtx").value.trim();if(!t){card.querySelector(".cmtx").focus();return}(c.re=c.re||[]).push({text:t,author:cmName||"Host",ts:Date.now()});cmPut(c);renderCmts();return}
   if(b.matches("[data-cdone]")){c.done=!c.done;cmPut(c);renderCmts();cmCount();cmPins();ptoast(c.done?"Komentář vyřešený":"Komentář znovu otevřený");return}
   if(b.matches("[data-cdel]")){CMT=CMT.filter(x=>x!==c);cmDel(c.id);renderCmts();cmCount();return}
+  if(b.matches("[data-cgo]")&&c.thread){const an=c.thread.startsWith("iss");cmOpen.add(c.thread);if(an)st.anTab="iss";else{st.icat="vse";st.ist="vse";const iv=document.getElementById("ideasview");iv.innerHTML=""}if(an){const av=document.getElementById("anview");av.innerHTML=""}
+    setView(an?"an":"ideas");setTimeout(()=>{const t=document.querySelector(`.thr[data-thr="${c.thread}"]`);if(t){t.scrollIntoView({block:"center",behavior:reduce?"auto":"smooth"});t.classList.add("flash")}},450);return}
+  if(b.matches("[data-cgo]")&&(c.key==="flow"||c.key==="notes")){if(!st.cm)cmToggle();setView(c.key);setTimeout(()=>{cmPins();const p=document.querySelector(`.cmpin[data-cmid="${c.id}"]`);if(p){p.classList.add("flash");p.scrollIntoView({block:"center",inline:"center",behavior:reduce?"auto":"smooth"})}},600);return}
   if(b.matches("[data-cgo]")){const f=cmFlowOf(c);if(FLOWS[f]){if(st.flow!==f)subAnim=true;st.flow=f}st.screen=c.screen;if(c.look)st.look=c.look;if(st.mode==="canvas")st.mode="one";
-    if(!st.cm)document.getElementById("cmgl").click();setView("proto");setTimeout(()=>{const p=$p.querySelector(`[data-cmid="${c.id}"]`);if(p){p.classList.add("flash");p.scrollIntoView({block:"center",behavior:reduce?"auto":"smooth"})}},700)}});
+    if(!st.cm)cmToggle();setView("proto");setTimeout(()=>{const p=$p.querySelector(`[data-cmid="${c.id}"]`);if(p){p.classList.add("flash");p.scrollIntoView({block:"center",behavior:reduce?"auto":"smooth"})}},700)}});
 document.getElementById("cmtview").addEventListener("input",e=>{if(e.target.matches(".cmc .cmtx")){e.target.style.height="auto";e.target.style.height=e.target.scrollHeight+"px"}});
 cmLoad();
 reload();
