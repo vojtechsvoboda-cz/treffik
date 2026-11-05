@@ -471,7 +471,7 @@ body:not(.v-proto) .po{display:none!important}
 .foot a{color:var(--fg);font-weight:600;text-decoration:none}
 .foot a:hover{text-decoration:underline}
 .flogo{display:inline-flex}
-body:not(.v-flow) #flowview,body:not(.v-ideas) #ideasview,body:not(.v-an) #anview,body:not(.v-notes) #notesview{display:none}
+body:not(.v-flow) #flowview,body:not(.v-ideas) #ideasview,body:not(.v-an) #anview,body:not(.v-notes) #notesview,body:not(.v-cmts) #cmtview{display:none}
 .vhead h2{margin:0;font-size:21px;font-weight:800;letter-spacing:-.01em}
 .vhead p{margin:6px 0 0;font-size:14px;line-height:1.55;color:var(--mute);max-width:72ch}
 .card2{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 8px 22px -18px rgba(20,30,25,.3)}
@@ -762,6 +762,39 @@ body.bp .cv.tiny .cvc:not(.on) .phone [data-hot]{outline:none}
 .canvas .cmpin{transform:scale(var(--pin,1));transform-origin:2px 100%}
 svg.cvl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible}
 .cvc.tgt .device{box-shadow:0 0 0 6px rgba(46,158,74,.45),0 24px 50px -24px rgba(20,30,25,.45)}
+/* stránka komentářů */
+#cmtview{display:flex;flex-direction:column;gap:16px}
+.cmfil{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:6px}
+.cmfil .fseg{flex:none}
+.cmsync{display:inline-flex;align-items:center;gap:7px;font:600 12px/1.3 var(--sans);color:var(--mute);padding-right:8px}
+.cmsync i{width:8px;height:8px;border-radius:50%;background:#C2CAC5}.cmsync i.on{background:#2EAA4E;box-shadow:0 0 0 3px rgba(46,170,78,.18)}
+.cmnew{display:flex;gap:12px;align-items:flex-start}
+.cmnew-b{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.cmlist{display:flex;flex-direction:column;gap:12px}
+.cmc{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 22px -18px rgba(20,30,25,.3)}
+.cmc.done{background:#FAFBFA}.cmc.done .cmc-tx{color:var(--mute)}
+.cmc-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cmc-hd>div{display:flex;flex-direction:column;gap:2px;margin-right:auto}
+.cmc-hd b{font-size:13.5px}.cmc-hd small,.cmre small{font-size:11.5px;color:var(--mute)}
+.cmtag{display:inline-flex;align-items:center;gap:6px;font:700 11.5px/1 var(--sans);padding:6px 9px;border-radius:999px;background:#EAF1FB;color:#2456A8}
+.cmtag .ic{width:13px;height:13px}
+.cmst{display:inline-flex;align-items:center;gap:5px;font:700 11.5px/1 var(--sans);padding:6px 9px;border-radius:999px;background:#E3F4E7;color:#227A3A}.cmst .ic{width:13px;height:13px}
+.cmc-tx{margin:0;font-size:14.5px;line-height:1.55;white-space:pre-wrap}
+.cmre{display:flex;gap:10px;padding:10px 0 0 14px;border-left:2px solid var(--line);margin-left:12px}
+.cmre>div{display:flex;flex-direction:column;gap:2px}.cmre b{font-size:13px}.cmre p{margin:3px 0 0;font-size:13.5px;line-height:1.5;white-space:pre-wrap}
+.cmav.sm{width:22px;height:22px;font-size:10.5px}
+.cmc-rp{display:flex;gap:8px;align-items:flex-end}.cmc-rp .cmtx{flex:1}
+.cmc-ft{display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px}
+.cmbtn.ghost{background:none;color:var(--mute);margin-left:auto}
+.cmpin.flash{animation:cmflash 1.2s ease 2}
+@keyframes cmflash{50%{box-shadow:0 0 0 10px rgba(47,111,214,.25)}}
+@media (max-width:699px){.navx .fchip .ic{display:none}.navx .fchip{padding:8px 9px}.cmc-rp{flex-direction:column;align-items:stretch}}
+body:not(.v-cmts) #cmtview{display:none}
+#navcm{margin-left:2px;font:700 10.5px/1 var(--sans);color:#fff;background:#2F6FD6;border-radius:9px;padding:3px 6px}
+#navcm:empty{display:none}
+.mcap{top:8px;bottom:auto}
+.cmfil{flex-direction:row!important}.cmc-rp .cmnm{flex:none;width:140px;height:38px}@media (max-width:699px){.navx .fchip{font-size:12.5px;padding:8px 7px}.cmc-rp .cmnm{width:auto}}
+.cmnew .cmnm{height:38px;flex:none}
 </style>
 
 <div class="wrap">
@@ -781,13 +814,13 @@ svg.cvl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-i
           <button type="button" data-mode="all" aria-pressed="true"></button><button type="button" data-mode="one" aria-pressed="false"></button><button type="button" data-mode="canvas" aria-pressed="false"></button></div>
       </div>
       <div class="fseg navx" role="group" aria-label="Podklady"><span class="thumb"></span>
-        <button type="button" class="fchip" data-view="an" aria-pressed="false"></button><button type="button" class="fchip" data-view="ideas" aria-pressed="false"></button><button type="button" class="fchip" data-view="notes" aria-pressed="false"></button></div>
+        <button type="button" class="fchip" data-view="an" aria-pressed="false"></button><button type="button" class="fchip" data-view="ideas" aria-pressed="false"></button><button type="button" class="fchip" data-view="notes" aria-pressed="false"></button><button type="button" class="fchip" data-view="cmts" aria-pressed="false"></button></div>
     </div>
     <div class="secwrap po">
       <div class="labrow"><span class="lab">Sekce a obrazovky</span><span class="kbh" id="kbh"></span>
         <span class="tgls"><button type="button" class="bpt" id="arrgl" aria-pressed="false" data-tip="Šipky ukazují, kam vede klepnutí z jedné obrazovky na další"><span class="sw"></span>Šipky</button>
         <button type="button" class="bpt" id="bptgl" aria-pressed="false" data-tip="Zvýrazní místa, na která jde klepnout. Po najetí myší popíše, kam vedou"><span class="sw"></span>Klikací místa</button>
-        <button type="button" class="bpt" id="cmgl" aria-pressed="false" data-tip="Klikněte na místo v obrazovce a napište k němu poznámku"><span class="sw"></span>Komentáře<i></i></button></span></div>
+        <button type="button" class="bpt" id="cmgl" aria-pressed="false" data-tip="Klikněte na místo v obrazovce a napište k němu poznámku"><span class="sw"></span>Komentovat<i></i></button></span></div>
       <div class="secbox">
         <div class="sxw" id="sxw"><div class="sx" id="sx"><div class="seg" id="sect" role="group" aria-label="Sekce aplikace"><span class="thumb"></span></div></div>
           <button type="button" class="sxbtn l" id="sxbtnl" aria-label="Posunout sekce doleva"></button><button type="button" class="sxbtn" id="sxbtn" aria-label="Posunout sekce doprava"></button></div>
@@ -805,6 +838,7 @@ svg.cvl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-i
 
   <section class="anv" id="anview" aria-label="Analýza"></section>
 
+  <section id="cmtview" aria-label="Komentáře"></section>
   <section class="notes" id="notesview" aria-label="Poznámky">
     <div class="vhead"><h2>Předpoklady a poznámky pro tým</h2><p>Rozhodnutí a předpoklady, na kterých prototyp stojí. Hodí se pro Davida i programátora.</p></div>
     <div class="ngrid" id="ngrid">
@@ -879,7 +913,7 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ovládací panel */
 const setBtn=(sel,icon,txt)=>{document.querySelector(sel).innerHTML=ic(icon)+txt};
-setBtn('[data-view="an"]',"search","Analýza");setBtn('[data-view="flow"]',"flow","User flow");setBtn('[data-view="proto"]',"pointer","Prototyp");setBtn('[data-view="ideas"]',"bulb","Nápady");setBtn('[data-view="notes"]',"file","Poznámky");
+setBtn('[data-view="an"]',"search","Analýza");setBtn('[data-view="flow"]',"flow","User flow");setBtn('[data-view="proto"]',"pointer","Prototyp");setBtn('[data-view="ideas"]',"bulb","Nápady");setBtn('[data-view="notes"]',"file","Poznámky");setBtn('[data-view="cmts"]',"msg","Komentáře");document.querySelector('[data-view="cmts"]').insertAdjacentHTML("beforeend",'<small id="navcm"></small>');
 setBtn('[data-look="wf"]',"dashed","Wireframe");setBtn('[data-look="ui"]',"palette","UI");
 setBtn('[data-mode="all"]',"cols","Vedle sebe");setBtn('[data-mode="one"]',"phone","Proklik");setBtn('[data-mode="canvas"]',"map","Plátno");
 setBtn("#reload","refresh","Znovu načíst");setBtn("#fullbtn","max","Celá obrazovka");document.querySelector(".flogo").innerHTML=logo(22);document.querySelectorAll(".noi[data-ic]").forEach(x=>x.innerHTML=ic(x.dataset.ic));
@@ -959,7 +993,7 @@ function protoOut(done){if(reduce){done();return}poAnims.forEach(a=>a.cancel());
 let svT=0,outAnims=[];
 function setView(v){if(svT){clearTimeout(svT);svT=0;outAnims.forEach(a=>a.cancel());outAnims=[]}
   if(st.view===v){document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===v));placeThumbs();return}document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===v));placeThumbs();const go2=()=>{st.view=v;scrollTo({top:0});render(v==="proto"?{anim:{screen:st.screen,dir:"tab"}}:{});
-    const el=document.getElementById({an:"anview",ideas:"ideasview",notes:"notesview",flow:"flowview"}[v]);
+    const el=document.getElementById({an:"anview",ideas:"ideasview",notes:"notesview",cmts:"cmtview",flow:"flowview"}[v]);
     if(el&&!reduce)el.animate([{opacity:0,transform:"translateY(8px)"},{opacity:1,transform:"none"}],{duration:300,easing:"cubic-bezier(.2,.8,.2,1)"});requestAnimationFrame(placeThumbs)};
   if(st.view==="proto")protoOut(go2);else go2()}
 const mem={};
@@ -1077,6 +1111,34 @@ function refreshFeed(){
 }
 
 /* ---------- Detail ---------- */
+function mapSvg(e){const p=esc(e.place.split(" · ")[0]);return `<svg class="ai" viewBox="0 0 280 156" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <rect width="280" height="156" fill="#EEF2EA"/>
+  <path d="M0 18 L64 0 H120 L84 40 L20 58Z" fill="#D9EBCF"/><path d="M210 112 L280 96 V156 H196Z" fill="#D9EBCF"/><circle cx="236" cy="34" r="22" fill="#D9EBCF"/>
+  <path d="M-10 120 C 40 104 70 126 120 112 S 210 70 300 84" stroke="#B9D7F0" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <g stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"><path d="M30 -10 L96 170"/><path d="M-10 70 L300 44"/><path d="M160 -10 L190 170"/><path d="M60 150 L280 120"/></g>
+  <g stroke="#DCE2DC" stroke-width="1" fill="none"><path d="M30 -10 L96 170"/><path d="M160 -10 L190 170"/></g>
+  <path d="M-10 92 C 60 86 120 74 180 70 S 260 60 300 58" stroke="#F6C453" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M-10 92 C 60 86 120 74 180 70 S 260 60 300 58" stroke="#E5A92E" stroke-width="1" fill="none" stroke-dasharray="6 6"/>
+  ${[[18,26,22,14],[108,12,20,16],[200,8,26,14],[120,96,24,16],[226,72,18,14],[30,126,22,14]].map(([x,y,w,h])=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="#E2E6DF"/>`).join("")}
+  <circle class="pulse" cx="140" cy="72" r="14" fill="#E5483B" opacity=".35"/>
+  <path d="M140 76 c-9-10-12-15-12-20 a12 12 0 0 1 24 0 c0 5-3 10-12 20z" fill="#E5483B" stroke="#fff" stroke-width="2"/><circle cx="140" cy="56" r="4.5" fill="#fff"/>
+  <g transform="translate(140 98)"><rect x="-${p.length*3.2+10}" y="-11" width="${p.length*6.4+20}" height="22" rx="11" fill="#fff" stroke="#E2E6DF"/><text x="0" y="4" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10.5" font-weight="700" fill="#142019">${p}</text></g>
+</svg>`}
+function photoSvg(e){const warn=e.type==="prace"||e.type==="uzavirka"?"#F29A0B":"#E5483B";return `<svg class="ai" viewBox="0 0 280 156" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs><linearGradient id="sky${e.id||""}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFE0F5"/><stop offset="1" stop-color="#E9F4F8"/></linearGradient></defs>
+  <rect width="280" height="156" fill="url(#sky${e.id||""})"/>
+  <circle cx="226" cy="30" r="14" fill="#FFE7A3"/>
+  <path d="M0 86 L40 60 L70 76 L110 50 L150 72 L190 54 L230 70 L280 58 V100 H0Z" fill="#CFE3D4"/>
+  <g fill="#F3EDE4" stroke="#D8CFC2" stroke-width="1"><rect x="14" y="62" width="44" height="40"/><rect x="200" y="58" width="56" height="44"/><rect x="66" y="72" width="30" height="30"/></g>
+  <g fill="#C96F4A"><path d="M10 64 L36 46 L62 64Z"/><path d="M196 60 L228 40 L260 60Z"/><path d="M62 74 L81 60 L100 74Z"/></g>
+  <g fill="#9CC3DE"><rect x="22" y="72" width="10" height="10"/><rect x="40" y="72" width="10" height="10"/><rect x="210" y="68" width="10" height="10"/><rect x="236" y="68" width="10" height="10"/><rect x="74" y="82" width="8" height="8"/></g>
+  <path d="M0 156 L118 98 H162 L280 156Z" fill="#7E8A84"/>
+  <path d="M140 102 v8 M140 118 v10 M140 136 v16" stroke="#fff" stroke-width="3"/>
+  <path d="M0 100 H280 V104 H0Z" fill="#B8C2BC"/>
+  <ellipse cx="176" cy="138" rx="34" ry="7" fill="#9FC2DB" opacity=".9"/>
+  <g transform="translate(96 118)"><path d="M0 22 L8 0 L16 22Z" fill="${warn}"/><rect x="2" y="10" width="12" height="3" fill="#fff"/><rect x="-3" y="22" width="22" height="4" rx="1" fill="#555"/></g>
+  <g transform="translate(184 106)"><path d="M0 14 L5 0 L10 14Z" fill="${warn}"/><rect x="1" y="6" width="8" height="2" fill="#fff"/></g>
+</svg>`}
 function aiSvg(e){
   const block=e.type==="prace"||e.type==="uzavirka"?"#F29A0B":"#E5483B";
   return `<svg class="ai" viewBox="0 0 280 156" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -1104,8 +1166,8 @@ function sDetail(){
   const est=e.est?`<div class="est">${ic("clock")}<span>Odhad konce</span><b>${e.est}</b><span>${e.elapsed||e.estT}</span></div>`:`<div class="est">${ic("clock")}<span>${e.estT}</span></div>`;
   const note=e.elapsed?`<div class="note">${ic("info")}<span>Odhadovaný čas uplynul, ale nikdo zatím nepotvrdil zlepšení. Stav zůstává <b>${ST[e.s]}</b>, dokud ho nezmění ŘSD nebo hlasování řidičů.</span></div>`:"";
   const view=media==="ai"?`${aiSvg(e)}<span class="mcap">${ic("sparkles")}AI vizualizace · orientační</span>`
-    :media==="mapa"?`<span class="mid">${ic("pin")}${e.place.split(" · ")[0]}</span>`
-    :`<span class="mid">${ic("image")}Foto ulice</span>`;
+    :media==="mapa"?(st.look==="ui"?mapSvg(e):`<span class="mid">${ic("pin")}${e.place.split(" · ")[0]}</span>`)
+    :(st.look==="ui"?`${photoSvg(e)}<span class="mcap">${ic("image")}Foto ulice · ukázka</span>`:`<span class="mid">${ic("image")}Foto ulice</span>`);
   return `<header class="hd">${bar}
     <div class="hero">
       ${fromRoute?`<span class="ctx">${ic("route")}Na vaší cestě ${esc(r.name)}</span>`:""}
@@ -1528,7 +1590,7 @@ function chrome(){
   steps.innerHTML=f.map((s,i)=>`${i?`<span class="link ${i<=ci?"done":""}"></span>`:""}<button type="button" class="step ${i===ci?"on":i<ci?"done":""}" data-step="${s}" ${i===ci?'aria-current="step"':""}><span class="n">${i+1}</span>${NAMES[s]}</button>`).join("");
   if(subAnim){steps.classList.remove("subin");void steps.offsetWidth;steps.classList.add("subin");subAnim=false}
   document.body.classList.toggle("full",st.full&&st.view==="proto");
-  ["an","flow","proto","ideas","notes"].forEach(v=>document.body.classList.toggle("v-"+v,st.view===v));
+  ["an","flow","proto","ideas","notes","cmts"].forEach(v=>document.body.classList.toggle("v-"+v,st.view===v));
   if(st.view==="proto"&&lastView&&lastView!=="proto")protoIn();lastView=st.view;
   document.body.style.setProperty("--fz",fz());
   placeThumbs();hints();
@@ -1545,6 +1607,7 @@ function render(o={}){
   if(st.view==="ideas"){renderIdeas();chrome();return}
   if(st.view==="an"){renderAn();chrome();return}
   if(st.view==="notes"){chrome();return}
+  if(st.view==="cmts"){renderCmts();chrome();return}
   save(); if(o.reset)mem[o.reset]=0; if(o.zero)Object.keys(mem).forEach(k=>mem[k]=0);
   if(!st.full&&st.mode==="canvas"){renderCanvas();chrome();tagHot();trackHist();scheduleLinks();if(typeof cmPins==='function')requestAnimationFrame(cmPins);return}
   const one=st.full||st.mode==="one",list=one?[st.screen]:FLOWS[st.flow];
@@ -1771,7 +1834,7 @@ function cmFind(root,path){let el=root;for(const i of path.split(".")){el=el&&el
 function cmPick(t,ph){let el=t.closest(CMSEL);if(!el||!ph.contains(el)||el===ph)el=t;if(el.closest("svg")&&el.tagName!=="svg")el=el.closest("svg");return ph.contains(el)&&el!==ph?el:null}
 const cmAgo=ts=>{const m=Math.round((Date.now()-ts)/60000);return m<1?"právě teď":m<60?`před ${m} min`:m<1440?`před ${Math.round(m/60)} h`:new Date(ts).toLocaleDateString("cs-CZ")};
 const cmInit=n=>(n||"?").trim().charAt(0).toUpperCase()||"?";
-function cmCount(){const n=CMT.filter(c=>!c.done).length,b=document.getElementById("cmgl");if(b)b.querySelector("i").textContent=n||""}
+function cmCount(){const n=CMT.filter(c=>!c.done).length,b=document.getElementById("cmgl");if(b)b.querySelector("i").textContent=n||"";const m=document.getElementById("navcm");if(m)m.textContent=n||""}
 function cmPins(){$p.querySelectorAll(".cmpin").forEach(x=>x.remove());if(!st.cm)return;
   $p.querySelectorAll(".phone").forEach(ph=>{const pr=ph.getBoundingClientRect(),sc=pr.width/ph.offsetWidth||1,scr=ph.querySelector(".scr").getBoundingClientRect();
     CMT.forEach((c,i)=>{if(c.done||c.key!==ph.dataset.key)return;const el=cmFind(ph,c.path);if(!el)return;const r=el.getBoundingClientRect();
@@ -1780,7 +1843,7 @@ function cmPins(){$p.querySelectorAll(".cmpin").forEach(x=>x.remove());if(!st.cm
 function cmClose(){const p=document.getElementById("cmpop");if(p)p.remove();$p.querySelectorAll(".cmsel").forEach(x=>x.classList.remove("cmsel"))}
 function cmPlace(pop,r){if(innerWidth<600){pop.classList.add("sheet");return}const w=pop.offsetWidth,h=pop.offsetHeight;let l=Math.min(innerWidth-w-12,Math.max(12,r.left)),t=r.bottom+10;if(t+h>innerHeight-12)t=Math.max(12,r.top-h-10);pop.style.left=l+"px";pop.style.top=t+"px"}
 function cmCompose(ph,el,ev){cmClose();el.classList.add("cmsel");const r=el.getBoundingClientRect();
-  const c={key:ph.dataset.key,screen:ph.dataset.screen,path:cmPath(el,ph),rx:Math.min(1,Math.max(0,(ev.clientX-r.left)/(r.width||1))),ry:Math.min(1,Math.max(0,(ev.clientY-r.top)/(r.height||1)))};
+  const c={key:ph.dataset.key,screen:ph.dataset.screen,look:st.look,flow:ph.dataset.key.startsWith("detail-")?ph.dataset.key.slice(7):(ORDER.find(f=>FLOWS[f].includes(ph.dataset.screen))||""),path:cmPath(el,ph),rx:Math.min(1,Math.max(0,(ev.clientX-r.left)/(r.width||1))),ry:Math.min(1,Math.max(0,(ev.clientY-r.top)/(r.height||1)))};
   document.body.insertAdjacentHTML("beforeend",`<div class="cmpop" id="cmpop" role="dialog" aria-label="Nový komentář">
     <div class="cmhd"><span class="cmav">${cmInit(cmName)}</span>${cmName?`<b>${esc(cmName)}</b>`:`<input class="cmnm" placeholder="Vaše jméno" autocomplete="name">`}<small>${NAMES[c.screen]||""}</small></div>
     <textarea class="cmtx" rows="3" placeholder="Napište komentář k tomuto místu…"></textarea>
@@ -1797,11 +1860,11 @@ document.addEventListener("click",e=>{
   if(pop&&pop.contains(e.target)){const b=e.target.closest("button");if(!b)return;
     if(b.matches("[data-cmx]"))return cmClose();
     if(b.matches("[data-cmadd]")){const t=pop.querySelector(".cmtx").value.trim(),nm=pop.querySelector(".cmnm");if(nm&&nm.value.trim()){cmName=nm.value.trim();try{localStorage.setItem("treffik-cm-name",cmName)}catch(x){}}
-      if(!t){pop.querySelector(".cmtx").focus();return}CMT.push({...pop._c,id:"c"+Date.now(),text:t,author:cmName||"Host",ts:Date.now(),re:[]});cmSave();cmClose();cmPins();cmCount();ptoast("Komentář přidaný");return}
+      if(!t){pop.querySelector(".cmtx").focus();return}const nc={...pop._c,id:"c"+Date.now(),text:t,author:cmName||"Host",ts:Date.now(),re:[]};CMT.push(nc);cmPut(nc);cmClose();cmPins();cmCount();ptoast("Komentář přidaný");return}
     const c=CMT.find(x=>x.id===pop._id);if(!c)return;
-    if(b.matches("[data-cmre]")){const t=pop.querySelector(".cmtx").value.trim();if(!t)return;(c.re=c.re||[]).push({text:t,author:cmName||"Host",ts:Date.now()});cmSave();const a=$p.querySelector(`[data-cmid="${c.id}"]`);if(a)cmThread(c.id,a);else cmClose();return}
-    if(b.matches("[data-cmdone]")){c.done=true;cmSave();cmClose();cmPins();cmCount();ptoast("Komentář vyřešený");return}
-    if(b.matches("[data-cmdel]")){CMT=CMT.filter(x=>x!==c);cmSave();cmClose();cmPins();cmCount();return}
+    if(b.matches("[data-cmre]")){const t=pop.querySelector(".cmtx").value.trim();if(!t)return;(c.re=c.re||[]).push({text:t,author:cmName||"Host",ts:Date.now()});cmPut(c);const a=$p.querySelector(`[data-cmid="${c.id}"]`);if(a)cmThread(c.id,a);else cmClose();return}
+    if(b.matches("[data-cmdone]")){c.done=true;cmPut(c);cmClose();cmPins();cmCount();ptoast("Komentář vyřešený");return}
+    if(b.matches("[data-cmdel]")){CMT=CMT.filter(x=>x!==c);cmDel(c.id);cmClose();cmPins();cmCount();return}
     return}
   if(!st.cm){if(pop)cmClose();return}
   const pin=e.target.closest(".cmpin");if(pin){e.preventDefault();e.stopPropagation();cmThread(pin.dataset.cmid,pin);return}
@@ -1826,5 +1889,49 @@ function cvHover(h){cvHov=h;document.querySelectorAll(".cvc.tgt").forEach(c=>c.c
   const sx=(fw?er.right:er.left)-b.left,sy=er.top+er.height/2-b.top,ex=(fw?tr.left:tr.right)-b.left,ey=Math.max(tr.top+40,Math.min(tr.bottom-40,er.top+er.height/2))-b.top,dx=Math.max(30,Math.abs(ex-sx)*.5)*(fw?1:-1);
   svg.innerHTML=`<defs><marker id="cvah" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="userSpaceOnUse"><path d="M2,1.5 L8,5 L2,8.5" fill="none" stroke="#2E9E4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><path d="M${sx},${sy} C${sx+dx},${sy} ${ex-dx},${ey} ${ex},${ey}" fill="none" stroke="#2E9E4A" stroke-width="2" stroke-linecap="round" marker-end="url(#cvah)"/><circle cx="${sx}" cy="${sy}" r="3.5" fill="#2E9E4A"/>`;
   tc.classList.add("tgt")}
+/* ---------- komentáře: server (Cloudflare D1) nebo jen prohlížeč ---------- */
+const CMAPI="/api/comments";let cmRemote=false,cmSig="",cmDirty=false;
+function cmFlowOf(c){if(c.flow)return c.flow;if(c.key&&c.key.startsWith("detail-"))return c.key.slice(7);return ORDER.find(f=>FLOWS[f].includes(c.screen))||""}
+function cmTag(c){if(!c.screen)return "Obecné";const f=cmFlowOf(c),n=NAMES[c.screen]||c.screen;return (SECNAME[f]&&SECNAME[f]!==n?SECNAME[f]+" · ":"")+n}
+async function cmLoad(){try{const r=await fetch(CMAPI,{cache:"no-store"});if(!r.ok||!(r.headers.get("content-type")||"").includes("json"))throw 0;const j=await r.json();
+    const sig=JSON.stringify(j.comments||[]);cmRemote=true;if(sig!==cmSig){cmSig=sig;CMT=j.comments||[];cmSave();cmCount();cmPins();if(st.view==="cmts")renderCmts(true)}}
+  catch(e){cmRemote=false}cmSync()}
+function cmSync(){const s=document.getElementById("cmsync");if(s)s.innerHTML=cmRemote?`<i class="on"></i>Synchronizováno, vidíte je vy i klient`:`<i></i>Ukázka: komentáře se ukládají jen v tomto prohlížeči`}
+async function cmPut(c){cmSave();cmSig="";if(!cmRemote)return;try{const r=await fetch(CMAPI+"/"+encodeURIComponent(c.id),{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(c)});if(!r.ok)throw 0}catch(e){ptoast("Komentář se nepodařilo uložit na server, zkuste to znovu")}}
+async function cmDel(id){cmSave();cmSig="";if(!cmRemote)return;try{await fetch(CMAPI+"/"+encodeURIComponent(id),{method:"DELETE"})}catch(e){}}
+setInterval(()=>{if(!document.hidden&&cmRemote)cmLoad()},20000);addEventListener("focus",()=>{if(cmRemote)cmLoad()});
+let cmFilter="open";
+function renderCmts(soft){const v=document.getElementById("cmtview");
+  if(soft){const a=document.activeElement;if(a&&v.contains(a)&&a.value){cmDirty=true;return}}
+  const open=CMT.filter(c=>!c.done),done=CMT.filter(c=>c.done),list=(cmFilter==="open"?open:cmFilter==="done"?done:CMT).slice().sort((a,b)=>(b.re&&b.re.length?b.re[b.re.length-1].ts:b.ts)-(a.re&&a.re.length?a.re[a.re.length-1].ts:a.ts));
+  const fresh=!v.querySelector(".cmfil");
+  const items=list.length?list.map(c=>`<article class="cmc ${c.done?"done":""}" data-cid="${c.id}">
+      <div class="cmc-hd"><span class="cmav">${cmInit(c.author)}</span><div><b>${esc(c.author||"Host")}</b><small>${cmAgo(c.ts)}</small></div>
+        <span class="cmtag">${ic(c.screen?"phone":"msg")}${esc(cmTag(c))}${c.look?` · ${c.look==="ui"?"UI":"Wireframe"}`:""}</span>${c.done?`<span class="cmst">${ic("check")}Vyřešeno</span>`:""}</div>
+      <p class="cmc-tx">${esc(c.text)}</p>
+      ${(c.re||[]).map(m=>`<div class="cmre"><span class="cmav sm">${cmInit(m.author)}</span><div><b>${esc(m.author||"Host")}</b><small>${cmAgo(m.ts)}</small><p>${esc(m.text)}</p></div></div>`).join("")}
+      <div class="cmc-rp">${cmName?"":`<input class="cmnm" placeholder="Vaše jméno" autocomplete="name">`}<textarea class="cmtx" rows="1" placeholder="Odpovědět…"></textarea><button type="button" class="cmbtn pri" data-cr>Odpovědět</button></div>
+      <div class="cmc-ft">${c.screen?`<button type="button" class="cmbtn" data-cgo>${ic("pointer")}Ukázat v prototypu</button>`:""}<button type="button" class="cmbtn" data-cdone>${ic(c.done?"undo":"check")}${c.done?"Znovu otevřít":"Vyřešit"}</button><button type="button" class="cmbtn ghost" data-cdel>Smazat</button></div>
+    </article>`).join(""):`<div class="iempty">${cmFilter==="done"?"Zatím nic vyřešeného.":"Žádné otevřené komentáře. Zapněte v prototypu přepínač Komentovat a klikněte na místo, ke kterému chcete něco napsat."}</div>`;
+  if(fresh){v.innerHTML=`<div class="vhead"><h2>Komentáře</h2><p>Poznámky ke konkrétním místům v prototypu i obecné. Každý komentář má štítek, ke které obrazovce patří, a jde na něj odpovědět nebo ho označit jako vyřešený.</p></div>
+    <div class="ifil cmfil"><div class="fseg" role="group" aria-label="Stav komentářů"><span class="thumb"></span>
+      <button type="button" class="fchip" data-cf="open">${ic("msg")}Otevřené<small></small></button><button type="button" class="fchip" data-cf="done">${ic("check")}Vyřešené<small></small></button><button type="button" class="fchip" data-cf="all">Vše<small></small></button></div>
+      <span class="cmsync" id="cmsync"></span></div>
+    <div class="cmnew card2"><span class="cmav">${cmInit(cmName)}</span><div class="cmnew-b">${cmName?"":`<input class="cmnm" placeholder="Vaše jméno" autocomplete="name">`}<textarea class="cmtx" rows="2" placeholder="Napsat obecný komentář k celému návrhu…"></textarea></div><button type="button" class="cmbtn pri" data-cnew>Přidat</button></div>
+    <div class="cmlist" data-stagger></div>`}
+  v.querySelectorAll("[data-cf]").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.cf===cmFilter);b.querySelector("small").textContent={open:open.length,done:done.length,all:CMT.length}[b.dataset.cf]});
+  v.querySelector(".cmlist").innerHTML=items;cmSync();placeThumbs();if(!soft)stagger(v);cmDirty=false}
+document.getElementById("cmtview").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const v=e.currentTarget;
+  if(b.dataset.cf){cmFilter=b.dataset.cf;renderCmts();return}
+  if(b.matches("[data-cnew]")){const box=b.closest(".cmnew"),t=box.querySelector(".cmtx").value.trim(),nm=box.querySelector(".cmnm");if(nm&&nm.value.trim()){cmName=nm.value.trim();try{localStorage.setItem("treffik-cm-name",cmName)}catch(x){}}
+    if(!t){box.querySelector(".cmtx").focus();return}const c={id:"c"+Date.now(),text:t,author:cmName||"Host",ts:Date.now(),re:[]};CMT.push(c);cmPut(c);box.querySelector(".cmtx").value="";cmFilter="open";v.innerHTML="";renderCmts();cmCount();return}
+  const card=b.closest(".cmc");if(!card)return;const c=CMT.find(x=>x.id===card.dataset.cid);if(!c)return;
+  if(b.matches("[data-cr]")){const nm=card.querySelector(".cmnm");if(nm&&nm.value.trim()){cmName=nm.value.trim();try{localStorage.setItem("treffik-cm-name",cmName)}catch(x){}}const t=card.querySelector(".cmtx").value.trim();if(!t){card.querySelector(".cmtx").focus();return}(c.re=c.re||[]).push({text:t,author:cmName||"Host",ts:Date.now()});cmPut(c);renderCmts();return}
+  if(b.matches("[data-cdone]")){c.done=!c.done;cmPut(c);renderCmts();cmCount();cmPins();ptoast(c.done?"Komentář vyřešený":"Komentář znovu otevřený");return}
+  if(b.matches("[data-cdel]")){CMT=CMT.filter(x=>x!==c);cmDel(c.id);renderCmts();cmCount();return}
+  if(b.matches("[data-cgo]")){const f=cmFlowOf(c);if(FLOWS[f]){if(st.flow!==f)subAnim=true;st.flow=f}st.screen=c.screen;if(c.look)st.look=c.look;if(st.mode==="canvas")st.mode="one";
+    if(!st.cm)document.getElementById("cmgl").click();setView("proto");setTimeout(()=>{const p=$p.querySelector(`[data-cmid="${c.id}"]`);if(p){p.classList.add("flash");p.scrollIntoView({block:"center",behavior:reduce?"auto":"smooth"})}},700)}});
+document.getElementById("cmtview").addEventListener("input",e=>{if(e.target.matches(".cmc .cmtx")){e.target.style.height="auto";e.target.style.height=e.target.scrollHeight+"px"}});
+cmLoad();
 reload();
 </script>
