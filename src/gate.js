@@ -51,5 +51,6 @@ export async function gate(req, env, url) {
   }
   if (cookieOf(req)[COOKIE] === good) return null;
   if (url.pathname.startsWith("/api/")) return new Response(JSON.stringify({ error: "Je potřeba se přihlásit" }), { status: 401, headers: { "content-type": "application/json" } });
-  return new Response(page(url, false), { status: 401, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  // 200, ne 401: WhatsApp a další sítě si náhled z chybové stránky nevezmou
+  return new Response(page(url, false), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex" } });
 }
